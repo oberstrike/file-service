@@ -9,6 +9,7 @@ mockkVersion = "1.12.1"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.18.0" }
 
 [libraries]
 kotlin-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
