@@ -38,10 +38,12 @@ class DatabaseTestResource : QuarkusTestResourceLifecycleManager {
 
 
         System.clearProperty("%test.xml.quarkus.hibernate-orm.dialect")
-        System.setProperty("%test.xml.quarkus.datasource.jdbc.url", db.jdbcUrl)
+        //        System.setProperty("%test.xml.quarkus.datasource.jdbc.url", db.jdbcUrl)
 
         return mapOf(
-            "quarkus.datasource.jdbc.url" to db.jdbcUrl,
+
+         //   "quarkus.datasource.jdbc.url" to db.jdbcUrl,
+            "quarkus.datasource.reactive.url" to db.jdbcUrl.replace("jdbc:", "vertx-reactive:"),
             "quarkus.datasource.db-kind" to "postgresql",
             "quarkus.datasource.username" to username,
             "quarkus.datasource.password" to password,

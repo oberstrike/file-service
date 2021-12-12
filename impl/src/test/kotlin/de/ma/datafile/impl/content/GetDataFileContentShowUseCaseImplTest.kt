@@ -7,9 +7,8 @@ import de.ma.domain.datafile.exceptions.DataFileException
 import de.ma.datafile.impl.utils.dataFileShow
 import de.ma.datafile.impl.utils.file
 import de.ma.datafile.impl.utils.nanoId
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
+import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldNotBe
 import org.junit.jupiter.api.Test
@@ -27,7 +26,7 @@ class GetDataFileContentShowUseCaseImplTest {
 
 
     @Test
-    fun `Get content if data file doesn't exist throws an exception`() {
+    fun `Get content if data file doesn't exist throws an exception`() = runBlocking {
         val nanoId = nanoId("meineId")
 
         every { dataFileGateway.findById(nanoId) } returns null
@@ -42,14 +41,14 @@ class GetDataFileContentShowUseCaseImplTest {
     }
 
     @Test
-    fun `Get content if data file is present successfully`() {
+    fun `Get content if data file is present successfully`() = runBlocking {
         val nanoId = nanoId("randomId123")
         val dataFileShow = dataFileShow(nanoId.text)
         val dataFileContentShow = dataFileContentShow(file())
 
         every { dataFileGateway.findById(nanoId) } returns dataFileShow
 
-        every { dataFileContentGateway.getContentByNanoId(nanoId) } returns Result.success(dataFileContentShow)
+        coEvery { dataFileContentGateway.getContentByNanoId(nanoId) } returns Result.success(dataFileContentShow)
 
         val result = getDataFileContentUseCaseImpl(nanoId)
 
@@ -57,7 +56,7 @@ class GetDataFileContentShowUseCaseImplTest {
 
         verify(exactly = 1) { dataFileGateway.findById(nanoId) }
 
-        verify(exactly = 1) { dataFileContentGateway.getContentByNanoId(nanoId) }
+        coVerify(exactly = 1) { dataFileContentGateway.getContentByNanoId(nanoId) }
 
     }
 }

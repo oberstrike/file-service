@@ -5,9 +5,8 @@ import de.ma.datafile.impl.utils.dataFileContentOverview
 import de.ma.datafile.impl.utils.inputStream
 import de.ma.datafile.impl.utils.nanoId
 import de.ma.domain.datafile.content.DataFileContentGateway
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
+import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -22,18 +21,18 @@ class CreateDataFileContentUseCaseImplTest {
     )
 
     @Test
-    fun `checks if returns the right value if all is successfully done`() {
+    fun `checks if returns the right value if all is successfully done`() = runBlocking {
         val dataFileContentCreate = dataFileContentCreate(inputStream())
         val nanoId = nanoId("123")
 
-        every { dataFileContentGateway.saveContentByNanoId(nanoId, dataFileContentCreate) } returns
+        coEvery { dataFileContentGateway.saveContentByNanoId(nanoId, dataFileContentCreate) } returns
                 Result.success(dataFileContentOverview(123))
 
         val result = createDataFileContentUseCaseImpl(dataFileContentCreate, nanoId)
 
         result.isSuccess shouldBe true
 
-        verify(exactly = 1) { dataFileContentGateway.saveContentByNanoId(nanoId, dataFileContentCreate) }
+        coVerify(exactly = 1) { dataFileContentGateway.saveContentByNanoId(nanoId, dataFileContentCreate) }
 
 
     }

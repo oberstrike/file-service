@@ -4,5 +4,5 @@ import de.ma.domain.datafile.content.DataFileContentShow
 import de.ma.domain.datafile.shared.NanoId
 
 interface GetDataFileContentUseCase {
-    operator fun invoke(id: NanoId): Result<DataFileContentShow>
+    suspend operator fun invoke(id: NanoId): Result<DataFileContentShow>
 }

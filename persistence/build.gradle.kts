@@ -1,7 +1,7 @@
 plugins {
-    kotlin("plugin.allopen") version "1.5.21"
+    kotlin("plugin.allopen") version "1.6.0"
     id("io.quarkus")
-    id("org.jetbrains.kotlin.plugin.noarg") version "1.5.21"
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.6.0"
 }
 
 val quarkusPlatformGroupId: String by project
@@ -21,16 +21,23 @@ dependencies{
     api(project("::domain"))
     api(project("::impl"))
 
-    implementation("io.quarkus:quarkus-jdbc-postgresql")
     implementation("io.quarkus:quarkus-hibernate-validator")
-    implementation("io.quarkus:quarkus-hibernate-orm-panache")
-    implementation("io.quarkus:quarkus-hibernate-orm-panache-kotlin")
+    implementation("io.quarkus:quarkus-hibernate-reactive-panache")
+    implementation("io.quarkus:quarkus-reactive-pg-client")
+
+
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
     implementation("io.quarkus:quarkus-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-keycloak-admin-client")
 
+    //Kotlin coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC2")
+
+
+    // https://mvnrepository.com/artifact/io.smallrye.reactive/mutiny-kotlin
+    implementation("io.smallrye.reactive:mutiny-kotlin:1.2.0")
 
     testImplementation(libs.junit5Jupiter)
     testImplementation(libs.junit5JupiterApi)
@@ -38,6 +45,7 @@ dependencies{
     testRuntimeOnly(libs.junit5JupiterEngine)
     testImplementation(libs.kluent)
     testImplementation(libs.mockk)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0-RC2")
 
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")

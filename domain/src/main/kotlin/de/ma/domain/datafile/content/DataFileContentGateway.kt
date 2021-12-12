@@ -4,9 +4,9 @@ import de.ma.domain.datafile.shared.NanoId
 
 interface DataFileContentGateway {
 
-    fun getContentByNanoId(nanoId: NanoId): Result<DataFileContentShow>
+    suspend fun getContentByNanoId(nanoId: NanoId): Result<DataFileContentShow>
 
-    fun saveContentByNanoId(nanoId: NanoId, content: DataFileContentCreate): Result<DataFileContentOverview>
+    suspend fun saveContentByNanoId(nanoId: NanoId, content: DataFileContentCreate): Result<DataFileContentOverview>
 
-    fun deleteContentByNanoId(nanoId: NanoId): Boolean
+    suspend fun deleteContentByNanoId(nanoId: NanoId): Boolean
 }

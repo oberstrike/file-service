@@ -1,8 +1,10 @@
 package de.ma.datafile
 
-import io.quarkus.hibernate.orm.panache.PanacheRepository
+import de.ma.domain.datafile.shared.NanoId
+import io.quarkus.hibernate.reactive.panache.PanacheRepository
+import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
-class DataFileRepository: PanacheRepository<DataFileEntity> {
+class DataFileRepository: PanacheRepositoryBase<DataFileEntity, NanoId> {
 }

@@ -12,7 +12,7 @@ class GetDataFileContentUseCaseImpl(
     private val dataFileContentGateway: DataFileContentGateway
 ) : GetDataFileContentUseCase {
 
-    override fun invoke(id: NanoId): Result<DataFileContentShow> {
+    override suspend fun invoke(id: NanoId): Result<DataFileContentShow> {
         dataFileGateway.findById(id)
             ?: return Result.failure(DataFileException.NotFoundException(id.text))
 

@@ -14,6 +14,9 @@ dependencies {
     api(project("::domain"))
     api(project("::api"))
 
+    //Kotlin coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC2")
+
 
     testImplementation(libs.junit5Jupiter)
     testImplementation(libs.junit5JupiterApi)

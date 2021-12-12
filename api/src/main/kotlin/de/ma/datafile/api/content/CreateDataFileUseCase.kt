@@ -4,5 +4,5 @@ import de.ma.domain.datafile.DataFileCreate
 import de.ma.domain.datafile.DataFileShowView
 
 interface CreateDataFileUseCase {
-    operator fun invoke(dataFileCreate: DataFileCreate): Result<DataFileShowView>
+    suspend operator fun invoke(dataFileCreate: DataFileCreate): Result<DataFileShowView>
 }

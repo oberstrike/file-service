@@ -10,7 +10,7 @@ class CreateDataFileContentUseCaseImpl(
     private val dataFileContentGateway: DataFileContentGateway
 ) : CreateDataFileContentUseCase {
 
-    override fun invoke(content: DataFileContentCreate, id: NanoId): Result<DataFileContentOverview> {
+    override suspend fun invoke(content: DataFileContentCreate, id: NanoId): Result<DataFileContentOverview> {
         return dataFileContentGateway.saveContentByNanoId(id, content)
     }
 

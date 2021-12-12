@@ -1,17 +1,23 @@
 package de.ma.utils
 
 
+import de.ma.domain.datafile.content.DataFileContentCreate
+import de.ma.domain.datafile.content.DataFileContentShow
+import de.ma.domain.datafile.shared.NanoId
 import io.quarkus.test.common.QuarkusTestResource
-import io.vertx.ext.auth.User
+import java.io.File
+import java.io.InputStream
 import java.util.*
-import javax.persistence.EntityManager
-import javax.transaction.Transactional
-
 
 
 @QuarkusTestResource(DatabaseTestResource::class)
 abstract class AbstractDatabaseTest {
 
-    abstract var entityManager: EntityManager
+    data class NanoIdImpl(override val text: String) : NanoId
 
+    data class DataFileContentCreateImpl(override val input: InputStream) : DataFileContentCreate
+
+    fun nanoId(text: String = UUID.randomUUID().toString()): NanoId = NanoIdImpl(text)
+
+    fun dataFileContentCreate(input: InputStream): DataFileContentCreate = DataFileContentCreateImpl(input)
 }

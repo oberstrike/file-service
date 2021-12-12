@@ -16,7 +16,7 @@ class CreateDataFileUseCaseImpl(
     private val nanoIdGateway: NanoIdGateway
 ) : CreateDataFileUseCase, BaseUseCase by BaseUseCaseImpl(nanoIdGateway) {
 
-    override fun invoke(dataFileCreate: DataFileCreate): Result<DataFileShowView> {
+    override suspend fun invoke(dataFileCreate: DataFileCreate): Result<DataFileShowView> {
         val result: Result<DataFileShowView> = dataFileGateway.save(dataFileCreate)
 
         val dataFileShowView = result.getOrNull()

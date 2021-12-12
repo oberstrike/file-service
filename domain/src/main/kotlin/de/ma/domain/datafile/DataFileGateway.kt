@@ -6,13 +6,13 @@ import de.ma.domain.datafile.shared.PagedParams
 import de.ma.domain.datafile.shared.SearchParams
 
 interface DataFileGateway {
-    fun findById(id: NanoId): DataFileShowView?
+     fun findById(id: NanoId): DataFileShowView?
 
-    fun deleteById(id: NanoId): Boolean
+     fun deleteById(id: NanoId): Boolean
 
-    fun save(dataFile: DataFileCreate): Result<DataFileShowView>
+     fun save(dataFile: DataFileCreate): Result<DataFileShowView>
 
-    fun findAll(
+     fun findAll(
         pagedParams: PagedParams,
         searchParams: SearchParams?
     ): Result<PagedList<DataFileShowView>>

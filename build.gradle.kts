@@ -12,6 +12,7 @@ allprojects  {
     repositories {
         mavenCentral()
     }
+
 }
 
 subprojects {
@@ -22,5 +23,7 @@ subprojects {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
         kotlinOptions.javaParameters = true
     }
+
+
 
 }

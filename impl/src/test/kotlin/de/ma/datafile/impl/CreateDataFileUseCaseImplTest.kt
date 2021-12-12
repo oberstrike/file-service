@@ -3,9 +3,8 @@ package de.ma.datafile.impl
 import de.ma.datafile.api.content.CreateDataFileContentUseCase
 import de.ma.datafile.impl.utils.*
 import de.ma.domain.datafile.DataFileGateway
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
+import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -24,7 +23,7 @@ class CreateDataFileUseCaseImplTest {
     )
 
     @Test
-    fun `the save fails`() {
+    fun `the save fails`() = runBlocking {
         val testFile = CreateDataFileUseCaseImpl::class.java.getResource("/files/TestDatei-Klein.txt")
             ?: throw IllegalStateException("Test file not found")
         //reads the file with stream and prints all lines of its content
@@ -45,7 +44,7 @@ class CreateDataFileUseCaseImplTest {
 
 
     @Test
-    fun `saves successfully a datafile`() {
+    fun `saves successfully a datafile`() = runBlocking{
         val contentCreate = dataFileContentCreate(inputStream())
         val dataFileCreate = dataFileCreate(contentCreate, "TestDatei-Klein.txt")
         val dataFileShow = dataFileShow("123")
@@ -55,7 +54,7 @@ class CreateDataFileUseCaseImplTest {
 
         every { gateway.save(dataFileCreate) } returns Result.success(dataFileShow)
 
-        every { createDataFileContentUseCase.invoke(contentCreate, nanoId("123")) } returns Result.success(
+        coEvery { createDataFileContentUseCase.invoke(contentCreate, nanoId("123")) } returns Result.success(
             dataFileContentOverview
         )
 
@@ -67,7 +66,7 @@ class CreateDataFileUseCaseImplTest {
 
         verify(exactly = 1) { gateway.save(dataFileCreate) }
 
-        verify(exactly = 1) { createDataFileContentUseCase.invoke(contentCreate, nanoId("123")) }
+        coVerify (exactly = 1) { createDataFileContentUseCase.invoke(contentCreate, nanoId("123")) }
 
     }
 

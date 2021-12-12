@@ -2,9 +2,13 @@ package de.ma.datafile
 
 import de.ma.utils.TransactionalQuarkusTest
 import de.ma.utils.AbstractDatabaseTest
+import io.smallrye.mutiny.coroutines.awaitSuspending
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.Duration
 import javax.inject.Inject
 import javax.persistence.EntityManager
 
@@ -13,21 +17,26 @@ import javax.persistence.EntityManager
 class DataFileRepositoryTest : AbstractDatabaseTest() {
 
     @Inject
-    override lateinit var entityManager: EntityManager
-
-    @Inject
     lateinit var dataFileRepository: DataFileRepository
 
+    val scope = Dispatchers.IO
+
     @BeforeEach
-    fun setup() {
-        entityManager.clear()
+    fun setup() = runBlocking {
+        dataFileRepository.deleteAll().awaitSuspending()
+        Unit
     }
 
     @Test
-    fun test() {
-        dataFileRepository.persist(DataFileEntity("Markus"))
+    fun test() = runBlocking {
+        val persist = dataFileRepository.persist(DataFileEntity("Markus")).awaitSuspending()
+        persist.name shouldBe "Markus"
 
-        dataFileRepository.findAll().list<DataFileEntity>().size shouldBe 1
+        val atMost = dataFileRepository.findAll().list<DataFileEntity>().awaitSuspending()
+
+        println(atMost)
+
+        Unit
     }
 
 }
