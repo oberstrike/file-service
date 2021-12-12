@@ -1,6 +1,6 @@
 package de.ma.datafile.impl.utils
 
-import de.ma.domain.datafile.DataFileCreate
+import de.ma.domain.datafile.com.DataFileCreate
 import de.ma.domain.datafile.DataFileDelete
 import de.ma.domain.datafile.DataFileShowView
 import de.ma.domain.datafile.content.DataFileContentCreate

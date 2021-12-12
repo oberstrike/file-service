@@ -14,7 +14,7 @@ class DeleteDataFileUseCaseImpl(
 ) : DeleteDataFileUseCase,
     BaseUseCase by BaseUseCaseImpl(nanoIdGateway) {
 
-    override fun invoke(dataFile: DataFileDelete): Result<Boolean> {
+    override fun<T: DataFileDelete> invoke(dataFile: T): Result<Boolean> {
         val dataFileShow = dataFileGateway.findById(dataFile.id.toNanoId())
             ?: return Result.failure(DataFileException.NotFoundException(dataFile.id))
 

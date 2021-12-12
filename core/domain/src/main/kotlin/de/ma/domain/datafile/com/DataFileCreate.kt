@@ -1,4 +1,4 @@
-package de.ma.domain.datafile
+package de.ma.domain.datafile.com
 
 import de.ma.domain.datafile.content.DataFileContentCreate
 

@@ -1,6 +1,6 @@
 package de.ma.datafile
 
-import de.ma.domain.datafile.DataFileCreate
+import de.ma.domain.datafile.com.DataFileCreate
 import de.ma.domain.datafile.DataFileGateway
 import de.ma.domain.datafile.DataFileShowView
 import de.ma.domain.datafile.shared.NanoId
@@ -19,7 +19,7 @@ class DataFileGatewayImpl(
         TODO("Not yet implemented")
     }
 
-    override fun save(dataFile: DataFileCreate): Result<DataFileShowView> {
+    override fun <T : DataFileCreate> save(dataFile: T): Result<DataFileShowView> {
         TODO("Not yet implemented")
     }
 
