@@ -13,7 +13,7 @@ pluginManagement {
     }
 }
 
-include(":api", ":domain", ":impl", ":persistence")
+include(":core:api", ":core:domain", ":base:impl", ":base:persistence")
 
 enableFeaturePreview("VERSION_CATALOGS")
 include("persistence")
