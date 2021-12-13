@@ -4,7 +4,7 @@ import de.ma.datafile.impl.utils.dataFileContentCreate
 import de.ma.datafile.impl.utils.dataFileContentOverview
 import de.ma.datafile.impl.utils.inputStream
 import de.ma.datafile.impl.utils.nanoId
-import de.ma.domain.datafile.content.DataFileContentGateway
+import de.ma.domain.content.DataFileContentGateway
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBe

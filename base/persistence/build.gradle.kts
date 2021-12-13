@@ -2,7 +2,7 @@ plugins {
     kotlin("plugin.allopen") version "1.6.0"
     id("io.quarkus")
     id("org.jetbrains.kotlin.plugin.noarg") version "1.6.0"
-    id("org.kordamp.gradle.jandex") version "0.11.0"
+    id("org.kordamp.gradle.jandex")
 }
 
 val quarkusPlatformGroupId: String by project

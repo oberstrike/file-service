@@ -1,13 +1,14 @@
 plugins {
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.mavenPublish) apply false
+    id("org.kordamp.gradle.jandex") apply false
 }
 
 
 //apply group and version to all projects
 allprojects  {
-    group = "de.ma"
-    version = "1.0.0"
+    group = property("GROUP") as String
+    version = property("VERSION_NAME") as String
 
     repositories {
         mavenCentral()

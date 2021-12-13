@@ -1,8 +1,8 @@
 package de.ma.utils
 
 
-import de.ma.domain.datafile.content.DataFileContentCreate
-import de.ma.domain.datafile.shared.NanoId
+import de.ma.domain.content.DataFileContentCreate
+import de.ma.domain.nanoid.NanoId
 import io.quarkus.test.common.QuarkusTestResource
 import java.io.InputStream
 import java.util.*

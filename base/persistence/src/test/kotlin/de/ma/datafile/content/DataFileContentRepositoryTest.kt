@@ -1,5 +1,6 @@
 package de.ma.datafile.content
 
+import de.ma.content.DataFileContentRepository
 import de.ma.utils.AbstractDatabaseTest
 import io.quarkus.test.junit.QuarkusTest
 import kotlinx.coroutines.*

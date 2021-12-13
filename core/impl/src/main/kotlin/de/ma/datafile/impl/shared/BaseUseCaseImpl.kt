@@ -1,7 +1,7 @@
 package de.ma.datafile.impl.shared
 
-import de.ma.domain.datafile.shared.NanoId
-import de.ma.domain.datafile.shared.NanoIdGateway
+import de.ma.domain.nanoid.NanoId
+import de.ma.domain.nanoid.NanoIdGateway
 
 interface BaseUseCase {
     fun String.toNanoId(): NanoId

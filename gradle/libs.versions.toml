@@ -6,7 +6,6 @@ kluentVersion = "1.68"
 kotlinFakerVersion = "1.9.0"
 mockkVersion = "1.12.1"
 
-
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.18.0" }

@@ -1,12 +1,14 @@
 package de.ma.datafile.impl.utils
 
-import de.ma.domain.datafile.com.DataFileCreate
+import de.ma.domain.datafile.DataFileCreate
 import de.ma.domain.datafile.DataFileDelete
-import de.ma.domain.datafile.DataFileShowView
-import de.ma.domain.datafile.content.DataFileContentCreate
-import de.ma.domain.datafile.content.DataFileContentOverview
-import de.ma.domain.datafile.content.DataFileContentShow
-import de.ma.domain.datafile.shared.*
+import de.ma.domain.datafile.DataFileOverview
+import de.ma.domain.content.DataFileContentCreate
+import de.ma.domain.content.DataFileContentOverview
+import de.ma.domain.content.DataFileContentShow
+import de.ma.domain.nanoid.NanoId
+import de.ma.domain.nanoid.NanoIdGateway
+import de.ma.domain.shared.*
 import java.io.File
 import java.io.InputStream
 
@@ -31,12 +33,12 @@ data class DataFileDeleteImpl(
     override val version: Long
 ) : DataFileDelete
 
-data class DataFileShowImpl(
+data class DataFileOverviewImpl(
     override val id: String,
     override val name: String,
     override val version: Long,
     override val size: Long,
-) : DataFileShowView
+) : DataFileOverview
 
 data class DataFileCreateImpl(
     override val name: String,
@@ -65,7 +67,7 @@ data class PagedListImpl<T>(
 ) : PagedList<T>
 
 data class DataFileContentShowImpl(
-    override val content: File
+    override val file: File
 ) : DataFileContentShow
 
 fun nanoId(text: String) = NanoIdImpl(text)
@@ -75,8 +77,8 @@ fun dataFileDelete(
     targetVersion: Long = 1
 ): DataFileDelete = DataFileDeleteImpl(targetId, targetVersion)
 
-fun dataFileShow(targetId: String = "123", version: Long = 1, size: Long = 1, name: String = "Name"): DataFileShowView {
-    return DataFileShowImpl(targetId, name, version, size)
+fun dataFileShow(targetId: String = "123", version: Long = 1, size: Long = 1, name: String = "Name"): DataFileOverview {
+    return DataFileOverviewImpl(targetId, name, version, size)
 }
 
 

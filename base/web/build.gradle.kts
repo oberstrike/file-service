@@ -1,7 +1,8 @@
 plugins {
     kotlin("plugin.allopen") version "1.6.0"
     id("io.quarkus")
-    id("org.jetbrains.kotlin.plugin.noarg") version "1.6.0"
+    id("org.kordamp.gradle.jandex")
+
 }
 
 
@@ -9,8 +10,17 @@ val quarkusPlatformGroupId: String by project
 val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
 
+sourceSets {
+    getByName("main").java.srcDirs("src/main/kotlin")
+    getByName("test").java.srcDirs("src/test/kotlin")
+}
+
+
 dependencies {
-    api(project("::base::persistence"))
+    implementation(project("::base::beans"))
+    api(project("::core::api"))
+    api(project("::core::domain"))
+
 
 
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
@@ -24,3 +34,11 @@ dependencies {
 
 
 }
+
+allOpen {
+    annotation("javax.ws.rs.Path")
+    annotation("javax.enterprise.context.ApplicationScoped")
+    annotation("io.quarkus.test.junit.QuarkusTest")
+
+}
+

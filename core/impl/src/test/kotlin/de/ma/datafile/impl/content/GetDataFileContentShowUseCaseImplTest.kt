@@ -2,7 +2,7 @@ package de.ma.datafile.impl.content
 
 import de.ma.datafile.impl.utils.dataFileContentShow
 import de.ma.domain.datafile.DataFileGateway
-import de.ma.domain.datafile.content.DataFileContentGateway
+import de.ma.domain.content.DataFileContentGateway
 import de.ma.datafile.impl.utils.dataFileShow
 import de.ma.datafile.impl.utils.file
 import de.ma.datafile.impl.utils.nanoId

@@ -10,10 +10,11 @@ pluginManagement {
     }
     plugins {
         id(quarkusPluginId) version quarkusPluginVersion
+        id("org.kordamp.gradle.jandex") version "0.11.0"
     }
 }
 
 include(":base:web", ":core:api", ":core:domain", ":core:impl", ":base:persistence")
 
 enableFeaturePreview("VERSION_CATALOGS")
-
+include(":base:beans")

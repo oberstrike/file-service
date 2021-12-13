@@ -1,20 +1,19 @@
 package de.ma.domain.datafile
 
-import de.ma.domain.datafile.com.DataFileCreate
-import de.ma.domain.datafile.shared.NanoId
-import de.ma.domain.datafile.shared.PagedList
-import de.ma.domain.datafile.shared.PagedParams
-import de.ma.domain.datafile.shared.SearchParams
+import de.ma.domain.nanoid.NanoId
+import de.ma.domain.shared.PagedList
+import de.ma.domain.shared.PagedParams
+import de.ma.domain.shared.SearchParams
 
 interface DataFileGateway {
-     fun findById(id: NanoId): DataFileShowView?
+     suspend fun findById(id: NanoId): DataFileShow?
 
-     fun deleteById(id: NanoId): Boolean
+    fun deleteById(id: NanoId): Boolean
 
-     fun<T : DataFileCreate> save(dataFile: T): Result<DataFileShowView>
+     fun<T : DataFileCreate> save(dataFile: T): Result<DataFileOverview>
 
-     fun findAll(
-        pagedParams: PagedParams,
-        searchParams: SearchParams?
-    ): Result<PagedList<DataFileShowView>>
+     suspend fun findAll(
+         pagedParams: PagedParams,
+         searchParams: SearchParams?
+    ): Result<PagedList<DataFileOverview>>
 }
