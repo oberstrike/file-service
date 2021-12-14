@@ -17,11 +17,11 @@ data class DataFileContentOverviewImpl(
     override val size: Long
 ) : DataFileContentOverview
 
-data class NanoIdImpl(override val text: String) : NanoId
+data class NanoIdImpl(override val value: String) : NanoId
 
 class NanoIdGatewayImpl : NanoIdGateway {
     override fun toText(nanoId: NanoId): String {
-        return nanoId.text
+        return nanoId.value
     }
 
     override fun toNanoId(text: String): NanoId {

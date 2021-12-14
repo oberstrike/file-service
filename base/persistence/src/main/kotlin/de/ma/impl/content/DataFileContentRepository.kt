@@ -62,11 +62,11 @@ class DataFileContentRepository(
 
     //saves the content to the file system synchron
     suspend fun save(nanoId: NanoId, content: DataFileContentCreate): DataFileContentOverview? = withContext(scope) {
-        val file = File(domain, nanoId.toString())
+        val file = File(domain, nanoId.value)
 
         return@withContext try {
             Files.copy(content.input, file.toPath())
-            DataFileContentOverviewDTO(content.input.available().toLong())
+            DataFileContentOverviewDTO(file.length())
         } catch (e: Exception) {
             //TODO implement logging
             e.printStackTrace()
@@ -75,7 +75,7 @@ class DataFileContentRepository(
     }
 
     fun exists(nanoId: NanoId): File? {
-        val file = File(domain, nanoId.text)
+        val file = File(domain, nanoId.value)
         return if (file.exists()) file else null
     }
 

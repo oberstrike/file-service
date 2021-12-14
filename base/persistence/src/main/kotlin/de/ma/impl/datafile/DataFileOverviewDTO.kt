@@ -10,7 +10,7 @@ data class DataFileOverviewDTO(
 
 
 fun DataFileEntity.toOverviewDTO() : DataFileOverview = DataFileOverviewDTO(
-    id = id!!.text,
+    id = id!!.value,
     name = name,
     size = size,
 )

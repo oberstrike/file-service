@@ -54,11 +54,18 @@ class DataFileGatewayImpl(
         val dataFileEntity = DataFileEntity(dataFileCreate.name, dataFileCreate.extension)
         val result = dataFileRepository.persist(dataFileEntity).awaitSuspending()
 
-        val dataFileContentOverview = dataFileContentRepository.save(result.id!!.toDTO(), dataFileCreate.content)
+        val dataFileContentOverview = dataFileContentRepository.save(result.id!!, dataFileCreate.content)
 
         if (dataFileContentOverview != null) {
+            result.size = dataFileContentOverview.size
+            dataFileRepository.persist(result).awaitSuspending()
+
             return Result.success(result.toOverviewDTO())
         }
+
+        // println("I'm deleting the wrong datafile")
+        // deleteById(result.id!!)
+
         //TODO implement own exception
         return Result.failure(RuntimeException("Could not save data file"))
     }

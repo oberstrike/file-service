@@ -1,5 +1,7 @@
 package de.ma.domain.nanoid
 
-interface NanoId {
-    val text: String
+import java.io.Serializable
+
+interface NanoId : Serializable {
+    var value: String
 }

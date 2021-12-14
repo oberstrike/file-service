@@ -39,6 +39,8 @@ class DataFileRepositoryTest : AbstractDatabaseTest() {
         dataFileEntity.name shouldBe "Markus"
         dataFileEntity.extension shouldBe "txt"
 
+        println(dataFileEntity)
+
 
     }
 

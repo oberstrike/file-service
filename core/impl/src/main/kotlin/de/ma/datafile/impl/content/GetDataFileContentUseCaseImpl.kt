@@ -14,7 +14,7 @@ class GetDataFileContentUseCaseImpl(
 
     override suspend fun invoke(id: NanoId): Result<DataFileContentShow> {
         dataFileGateway.findById(id)
-            ?: return Result.failure(DataFileException.NotFoundException(id.text))
+            ?: return Result.failure(DataFileException.NotFoundException(id.value))
 
         val content = dataFileContentGateway.getContentByNanoId(id)
 

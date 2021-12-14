@@ -1,7 +1,7 @@
 package de.ma.impl.datafile
 
 import de.ma.domain.datafile.DataFile
-import de.ma.impl.nanoid.NanoIdEntity
+import de.ma.domain.nanoid.NanoId
 import de.ma.impl.shared.AbstractBaseEntity
 import org.hibernate.Hibernate
 import javax.persistence.Cacheable
@@ -15,7 +15,7 @@ import javax.persistence.Table
 data class DataFileEntity(
     override var name: String,
     override var extension: String
-) : AbstractBaseEntity(), DataFile<NanoIdEntity> {
+) : AbstractBaseEntity(), DataFile<NanoId> {
 
     override var size: Long = 0
 

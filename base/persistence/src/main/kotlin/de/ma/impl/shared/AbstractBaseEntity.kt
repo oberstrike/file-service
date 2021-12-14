@@ -1,23 +1,22 @@
 package de.ma.impl.shared
 
+import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.HasId
-import de.ma.impl.nanoid.NanoIdEntity
+import de.ma.impl.nanoid.NanoIdConverter
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase
 import org.hibernate.annotations.GenericGenerator
-import javax.persistence.Column
-import javax.persistence.EmbeddedId
-import javax.persistence.GeneratedValue
-import javax.persistence.MappedSuperclass
+import javax.persistence.*
 
 @MappedSuperclass
-abstract class AbstractBaseEntity : HasId<NanoIdEntity?>, PanacheEntityBase() {
+abstract class AbstractBaseEntity : HasId<NanoId?>, PanacheEntityBase() {
 
-    @get:EmbeddedId
+
+    @get:Id
     @get:GeneratedValue(generator = "nano-generator")
     @get:GenericGenerator(
         name = "nano-generator",
         strategy = "de.ma.impl.nanoid.NanoIdGenerator"
     )
-    @get:Column(columnDefinition = "CHAR(21)")
-    override var id: NanoIdEntity? = null
+    @get:Convert(converter = NanoIdConverter::class)
+    override var id: NanoId? = null
 }
