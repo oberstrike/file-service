@@ -1,16 +1,16 @@
 package de.ma.web.datafile
 
-import de.ma.datafile.api.datafile.ShowDataFilesUseCase
+import de.ma.datafile.api.datafile.GetDataFilesUseCase
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 
 @Path("/datafile")
 class DataFileResource(
-    private val showDataFilesUseCase: ShowDataFilesUseCase
+    private val getDataFilesUseCase: GetDataFilesUseCase
 ) {
     @GET
     fun show(): String {
-        print(showDataFilesUseCase::class.java.name)
+        print(getDataFilesUseCase::class.java.name)
         return "show"
     }
 

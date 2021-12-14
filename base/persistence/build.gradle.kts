@@ -16,15 +16,18 @@ sourceSets {
 
 val mockkVersion = "1.12.1"
 val testcontainersVersion = "1.16.2"
+val jnanoid = "2.0.0"
 
 dependencies{
     api(project("::core::api"))
     api(project("::core::domain"))
     api(project("::core::impl"))
+    implementation("org.jetbrains.kotlin:kotlin-noarg:1.6.0")
 
     implementation("io.quarkus:quarkus-hibernate-validator")
     implementation("io.quarkus:quarkus-hibernate-reactive-panache")
     implementation("io.quarkus:quarkus-reactive-pg-client")
+    implementation("com.aventrix.jnanoid:jnanoid:$jnanoid")
 
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
     implementation("io.quarkus:quarkus-kotlin")
@@ -37,6 +40,7 @@ dependencies{
 
     // https://mvnrepository.com/artifact/io.smallrye.reactive/mutiny-kotlin
     implementation("io.smallrye.reactive:mutiny-kotlin:1.2.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0-RC2")
 
     testImplementation(libs.junit5Jupiter)
     testImplementation(libs.junit5JupiterApi)

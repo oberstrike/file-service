@@ -4,16 +4,18 @@ import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
+import de.ma.domain.shared.SortParams
 
 interface DataFileGateway {
-     suspend fun findById(id: NanoId): DataFileShow?
+    suspend fun findById(id: NanoId): DataFileShow?
 
-    fun deleteById(id: NanoId): Boolean
+    suspend fun deleteById(id: NanoId): Boolean
 
-     fun<T : DataFileCreate> save(dataFile: T): Result<DataFileOverview>
+    suspend fun <T : DataFileCreate> save(dataFileCreate: T): Result<DataFileOverview>
 
-     suspend fun findAll(
-         pagedParams: PagedParams,
-         searchParams: SearchParams?
+    suspend fun findAll(
+        pagedParams: PagedParams,
+        searchParams: SearchParams?,
+        sortParams: SortParams?
     ): Result<PagedList<DataFileOverview>>
 }

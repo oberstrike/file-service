@@ -6,6 +6,7 @@ import de.ma.domain.datafile.DataFileOverview
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.content.DataFileContentOverview
 import de.ma.domain.content.DataFileContentShow
+import de.ma.domain.datafile.DataFileShow
 import de.ma.domain.nanoid.NanoId
 import de.ma.domain.nanoid.NanoIdGateway
 import de.ma.domain.shared.*
@@ -34,14 +35,14 @@ data class DataFileDeleteImpl(
 ) : DataFileDelete
 
 data class DataFileOverviewImpl(
-    override val id: String,
     override val name: String,
-    override val version: Long,
     override val size: Long,
+    override val id: String
 ) : DataFileOverview
 
 data class DataFileCreateImpl(
     override val name: String,
+    override val extension: String,
     override val content: DataFileContentCreate
 ) : DataFileCreate
 
@@ -52,7 +53,7 @@ data class DataFileContentCreateImpl(
 
 data class PagedParamsImpl(
     override val page: Int,
-    override val pageSize: Int
+    override val size: Int
 ) : PagedParams
 
 data class SearchParamsImpl(
@@ -66,6 +67,13 @@ data class PagedListImpl<T>(
     override val pageCount: Int
 ) : PagedList<T>
 
+
+data class DataFileShowImpl(
+    override val content: DataFileContentShow,
+    override val name: String,
+    override val extension: String
+): DataFileShow
+
 data class DataFileContentShowImpl(
     override val file: File
 ) : DataFileContentShow
@@ -77,13 +85,19 @@ fun dataFileDelete(
     targetVersion: Long = 1
 ): DataFileDelete = DataFileDeleteImpl(targetId, targetVersion)
 
-fun dataFileShow(targetId: String = "123", version: Long = 1, size: Long = 1, name: String = "Name"): DataFileOverview {
-    return DataFileOverviewImpl(targetId, name, version, size)
+fun dataFileOverview(
+     name: String,
+     size: Long,
+     id: String
+): DataFileOverview {
+    return DataFileOverviewImpl(name, size, id)
 }
 
 
-fun dataFileCreate(dataFileContentCreate: DataFileContentCreate, name: String = "") = DataFileCreateImpl(
-    name, dataFileContentCreate
+fun dataFileCreate(dataFileContentCreate: DataFileContentCreate,
+                   extension: String = "txt",
+                   name: String = "") = DataFileCreateImpl(
+    name, extension, dataFileContentCreate
 )
 
 fun pagedParams() = PagedParamsImpl(1, 10)
@@ -102,3 +116,5 @@ fun dataFileContentOverview(size: Long) = DataFileContentOverviewImpl(size)
 fun dataFileContentCreate(input: InputStream): DataFileContentCreate = DataFileContentCreateImpl(input)
 
 fun dataFileContentShow(content: File) = DataFileContentShowImpl(content)
+
+fun dataFileShow(content: DataFileContentShow, name: String, extension: String) = DataFileShowImpl(content, name, extension)
