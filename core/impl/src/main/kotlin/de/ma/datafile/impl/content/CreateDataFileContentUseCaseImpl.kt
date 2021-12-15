@@ -4,13 +4,12 @@ import de.ma.datafile.api.content.CreateDataFileContentUseCase
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.content.DataFileContentGateway
 import de.ma.domain.content.DataFileContentOverview
-import de.ma.domain.nanoid.NanoId
 
 class CreateDataFileContentUseCaseImpl(
     private val dataFileContentGateway: DataFileContentGateway
 ) : CreateDataFileContentUseCase {
 
-    override suspend fun invoke(content: DataFileContentCreate, id: NanoId): Result<DataFileContentOverview> {
+    override suspend fun invoke(content: DataFileContentCreate): Result<DataFileContentOverview> {
         return dataFileContentGateway.saveContent(content)
     }
 

@@ -49,8 +49,7 @@ class CreateDataFileUseCaseImplTest : AbstractImplTest() {
 
                             coEvery {
                                 createDataFileContentUseCase.invoke(
-                                    dataFileCreate.content,
-                                    nanoId("123")
+                                    dataFileCreate.content
                                 )
                             } returns Result.success(
                                 dataFileContentOverview
@@ -66,8 +65,7 @@ class CreateDataFileUseCaseImplTest : AbstractImplTest() {
 
                             coVerify(exactly = 1) {
                                 createDataFileContentUseCase.invoke(
-                                    dataFileCreate.content,
-                                    nanoId("123")
+                                    dataFileCreate.content
                                 )
                             }
 
