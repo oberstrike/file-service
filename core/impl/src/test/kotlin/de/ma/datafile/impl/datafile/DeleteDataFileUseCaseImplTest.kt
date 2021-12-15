@@ -30,7 +30,7 @@ class DeleteDataFileUseCaseImplTest {
 
         val nanoId = dataFileDelete.id.toNanoId()
 
-        coEvery { dataFileGateway.findById(nanoId) } returns null
+        coEvery { dataFileGateway.find(nanoId) } returns null
 
         val result = deletedDataFileUseCaseImpl(dataFileDelete)
 
@@ -38,7 +38,7 @@ class DeleteDataFileUseCaseImplTest {
 
         result.exceptionOrNull()?.javaClass `should be` DataFileException.NotFoundException::class.java
 
-        coVerify (exactly = 1) { dataFileGateway.findById(nanoId) }
+        coVerify (exactly = 1) { dataFileGateway.find(nanoId) }
 
         coVerify(exactly = 0) { dataFileGateway.deleteById(any()) }
     }
@@ -51,7 +51,7 @@ class DeleteDataFileUseCaseImplTest {
 
         val nanoId = dataFileDelete.id.toNanoId()
 
-        coEvery { dataFileGateway.findById(nanoId) } returns dataFileShowView
+        coEvery { dataFileGateway.find(nanoId) } returns dataFileShowView
 
         coEvery { dataFileGateway.deleteById(nanoId) } returns true
 
@@ -60,7 +60,7 @@ class DeleteDataFileUseCaseImplTest {
         result.isSuccess `should be` true
         result.getOrNull() `should be` true
 
-        coVerify(exactly = 1) { dataFileGateway.findById(nanoId) }
+        coVerify(exactly = 1) { dataFileGateway.find(nanoId) }
 
         coVerify(exactly = 1) { dataFileGateway.deleteById(any()) }
     }

@@ -5,8 +5,6 @@ import de.ma.domain.datafile.DataFileGateway
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
@@ -24,12 +22,12 @@ class GetDataFileByIdUseCaseImplTest {
         val dataFileContentShow = dataFileContentShow(file())
         val dataFileShow = dataFileShow(dataFileContentShow, "123", "txt")
 
-        coEvery { dataFileGateway.findById(nanoId) } returns dataFileShow
+        coEvery { dataFileGateway.find(nanoId) } returns dataFileShow
 
 
         val result = getDataFileByIdUseCaseImpl(nanoId)
 
-        coVerify(exactly = 1) { dataFileGateway.findById(nanoId) }
+        coVerify(exactly = 1) { dataFileGateway.find(nanoId) }
 
     }
 }

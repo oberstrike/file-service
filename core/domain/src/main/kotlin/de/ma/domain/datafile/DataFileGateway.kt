@@ -6,8 +6,10 @@ import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
 import de.ma.domain.shared.SortParams
 
+
+//The DataFileGateway interface is the gateway to the data file domain.
 interface DataFileGateway {
-    suspend fun findById(id: NanoId): DataFileShow?
+    suspend fun find(id: NanoId): DataFileShow?
 
     suspend fun deleteById(id: NanoId): Boolean
 

@@ -1,5 +1,6 @@
-package de.ma.impl.content
+package de.ma.impl.content.repository
 
+import de.ma.impl.content.repository.DataFileContentRepositoryImpl
 import de.ma.impl.utils.AbstractDatabaseTest
 import io.quarkus.test.junit.QuarkusTest
 import kotlinx.coroutines.*
@@ -13,19 +14,19 @@ import javax.inject.Inject
 class DataFileContentRepositoryTest : AbstractDatabaseTest() {
 
     @Inject
-    lateinit var dataFileContentRepository: DataFileContentRepository
+    lateinit var dataFileContentRepositoryImpl: DataFileContentRepositoryImpl
 
     @BeforeEach
     fun setup() {
         runBlocking {
-            dataFileContentRepository.reset()
+            dataFileContentRepositoryImpl.reset()
         }
     }
 
     @AfterEach
     fun tearDown() {
         runBlocking {
-            dataFileContentRepository.reset()
+            dataFileContentRepositoryImpl.reset()
         }
     }
 

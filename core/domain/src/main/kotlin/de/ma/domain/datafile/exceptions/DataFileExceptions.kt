@@ -1,8 +1,10 @@
 package de.ma.domain.datafile.exceptions
 
+//DataFile specific exceptions
 sealed class DataFileException(
     message: String
 ) : RuntimeException(message) {
+
     data class NotFoundException(val id: String) : DataFileException(
         "DataFile with id '$id' not found"
     )

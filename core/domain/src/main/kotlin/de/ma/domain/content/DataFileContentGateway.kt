@@ -1,12 +1,10 @@
 package de.ma.domain.content
 
-import de.ma.domain.nanoid.NanoId
-
 interface DataFileContentGateway {
 
-    suspend fun getContentByNanoId(nanoId: NanoId): Result<DataFileContentShow>
+    suspend fun getContent(search: DataFileContentSearch): Result<DataFileContentShow>
 
-    suspend fun saveContentByNanoId(nanoId: NanoId, content: DataFileContentCreate): Result<DataFileContentOverview>
+    suspend fun saveContent(contentCreate: DataFileContentCreate): Result<DataFileContentOverview>
 
-    suspend fun deleteContentByNanoId(nanoId: NanoId): Boolean
+    suspend fun deleteContent(search: DataFileContentSearch): Boolean
 }

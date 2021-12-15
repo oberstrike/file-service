@@ -8,13 +8,11 @@ import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBe
 import org.junit.jupiter.api.Test
 
-class CreateDataFileUseCaseImplTest {
+class CreateDataFileUseCaseImplTest : AbstractImplTest() {
 
     private val gateway = mockk<DataFileGateway>()
 
-
     private val createDataFileContentUseCase = mockk<CreateDataFileContentUseCase>()
-
 
     private val createDataFileUseCase = CreateDataFileUseCaseImpl(
         createDataFileContentUseCase,
@@ -23,50 +21,61 @@ class CreateDataFileUseCaseImplTest {
     )
 
     @Test
-    fun `the save fails`() = runBlocking {
-        val testFile = CreateDataFileUseCaseImpl::class.java.getResource("/files/TestDatei-Klein.txt")
-            ?: throw IllegalStateException("Test file not found")
-        //reads the file with stream and prints all lines of its content
-        val dataFileContent = dataFileContentCreate(testFile.openStream())
-        val dataFileCreate = dataFileCreate(dataFileContent, "TestDatei-Klein.txt")
+    fun `the save fails`() {
+        withDataFileCreate("txt", "test") { dataFileCreate ->
+            runBlocking {
 
+                coEvery { gateway.save(dataFileCreate) } returns Result.failure(Exception())
 
-        coEvery { gateway.save(dataFileCreate) } returns Result.failure(Exception())
+                val result = createDataFileUseCase(dataFileCreate)
 
-        val result = createDataFileUseCase(dataFileCreate)
+                result.isFailure shouldBe true
+                result.exceptionOrNull()?.message shouldBe "There was an error saving the data file"
 
-        result.isFailure shouldBe true
-        result.exceptionOrNull()?.message shouldBe "There was an error saving the data file"
-
-        coVerify(exactly = 1) { gateway.save(dataFileCreate) }
-
+                coVerify(exactly = 1) { gateway.save(dataFileCreate) }
+            }
+        }
     }
 
 
     @Test
-    fun `saves successfully a datafile`() = runBlocking{
-        val contentCreate = dataFileContentCreate(inputStream())
-        val dataFileCreate = dataFileCreate(contentCreate, "txt", "TestDatei-Klein")
-        val dataFileShow = dataFileOverview("TestDatei-Klein", 12, "123")
+    fun `saves successfully a datafile`() {
+        withDataFileCreate("txt", "test") { dataFileCreate ->
+            withDataFileShow { dataFileShow ->
+                withDataFileOverview { dataFileOverview ->
+                    withDataFileContentOverview(0) { dataFileContentOverview ->
+                        runBlocking {
+                            coEvery { gateway.save(dataFileCreate) } returns Result.success(dataFileOverview)
 
-        val dataFileContentOverview = dataFileContentOverview(123)
+                            coEvery {
+                                createDataFileContentUseCase.invoke(
+                                    dataFileCreate.content,
+                                    nanoId("123")
+                                )
+                            } returns Result.success(
+                                dataFileContentOverview
+                            )
 
+                            val result = createDataFileUseCase(dataFileCreate)
 
-        coEvery { gateway.save(dataFileCreate) } returns Result.success(dataFileShow)
+                            //result is successfull and its the same like dataFileShow
+                            result.isSuccess shouldBe true
+                            result.getOrNull() shouldBe dataFileShow
 
-        coEvery { createDataFileContentUseCase.invoke(contentCreate, nanoId("123")) } returns Result.success(
-            dataFileContentOverview
-        )
+                            coVerify(exactly = 1) { gateway.save(dataFileCreate) }
 
-        val result = createDataFileUseCase(dataFileCreate)
+                            coVerify(exactly = 1) {
+                                createDataFileContentUseCase.invoke(
+                                    dataFileCreate.content,
+                                    nanoId("123")
+                                )
+                            }
 
-        //result is successfull and its the same like dataFileShow
-        result.isSuccess shouldBe true
-        result.getOrNull() shouldBe dataFileShow
-
-        coVerify(exactly = 1) { gateway.save(dataFileCreate) }
-
-        coVerify (exactly = 1) { createDataFileContentUseCase.invoke(contentCreate, nanoId("123")) }
+                        }
+                    }
+                }
+            }
+        }
 
     }
 

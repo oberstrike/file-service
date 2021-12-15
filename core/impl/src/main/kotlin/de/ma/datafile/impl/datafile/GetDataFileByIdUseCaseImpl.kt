@@ -17,7 +17,7 @@ class GetDataFileByIdUseCaseImpl(
 
 
     override suspend fun invoke(id: NanoId): Result<DataFileShow> = withContext(scope) {
-        val result = dataFileGateway.findById(id)
+        val result = dataFileGateway.find(id)
             ?: return@withContext Result.failure(DataFileException.NotFoundException(id.value))
         return@withContext Result.success(result)
     }

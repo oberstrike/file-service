@@ -1,9 +1,13 @@
-package de.ma.impl.content
+package de.ma.impl.content.repository
 
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.content.DataFileContentOverview
 import de.ma.domain.content.DataFileContentShow
 import de.ma.domain.nanoid.NanoId
+import de.ma.impl.content.DataFileContentOverviewDTO
+import de.ma.impl.content.DataFileContentShowDTO
+import de.ma.impl.content.repository.api.DataFileContentRepository
+import de.ma.impl.content.repository.api.SaveFileContent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -16,16 +20,21 @@ import javax.annotation.PreDestroy
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
-class DataFileContentRepository(
+class DataFileContentRepositoryImpl(
     @ConfigProperty(name = "datafile.content.folder")
     private val domainPath: String
-) {
+) : DataFileContentRepository {
 
-    private lateinit var domain: File
+    private val scope = Dispatchers.IO + Job()
 
     private val jobs: MutableSet<Job> = Collections.synchronizedSet(mutableSetOf())
 
-    private val scope = Dispatchers.IO + Job()
+    private lateinit var domain: File
+
+    private val saveFileContent = SaveFileContentImpl(domainPath)
+
+    private val findFileContentByNanoId = FindFileContentByNanoIdImpl(domainPath)
+
 
     @PreDestroy
     fun destroy() {
@@ -50,44 +59,32 @@ class DataFileContentRepository(
 
     }
 
-    suspend fun findByNanoId(nanoId: NanoId): DataFileContentShow? {
+    override suspend fun findByNanoId(nanoId: NanoId): DataFileContentShow? {
         return withContext(scope) {
-            val file = File(domain, nanoId.toString())
-            if (!file.exists()) {
-                return@withContext null
-            }
-            return@withContext DataFileContentShowDTO(file)
+            return@withContext findFileContentByNanoId.findByNanoId(nanoId)
         }
     }
 
     //saves the content to the file system synchron
-    suspend fun save(nanoId: NanoId, content: DataFileContentCreate): DataFileContentOverview? = withContext(scope) {
-        val file = File(domain, nanoId.value)
-
-        return@withContext try {
-            Files.copy(content.input, file.toPath())
-            DataFileContentOverviewDTO(file.length())
-        } catch (e: Exception) {
-            //TODO implement logging
-            e.printStackTrace()
-            null
+    override suspend fun save(nanoId: NanoId, content: DataFileContentCreate): DataFileContentOverview? =
+        withContext(scope) {
+            return@withContext saveFileContent.save(nanoId, content)
         }
-    }
 
-    fun exists(nanoId: NanoId): File? {
+    override fun exists(nanoId: NanoId): File? {
         val file = File(domain, nanoId.value)
         return if (file.exists()) file else null
     }
 
     //resets the domain
-    fun reset() {
+    override fun reset() {
         domain.listFiles()?.forEach { file ->
             file.delete()
         }
     }
 
 
-    fun deleteById(id: NanoId): Boolean {
+    override fun deleteById(id: NanoId): Boolean {
         val file = File(domain, id.toString())
         return file.delete()
     }

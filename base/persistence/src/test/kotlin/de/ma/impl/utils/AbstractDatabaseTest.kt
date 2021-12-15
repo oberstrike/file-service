@@ -4,6 +4,9 @@ package de.ma.impl.utils
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.datafile.DataFileCreate
 import de.ma.domain.nanoid.NanoId
+import de.ma.impl.content.DataFileContentCreateDTO
+import de.ma.impl.content.DataFileCreateDTO
+import de.ma.impl.nanoid.NanoIdDTO
 import io.quarkus.test.common.QuarkusTestResource
 import java.io.InputStream
 import java.util.*
@@ -12,24 +15,25 @@ import java.util.*
 @QuarkusTestResource(DatabaseTestResource::class)
 abstract class AbstractDatabaseTest {
 
-    data class NanoIdImpl(override var value: String) : NanoId
+    fun withContentCreate(block: (DataFileContentCreate) -> Unit){
+        return block(dataFileContentCreate(input()))
+    }
 
-    data class DataFileContentCreateImpl(override val input: InputStream) : DataFileContentCreate
 
-    data class DataFileCreateDTO(
-        override val extension: String,
-        override val name: String,
-        override val content: DataFileContentCreate
-    ) : DataFileCreate
+    fun input(text: String = UUID.randomUUID().toString()): InputStream {
+        return text.byteInputStream()
+    }
 
-    fun nanoId(text: String = UUID.randomUUID().toString()): NanoId = NanoIdImpl(text)
+    fun nanoId(text: String = UUID.randomUUID().toString()): NanoId = NanoIdDTO(text)
 
-    fun dataFileContentCreate(input: InputStream): DataFileContentCreate = DataFileContentCreateImpl(input)
+    fun dataFileContentCreate(input: InputStream): DataFileContentCreate {
+        return DataFileContentCreateDTO(input)
+    }
 
     fun dataFileCreate(extension: String, name: String, content: DataFileContentCreate): DataFileCreate =
         DataFileCreateDTO(
+            content,
             extension,
-            name,
-            content
+            name
         )
 }

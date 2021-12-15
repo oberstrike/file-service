@@ -20,7 +20,7 @@ class DeleteDataFileUseCaseImpl(
     private val scope = Dispatchers.IO + Job()
 
     override suspend fun<T: DataFileDelete> invoke(dataFile: T): Result<Boolean> = withContext(scope) {
-        dataFileGateway.findById(dataFile.id.toNanoId())
+        dataFileGateway.find(dataFile.id.toNanoId())
             ?: return@withContext Result.failure(DataFileException.NotFoundException(dataFile.id))
         return@withContext Result.success(dataFileGateway.deleteById(dataFile.id.toNanoId()))
     }

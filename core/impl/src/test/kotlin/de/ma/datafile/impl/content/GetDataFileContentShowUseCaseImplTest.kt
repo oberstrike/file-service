@@ -9,7 +9,7 @@ import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldNotBe
 import org.junit.jupiter.api.Test
 
-class GetDataFileContentShowUseCaseImplTest {
+class GetDataFileContentShowUseCaseImplTest : AbstractImplTest() {
 
     var dataFileGateway: DataFileGateway = mockk()
 
@@ -25,34 +25,39 @@ class GetDataFileContentShowUseCaseImplTest {
     fun `Get content if data file doesn't exist throws an exception`() = runBlocking {
         val nanoId = nanoId("meineId")
 
-        coEvery { dataFileGateway.findById(nanoId) } returns null
 
-        val result = getDataFileContentUseCaseImpl.invoke(nanoId)
+        coEvery { dataFileGateway.find(nanoId) } returns null
+
+        val result = getDataFileContentUseCaseImpl(nanoId)
 
         result.isFailure shouldBe true
 
         result.exceptionOrNull() shouldNotBe null
 
-        coVerify(exactly = 1) { dataFileGateway.findById(nanoId) }
+        coVerify(exactly = 1) { dataFileGateway.find(nanoId) }
     }
 
     @Test
-    fun `Get content if data file is present successfully`() = runBlocking {
-        val nanoId = nanoId("randomId123")
+    fun `Get content if data file is present successfully`()  {
+        withDataFileShow { dataFileShow ->
+            val nanoId = nanoId()
 
-        val dataFileShow = dataFileShow(dataFileContentShow(file()), "test", "txt")
+            val dataFileContentShow = dataFileShow.content
 
-        coEvery { dataFileGateway.findById(nanoId) } returns dataFileShow
+            coEvery { dataFileGateway.find(nanoId) } returns dataFileShow
 
-        coEvery { dataFileContentGateway.getContentByNanoId(nanoId) } returns Result.success(dataFileShow.content)
+            coEvery { dataFileContentGateway.getContent(nanoId) } returns Result.success(dataFileShow.content)
 
-        val result = getDataFileContentUseCaseImpl(nanoId)
+            val result = getDataFileContentUseCaseImpl(de.ma.datafile.impl.utils.nanoId)
 
-        result.isSuccess shouldBe true
+            result.isSuccess shouldBe true
 
-        coVerify(exactly = 1) { dataFileGateway.findById(nanoId) }
+            coVerify(exactly = 1) { dataFileGateway.find(de.ma.datafile.impl.utils.nanoId) }
 
-        coVerify(exactly = 1) { dataFileContentGateway.getContentByNanoId(nanoId) }
+            coVerify(exactly = 1) { dataFileContentGateway.getContent(de.ma.datafile.impl.utils.nanoId) }
+        }
+
+
 
     }
 }
