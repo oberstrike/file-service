@@ -13,14 +13,11 @@ class GetDataFileContentUseCaseImpl(
 ) : GetDataFileContentUseCase {
 
     override suspend fun invoke(search: DataFileContentSearch): Result<DataFileContentShow> {
-        dataFileGateway.find(search.id)
-            ?: return Result.failure(DataFileException.NotFoundException(search.id.value))
-
         val content = dataFileContentGateway.getContent(search)
 
         //TODO implement own exception
         val targetContent = content.getOrNull()
-            ?: return Result.failure(RuntimeException(content.exceptionOrNull()?.message ?: "not found"))
+            ?: return Result.failure(DataFileException.NotFoundException(search.id.value))
         return Result.success(targetContent)
     }
 }

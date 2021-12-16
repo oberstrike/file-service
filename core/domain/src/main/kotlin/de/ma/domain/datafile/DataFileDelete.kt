@@ -4,6 +4,6 @@ import de.ma.domain.shared.HasId
 
 
 //Delete a data file by id
-interface DataFileDelete : HasId<String> {
+interface DataFileDelete : DataFileSearch {
 
 }

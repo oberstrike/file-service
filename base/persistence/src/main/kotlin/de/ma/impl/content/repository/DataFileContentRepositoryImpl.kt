@@ -4,16 +4,12 @@ import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.content.DataFileContentOverview
 import de.ma.domain.content.DataFileContentShow
 import de.ma.domain.nanoid.NanoId
-import de.ma.impl.content.DataFileContentOverviewDTO
-import de.ma.impl.content.DataFileContentShowDTO
 import de.ma.impl.content.repository.api.DataFileContentRepository
-import de.ma.impl.content.repository.api.SaveFileContent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import java.io.File
-import java.nio.file.Files
 import java.util.*
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
@@ -66,9 +62,9 @@ class DataFileContentRepositoryImpl(
     }
 
     //saves the content to the file system synchron
-    override suspend fun save(nanoId: NanoId, content: DataFileContentCreate): DataFileContentOverview? =
+    override suspend fun save(content: DataFileContentCreate, nanoId: NanoId): DataFileContentOverview? =
         withContext(scope) {
-            return@withContext saveFileContent.save(nanoId, content)
+            return@withContext saveFileContent.save(content, nanoId)
         }
 
     override fun exists(nanoId: NanoId): File? {

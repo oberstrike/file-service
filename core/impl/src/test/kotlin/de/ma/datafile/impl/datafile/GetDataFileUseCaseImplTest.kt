@@ -8,11 +8,11 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
-class GetDataFileByIdUseCaseImplTest {
+class GetDataFileUseCaseImplTest {
 
     private val dataFileGateway = mockk<DataFileGateway>()
 
-    val getDataFileByIdUseCaseImpl = GetDataFileByIdUseCaseImpl(
+    val getDataFileByIdUseCaseImpl = GetDataFileUseCaseImpl(
         dataFileGateway
     )
 

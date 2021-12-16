@@ -22,14 +22,14 @@ class CreateDataFileContentUseCaseImplTest : AbstractImplTest() {
         withDataFileContentCreate(inputStream(), nanoId()) { dataFileContentCreate ->
             withDataFileContentOverview(12) { overview ->
                 runBlocking {
-                    coEvery { dataFileContentGateway.saveContent(dataFileContentCreate) } returns
+                    coEvery { dataFileContentGateway.saveContent(dataFileContentCreate,) } returns
                             Result.success(overview)
 
                     val result = createDataFileContentUseCaseImpl.invoke(dataFileContentCreate,)
 
                     result.isSuccess shouldBe true
 
-                    coVerify(exactly = 1) { dataFileContentGateway.saveContent(dataFileContentCreate) }
+                    coVerify(exactly = 1) { dataFileContentGateway.saveContent(dataFileContentCreate,) }
 
                 }
             }

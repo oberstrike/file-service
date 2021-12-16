@@ -13,7 +13,7 @@ class SaveFileContentImpl(
 ) : SaveFileContent {
 
     //saves the content to the file system synchron
-    override suspend fun save(nanoId: NanoId, content: DataFileContentCreate): DataFileContentOverview? {
+    override suspend fun save(content: DataFileContentCreate, nanoId: NanoId): DataFileContentOverview? {
         val file = File(domain, nanoId.value)
 
         return try {

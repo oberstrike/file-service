@@ -1,11 +1,7 @@
 package de.ma.impl.datafile
 
+import de.ma.domain.datafile.*
 import de.ma.impl.content.repository.DataFileContentRepositoryImpl
-import de.ma.domain.datafile.DataFileCreate
-import de.ma.domain.datafile.DataFileGateway
-import de.ma.domain.datafile.DataFileOverview
-import de.ma.domain.datafile.DataFileShow
-import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
@@ -28,20 +24,23 @@ class DataFileGatewayImpl(
 
     private val scope = Dispatchers.IO + Job()
 
-    override suspend fun find(id: NanoId): DataFileShow? {
+    override suspend fun find(dataFileSearch: DataFileSearch): DataFileShow? {
         return withContext(scope) {
-            val dataFile = dataFileRepository.findById(id).awaitSuspending() ?: return@withContext null
+            val nanoId = dataFileSearch.id
 
-            val dataFileContentShow = dataFileContentRepositoryImpl.findByNanoId(id) ?: return@withContext null
+            val dataFile = dataFileRepository.findById(nanoId).awaitSuspending() ?: return@withContext null
+
+            val dataFileContentShow = dataFileContentRepositoryImpl.findByNanoId(nanoId) ?: return@withContext null
 
             return@withContext DataFileShowDTO(dataFileContentShow, dataFile.extension, dataFile.name)
         }
     }
 
-    override suspend fun deleteById(id: NanoId): Boolean = withContext(scope) {
-        val deleted = dataFileContentRepositoryImpl.deleteById(id)
+    override suspend fun delete(dataFileDelete: DataFileSearch): Boolean = withContext(scope) {
+        val nanoId = dataFileDelete.id
+        val deleted = dataFileContentRepositoryImpl.deleteById(nanoId)
         if (deleted) {
-            dataFileRepository.deleteById(id).awaitSuspending()
+            dataFileRepository.deleteById(nanoId).awaitSuspending()
             return@withContext true
         }
 
@@ -53,7 +52,7 @@ class DataFileGatewayImpl(
         val dataFileEntity = DataFileEntity(dataFileCreate.name, dataFileCreate.extension)
         val result = dataFileRepository.persist(dataFileEntity).awaitSuspending()
 
-        val dataFileContentOverview = dataFileContentRepositoryImpl.save(result.id!!, dataFileCreate.content)
+        val dataFileContentOverview = dataFileContentRepositoryImpl.save(dataFileCreate.content, result.id!!)
 
         if (dataFileContentOverview != null) {
             result.size = dataFileContentOverview.size

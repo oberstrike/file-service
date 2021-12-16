@@ -3,9 +3,11 @@ package de.ma.datafile.impl.management
 import de.ma.datafile.api.content.CreateDataFileContentUseCase
 import de.ma.datafile.api.content.DeleteDataFileContentUseCase
 import de.ma.datafile.api.datafile.CreateDataFileUseCase
+import de.ma.datafile.api.management.DataFileManagement
 import de.ma.datafile.api.datafile.DeleteDataFileUseCase
 import de.ma.datafile.impl.shared.BaseUseCase
 import de.ma.datafile.impl.shared.BaseUseCaseImpl
+import de.ma.domain.content.DataFileContentDelete
 import de.ma.domain.datafile.DataFileCreate
 import de.ma.domain.datafile.DataFileDelete
 import de.ma.domain.nanoid.NanoIdGateway
@@ -17,10 +19,11 @@ class DataFileManagementImpl(
     private val deleteDataFileUseCase: DeleteDataFileUseCase,
     private val deleteDataFileContentUseCase: DeleteDataFileContentUseCase,
     private val nanoIdGateway: NanoIdGateway
-) : BaseUseCase by BaseUseCaseImpl(nanoIdGateway) {
+) : DataFileManagement, BaseUseCase by BaseUseCaseImpl(nanoIdGateway) {
 
 
-    suspend fun createDataFile(createDataFile: DataFileCreate): Result<Unit> {
+    //create Data File whole process
+    override suspend fun createDataFile(createDataFile: DataFileCreate): Result<Unit> {
 
         //uses the createDataFileUseCase to create a datafile
         val dataFileOverviewResult = createDataFileUseCase(createDataFile)
@@ -37,13 +40,15 @@ class DataFileManagementImpl(
 
         //prepare dataFileContent
         val nanoId = dataFileOverview.id
+
         val dataFileContentCreate = createDataFile.content
 
-        val dataFileContentOverviewResult = createDataFileContentUseCase(dataFileContentCreate, nanoId.toNanoId())
+        //create the datafile content
+        val dataFileContentOverviewResult = createDataFileContentUseCase(dataFileContentCreate, nanoId)
 
+        //if data file content couldn't be created delete the datafile
         if (dataFileContentOverviewResult.isFailure) {
-            //if data file content couldn't be created delete the datafile
-            val deleted = deleteDataFileUseCase(nanoId.toNanoId())
+            val deleted = deleteDataFileUseCase(dataFileOverview)
 
             //if the datafile couldn't be deleted return Result a failure
             if (deleted.isFailure) {
@@ -62,10 +67,14 @@ class DataFileManagementImpl(
         return Result.success(Unit)
     }
 
-    suspend fun deleteDataFile(deleteDataFile: DataFileDelete): Result<Unit> {
+    /*
+        delete data file and data file content
+
+     */
+    override suspend fun deleteDataFile(deleteDataFile: DataFileDelete): Result<Unit> {
 
         //first delete the datafile content
-        val dataFileContentDeleted = deleteDataFileContentUseCase(deleteDataFile.id)
+        val dataFileContentDeleted = deleteDataFileContentUseCase(deleteDataFile as DataFileContentDelete)
 
         //if the datafile content couldn't be deleted
         if (dataFileContentDeleted.isFailure) {
@@ -75,9 +84,14 @@ class DataFileManagementImpl(
         }
 
         //then delete the datafile
-        val dataFileDeleted = deleteDataFileUseCase(deleteDataFile.id.toNanoId())
+        val dataFileDeleted = deleteDataFileUseCase(deleteDataFile)
 
-
+        if (dataFileDeleted.isFailure) {
+            return Result.failure(
+                dataFileDeleted.exceptionOrNull() ?: RuntimeException("Could not delete datafile")
+            )
+        }
+        return Result.success(Unit)
     }
 
 

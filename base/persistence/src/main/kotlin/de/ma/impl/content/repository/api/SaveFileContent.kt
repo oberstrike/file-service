@@ -6,6 +6,6 @@ import de.ma.domain.nanoid.NanoId
 
 interface SaveFileContent {
 
-    suspend fun save(nanoId: NanoId, content: DataFileContentCreate): DataFileContentOverview?
+    suspend fun save(content: DataFileContentCreate, nanoId: NanoId): DataFileContentOverview?
 
 }

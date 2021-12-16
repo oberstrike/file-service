@@ -5,8 +5,6 @@ import io.quarkus.test.junit.QuarkusTest
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
-
 @QuarkusTest
 class SaveFileContentImplTest : AbstractDatabaseTest() {
 
@@ -16,7 +14,7 @@ class SaveFileContentImplTest : AbstractDatabaseTest() {
     @Test
     fun save() = runTest {
         withContentCreate { contentCreate ->
-            saveFileContentImpl.save(contentCreate., "content")
+            saveFileContentImpl.save("content", contentCreate.)
         }
 
     }

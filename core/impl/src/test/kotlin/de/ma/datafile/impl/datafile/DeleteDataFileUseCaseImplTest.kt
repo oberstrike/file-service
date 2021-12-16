@@ -40,7 +40,7 @@ class DeleteDataFileUseCaseImplTest {
 
         coVerify (exactly = 1) { dataFileGateway.find(nanoId) }
 
-        coVerify(exactly = 0) { dataFileGateway.deleteById(any()) }
+        coVerify(exactly = 0) { dataFileGateway.delete(any()) }
     }
 
 
@@ -53,7 +53,7 @@ class DeleteDataFileUseCaseImplTest {
 
         coEvery { dataFileGateway.find(nanoId) } returns dataFileShowView
 
-        coEvery { dataFileGateway.deleteById(nanoId) } returns true
+        coEvery { dataFileGateway.delete(nanoId) } returns true
 
         val result = deletedDataFileUseCaseImpl(dataFileDelete)
 
@@ -62,7 +62,7 @@ class DeleteDataFileUseCaseImplTest {
 
         coVerify(exactly = 1) { dataFileGateway.find(nanoId) }
 
-        coVerify(exactly = 1) { dataFileGateway.deleteById(any()) }
+        coVerify(exactly = 1) { dataFileGateway.delete(any()) }
     }
 
 
