@@ -6,7 +6,6 @@ import de.ma.impl.utils.TransactionalQuarkusTest
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
 import javax.inject.Inject
 
 @TransactionalQuarkusTest

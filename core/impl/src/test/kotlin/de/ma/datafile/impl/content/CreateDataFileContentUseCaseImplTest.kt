@@ -25,7 +25,7 @@ class CreateDataFileContentUseCaseImplTest : AbstractImplTest() {
                     coEvery { dataFileContentGateway.saveContent(dataFileContentCreate) } returns
                             Result.success(overview)
 
-                    val result = createDataFileContentUseCaseImpl(dataFileContentCreate, dataFileContentCreate.id)
+                    val result = createDataFileContentUseCaseImpl.invoke(dataFileContentCreate,)
 
                     result.isSuccess shouldBe true
 

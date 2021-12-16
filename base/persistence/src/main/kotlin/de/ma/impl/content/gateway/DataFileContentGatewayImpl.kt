@@ -20,7 +20,7 @@ class DataFileContentGatewayImpl(
     override suspend fun saveContent(
         contentCreate: DataFileContentCreate
     ): Result<DataFileContentOverview> {
-        val dataFileContentOverview = dataFileContentRepositoryImpl.save(nanoId, contentCreate)
+        val dataFileContentOverview = dataFileContentRepositoryImpl.save(contentCreate.id, contentCreate)
             ?: return Result.failure(RuntimeException(""))
 
         return Result.success(dataFileContentOverview)
