@@ -36,15 +36,16 @@ class DataFileGatewayImpl(
         }
     }
 
-    override suspend fun delete(dataFileDelete: DataFileSearch): Boolean = withContext(scope) {
+    override suspend fun delete(dataFileDelete: DataFileSearch): Result<Boolean> = withContext(scope) {
         val nanoId = dataFileDelete.id
         val deleted = dataFileContentRepositoryImpl.deleteById(nanoId)
         if (deleted) {
             dataFileRepository.deleteById(nanoId).awaitSuspending()
-            return@withContext true
+            return@withContext Result.success(true)
         }
 
-        return@withContext false
+        //TODO implement error handling
+        return@withContext Result.failure(RuntimeException("Could not delete data file"))
     }
 
     @Transactional

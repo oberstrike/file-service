@@ -5,10 +5,12 @@ import de.ma.domain.datafile.DataFileGateway
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBe
 import org.junit.jupiter.api.Test
 
-class GetDataFileUseCaseImplTest {
+class GetDataFileUseCaseImplTest : AbstractImplTest(){
 
     private val dataFileGateway = mockk<DataFileGateway>()
 
@@ -18,16 +20,25 @@ class GetDataFileUseCaseImplTest {
 
     @Test
     fun `get a valid data file by id`() = runTest {
-        val nanoId = nanoId("123")
-        val dataFileContentShow = dataFileContentShow(file())
-        val dataFileShow = dataFileShow(dataFileContentShow, "123", "txt")
+        val nanoId = nanoId()
 
-        coEvery { dataFileGateway.find(nanoId) } returns dataFileShow
+        withDataFileSearch(nanoId) { dataFileSearch ->
+            withDataFileShow { dataFileShow ->
+                runBlocking {
+                    coEvery { dataFileGateway.find(dataFileSearch) } returns dataFileShow
+
+                    val result = getDataFileByIdUseCaseImpl(dataFileSearch)
+
+                    result.isSuccess shouldBe true
+                    result.getOrNull() shouldBe dataFileShow
+
+                    coVerify(exactly = 1) { dataFileGateway.find(dataFileSearch) }
+                }
+
+            }
+        }
 
 
-        val result = getDataFileByIdUseCaseImpl(nanoId)
-
-        coVerify(exactly = 1) { dataFileGateway.find(nanoId) }
 
     }
 }

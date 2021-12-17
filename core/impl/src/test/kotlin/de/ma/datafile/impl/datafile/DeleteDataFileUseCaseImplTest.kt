@@ -4,12 +4,11 @@ import de.ma.datafile.impl.utils.*
 import de.ma.domain.datafile.DataFileGateway
 import de.ma.domain.datafile.exceptions.DataFileException
 import io.mockk.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be`
 import org.junit.jupiter.api.Test
 
-class DeleteDataFileUseCaseImplTest {
+class DeleteDataFileUseCaseImplTest : AbstractImplTest() {
 
     private val dataFileGateway = mockk<DataFileGateway>()
 
@@ -20,49 +19,54 @@ class DeleteDataFileUseCaseImplTest {
         nanoIdGateway
     )
 
-    private fun String.toNanoId() = nanoIdGateway.toNanoId(this)
 
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `try to delete a data file but throws an exception because its not present`() = runTest {
-        val dataFileDelete = dataFileDelete("123")
+    fun `try to delete a data file but throws an exception because its not present`() {
 
-        val nanoId = dataFileDelete.id.toNanoId()
+        withDataFileDelete { dataFileDelete ->
+            runBlocking {
 
-        coEvery { dataFileGateway.find(nanoId) } returns null
+                coEvery { dataFileGateway.delete(dataFileDelete) } returns Result.failure(
+                    DataFileException.NotFoundException(
+                        "DataFile not found"
+                    )
+                )
 
-        val result = deletedDataFileUseCaseImpl(dataFileDelete)
+                val result = deletedDataFileUseCaseImpl(dataFileDelete)
 
-        result.isFailure `should be` true
+                coVerify { dataFileGateway.delete(dataFileDelete) }
 
-        result.exceptionOrNull()?.javaClass `should be` DataFileException.NotFoundException::class.java
+                result.isFailure `should be` true
 
-        coVerify (exactly = 1) { dataFileGateway.find(nanoId) }
+                result.exceptionOrNull()?.javaClass `should be` DataFileException.NotFoundException::class.java
 
-        coVerify(exactly = 0) { dataFileGateway.delete(any()) }
+
+                coVerify(exactly = 1) { dataFileGateway.delete(any()) }
+            }
+
+        }
     }
 
 
     @Test
-    fun `test to delete a data file successfully`() = runTest {
-        val dataFileDelete = dataFileDelete("123", 1)
-        val dataFileShowView = dataFileShow(dataFileContentShow(file()), "123", "txt")
+    fun `test to delete a data file successfully`() {
+        withDataFileDelete { dataFileDelete ->
+            runBlocking {
 
-        val nanoId = dataFileDelete.id.toNanoId()
+                coEvery { dataFileGateway.delete(dataFileDelete) } returns Result.success(true)
 
-        coEvery { dataFileGateway.find(nanoId) } returns dataFileShowView
+                val result = deletedDataFileUseCaseImpl(dataFileDelete)
 
-        coEvery { dataFileGateway.delete(nanoId) } returns true
+                result.isSuccess `should be` true
 
-        val result = deletedDataFileUseCaseImpl(dataFileDelete)
+                result.getOrNull() `should be` true
 
-        result.isSuccess `should be` true
-        result.getOrNull() `should be` true
+                coVerify(exactly = 1) { dataFileGateway.delete(any()) }
 
-        coVerify(exactly = 1) { dataFileGateway.find(nanoId) }
+            }
+        }
 
-        coVerify(exactly = 1) { dataFileGateway.delete(any()) }
+
     }
 
 

@@ -8,7 +8,6 @@ import de.ma.domain.content.DataFileContentShow
 import de.ma.domain.datafile.exceptions.DataFileException
 
 class GetDataFileContentUseCaseImpl(
-    private val dataFileGateway: DataFileGateway,
     private val dataFileContentGateway: DataFileContentGateway
 ) : GetDataFileContentUseCase {
 

@@ -2,7 +2,10 @@ package de.ma.datafile.impl.utils
 
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.content.DataFileContentOverview
+import de.ma.domain.content.DataFileContentSearch
 import de.ma.domain.content.DataFileContentShow
+import de.ma.domain.datafile.DataFile
+import de.ma.domain.datafile.DataFileSearch
 import de.ma.domain.nanoid.NanoId
 import java.io.File
 import java.io.InputStream
@@ -16,7 +19,6 @@ interface DataFileContentTest {
 
     fun withDataFileContentCreate(
         input: InputStream,
-        id: NanoId,
         block: (DataFileContentCreate) -> Unit
     )
 
@@ -25,4 +27,8 @@ interface DataFileContentTest {
         block: (DataFileContentOverview) -> Unit
     )
 
+    fun withDataFileContentSearch(
+        nanoId: NanoId,
+        block: (DataFileContentSearch) -> Unit
+    )
 }

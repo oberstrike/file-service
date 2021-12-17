@@ -12,10 +12,8 @@ class CreateDataFileUseCaseImplTest : AbstractImplTest() {
 
     private val gateway = mockk<DataFileGateway>()
 
-    private val createDataFileContentUseCase = mockk<CreateDataFileContentUseCase>()
 
     private val createDataFileUseCase = CreateDataFileUseCaseImpl(
-        createDataFileContentUseCase,
         gateway,
         NanoIdGatewayImpl()
     )
@@ -41,40 +39,21 @@ class CreateDataFileUseCaseImplTest : AbstractImplTest() {
     @Test
     fun `saves successfully a datafile`() {
         withDataFileCreate("txt", "test") { dataFileCreate ->
-            withDataFileShow { dataFileShow ->
-                withDataFileOverview { dataFileOverview ->
-                    withDataFileContentOverview(0) { dataFileContentOverview ->
-                        runBlocking {
-                            coEvery { gateway.save(dataFileCreate) } returns Result.success(dataFileOverview)
+            withDataFileOverview { dataFileOverview ->
+                runBlocking {
+                    coEvery { gateway.save(dataFileCreate) } returns Result.success(dataFileOverview)
 
-                            coEvery {
-                                createDataFileContentUseCase.invoke(
-                                    dataFileCreate.content,
-                                )
-                            } returns Result.success(
-                                dataFileContentOverview
-                            )
+                    val result = createDataFileUseCase(dataFileCreate)
 
-                            val result = createDataFileUseCase(dataFileCreate)
+                    //result is successfull and its the same like dataFileShow
+                    result.isSuccess shouldBe true
+                    result.getOrNull() shouldBe dataFileOverview
 
-                            //result is successfull and its the same like dataFileShow
-                            result.isSuccess shouldBe true
-                            result.getOrNull() shouldBe dataFileShow
+                    coVerify(exactly = 1) { gateway.save(dataFileCreate) }
 
-                            coVerify(exactly = 1) { gateway.save(dataFileCreate) }
 
-                            coVerify(exactly = 1) {
-                                createDataFileContentUseCase.invoke(
-                                    dataFileCreate.content,
-                                )
-                            }
-
-                        }
-                    }
                 }
             }
         }
-
     }
-
 }

@@ -51,7 +51,7 @@ class DataFileManagementImpl(
             val deleted = deleteDataFileUseCase(dataFileOverview)
 
             //if the datafile couldn't be deleted return Result a failure
-            if (deleted.isFailure) {
+            if (deleted.isFailure || deleted.getOrNull() == false) {
                 return Result.failure(
                     dataFileContentOverviewResult.exceptionOrNull() ?: RuntimeException("Could not delete datafile")
                 )
@@ -69,7 +69,6 @@ class DataFileManagementImpl(
 
     /*
         delete data file and data file content
-
      */
     override suspend fun deleteDataFile(deleteDataFile: DataFileDelete): Result<Unit> {
 

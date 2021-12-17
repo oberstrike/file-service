@@ -10,7 +10,7 @@ import de.ma.domain.shared.SortParams
 interface DataFileGateway {
     suspend fun find(dataFileSearch: DataFileSearch): DataFileShow?
 
-    suspend fun delete(dataFileDelete: DataFileSearch): Boolean
+    suspend fun delete(dataFileDelete: DataFileSearch): Result<Boolean>
 
     suspend fun <T : DataFileCreate> save(dataFileCreate: T): Result<DataFileOverview>
 

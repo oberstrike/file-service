@@ -8,56 +8,65 @@ import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldNotBe
 import org.junit.jupiter.api.Test
+import java.lang.RuntimeException
 
 class GetDataFileContentShowUseCaseImplTest : AbstractImplTest() {
 
-    var dataFileGateway: DataFileGateway = mockk()
 
     var dataFileContentGateway: DataFileContentGateway = mockk()
 
     private val getDataFileContentUseCaseImpl = GetDataFileContentUseCaseImpl(
-        dataFileGateway,
         dataFileContentGateway
     )
 
 
     @Test
-    fun `Get content if data file doesn't exist throws an exception`() = runBlocking {
+    fun `Get content if data file doesn't exist throws an exception`() {
+
         val nanoId = nanoId("meineId")
+        withDataFileContentSearch(nanoId) { dataFileContentSearch ->
+            runBlocking {
+
+                coEvery { dataFileContentGateway.getContent(dataFileContentSearch) } returns Result.failure(
+                    RuntimeException("Test")
+                )
 
 
-        coEvery { dataFileGateway.find(nanoId) } returns null
+                val result = getDataFileContentUseCaseImpl(dataFileContentSearch)
 
-        val result = getDataFileContentUseCaseImpl(nanoId)
+                result.isFailure shouldBe true
 
-        result.isFailure shouldBe true
+                result.exceptionOrNull() shouldNotBe null
 
-        result.exceptionOrNull() shouldNotBe null
+                coVerify(exactly = 1) { dataFileContentGateway.getContent(dataFileContentSearch) }
+            }
+        }
 
-        coVerify(exactly = 1) { dataFileGateway.find(nanoId) }
     }
 
     @Test
-    fun `Get content if data file is present successfully`()  {
-        withDataFileShow { dataFileShow ->
-            val nanoId = nanoId()
+    fun `Get content if data file is present successfully`() {
+        val nanoId = nanoId("meineId")
+        withDataFileContentSearch(nanoId) { dataFileContentSearch ->
+            withDataFileContentShow(file()) { dataFileContentShow ->
+                runBlocking {
 
-            val dataFileContentShow = dataFileShow.content
+                    coEvery { dataFileContentGateway.getContent(dataFileContentSearch) } returns Result.success(
+                        dataFileContentShow
+                    )
 
-            coEvery { dataFileGateway.find(nanoId) } returns dataFileShow
+                    val result = getDataFileContentUseCaseImpl(dataFileContentSearch)
 
-            coEvery { dataFileContentGateway.getContent(nanoId) } returns Result.success(dataFileShow.content)
+                    result.isSuccess shouldBe true
 
-            val result = getDataFileContentUseCaseImpl(de.ma.datafile.impl.utils.nanoId)
+                    result.getOrNull() shouldBe dataFileContentShow
 
-            result.isSuccess shouldBe true
+                    coVerify(exactly = 1) { dataFileContentGateway.getContent(dataFileContentSearch) }
+                }
+            }
 
-            coVerify(exactly = 1) { dataFileGateway.find(de.ma.datafile.impl.utils.nanoId) }
 
-            coVerify(exactly = 1) { dataFileContentGateway.getContent(de.ma.datafile.impl.utils.nanoId) }
         }
-
-
 
     }
 }

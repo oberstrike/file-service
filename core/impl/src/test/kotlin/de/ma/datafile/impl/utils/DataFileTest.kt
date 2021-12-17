@@ -2,10 +2,8 @@ package de.ma.datafile.impl.utils
 
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.content.DataFileContentShow
-import de.ma.domain.datafile.DataFileCreate
-import de.ma.domain.datafile.DataFileDelete
-import de.ma.domain.datafile.DataFileOverview
-import de.ma.domain.datafile.DataFileShow
+import de.ma.domain.datafile.*
+import de.ma.domain.nanoid.NanoId
 
 interface DataFileTest {
     fun withDataFileShow(
@@ -16,23 +14,27 @@ interface DataFileTest {
     )
 
     fun withDataFileDelete(
-        targetId: String = "123",
-        targetVersion: Long = 1,
+        targetId: NanoId = nanoId(),
         block: (DataFileDelete) -> Unit
     )
 
     fun withDataFileOverview(
         name: String = "",
         size: Long = 0,
-        id: String = "",
+        id: NanoId = nanoId(),
         block: (DataFileOverview) -> Unit
     )
 
     fun withDataFileCreate(
         extension: String,
         name: String,
-        content: DataFileContentCreate = DataFileContentCreateImpl(inputStream(), nanoId()),
+        content: DataFileContentCreate = DataFileContentCreateImpl(inputStream()),
         block: (DataFileCreate) -> Unit
+    )
+
+    fun withDataFileSearch(
+        nanoId: NanoId,
+        block: (DataFileSearch) -> Unit
     )
 
 
