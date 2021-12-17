@@ -9,9 +9,7 @@ import de.ma.domain.nanoid.NanoIdGateway
 
 class DeleteDataFileContentUseCaseImpl(
     private val dataFileContentGateway: DataFileContentGateway,
-    private val nanoIdGateway: NanoIdGateway
-) : BaseUseCase by BaseUseCaseImpl(nanoIdGateway),
-    DeleteDataFileContentUseCase {
+) : DeleteDataFileContentUseCase {
 
     override suspend fun invoke(dataFileDelete: DataFileContentDelete): Result<Unit> {
         return dataFileContentGateway.deleteContent(dataFileDelete)

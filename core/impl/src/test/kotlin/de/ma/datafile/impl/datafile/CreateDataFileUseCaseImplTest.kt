@@ -14,8 +14,7 @@ class CreateDataFileUseCaseImplTest : AbstractImplTest() {
 
 
     private val createDataFileUseCase = CreateDataFileUseCaseImpl(
-        gateway,
-        NanoIdGatewayImpl()
+        gateway
     )
 
     @Test

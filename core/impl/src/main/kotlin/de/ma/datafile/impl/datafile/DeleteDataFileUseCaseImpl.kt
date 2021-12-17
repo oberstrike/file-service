@@ -12,9 +12,7 @@ import kotlinx.coroutines.withContext
 
 class DeleteDataFileUseCaseImpl(
     private val dataFileGateway: DataFileGateway,
-    private val nanoIdGateway: NanoIdGateway
-) : DeleteDataFileUseCase,
-    BaseUseCase by BaseUseCaseImpl(nanoIdGateway) {
+) : DeleteDataFileUseCase {
 
     private val scope = Dispatchers.IO + Job()
 

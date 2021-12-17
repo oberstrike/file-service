@@ -15,8 +15,7 @@ class DeleteDataFileUseCaseImplTest : AbstractImplTest() {
     private val nanoIdGateway = NanoIdGatewayImpl()
 
     private val deletedDataFileUseCaseImpl = DeleteDataFileUseCaseImpl(
-        dataFileGateway,
-        nanoIdGateway
+        dataFileGateway
     )
 
 

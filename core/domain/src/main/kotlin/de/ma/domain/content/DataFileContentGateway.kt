@@ -1,5 +1,6 @@
 package de.ma.domain.content
 
+import de.ma.domain.datafile.DataFileSearch
 import de.ma.domain.nanoid.NanoId
 
 interface DataFileContentGateway {
@@ -9,4 +10,6 @@ interface DataFileContentGateway {
     suspend fun saveContent(contentCreate: DataFileContentCreate, nanoId: NanoId): Result<DataFileContentOverview>
 
     suspend fun deleteContent(search: DataFileContentSearch): Result<Unit>
+
+    fun toContentSearch(dataFileSearch: DataFileSearch): DataFileContentSearch
 }

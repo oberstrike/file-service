@@ -56,7 +56,7 @@ class DataFileTestImpl : DataFileTest {
 }
 
 data class DataFileShowImpl(
-    override val content: DataFileContentShow,
+    override var content: DataFileContentShow,
     override val name: String,
     override val extension: String
 ) : DataFileShow

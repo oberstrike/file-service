@@ -2,14 +2,16 @@ package de.ma.datafile.impl.management
 
 import de.ma.datafile.api.content.CreateDataFileContentUseCase
 import de.ma.datafile.api.content.DeleteDataFileContentUseCase
+import de.ma.datafile.api.content.GetDataFileContentUseCase
 import de.ma.datafile.api.datafile.CreateDataFileUseCase
 import de.ma.datafile.api.management.DataFileManagement
 import de.ma.datafile.api.datafile.DeleteDataFileUseCase
+import de.ma.datafile.api.datafile.GetDataFileUseCase
 import de.ma.datafile.impl.shared.BaseUseCase
 import de.ma.datafile.impl.shared.BaseUseCaseImpl
 import de.ma.domain.content.DataFileContentDelete
-import de.ma.domain.datafile.DataFileCreate
-import de.ma.domain.datafile.DataFileDelete
+import de.ma.domain.content.DataFileContentGateway
+import de.ma.domain.datafile.*
 import de.ma.domain.nanoid.NanoIdGateway
 import java.lang.RuntimeException
 
@@ -18,8 +20,10 @@ class DataFileManagementImpl(
     private val createDataFileUseCase: CreateDataFileUseCase,
     private val deleteDataFileUseCase: DeleteDataFileUseCase,
     private val deleteDataFileContentUseCase: DeleteDataFileContentUseCase,
-    private val nanoIdGateway: NanoIdGateway
-) : DataFileManagement, BaseUseCase by BaseUseCaseImpl(nanoIdGateway) {
+    private val getDataFileUseCase: GetDataFileUseCase,
+    private val getDataFileContentUseCase: GetDataFileContentUseCase,
+    private val dataFileContentGateway: DataFileContentGateway
+) : DataFileManagement {
 
 
     //create Data File whole process
@@ -93,5 +97,28 @@ class DataFileManagementImpl(
         return Result.success(Unit)
     }
 
+    override suspend fun getDataFile(dataFileSearch: DataFileSearch): Result<DataFileShow> {
+
+        val dataFileShowResult = getDataFileUseCase(dataFileSearch)
+
+        if (dataFileShowResult.isFailure) {
+            return Result.failure(
+                dataFileShowResult.exceptionOrNull() ?: RuntimeException("Could not get datafile")
+            )
+        }
+
+        val dataFileShow = dataFileShowResult.getOrNull()!!
+
+        val dataFileContentResult = getDataFileContentUseCase(dataFileContentGateway.toContentSearch(dataFileSearch))
+
+        if (dataFileContentResult.isFailure) {
+            return Result.failure(
+                dataFileContentResult.exceptionOrNull() ?: RuntimeException("Could not get datafile content")
+            )
+        }
+
+        dataFileShow.content = dataFileContentResult.getOrNull()!!
+        return Result.success(dataFileShow)
+    }
 
 }

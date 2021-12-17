@@ -35,7 +35,4 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
 
     }
 
-    @Test
-    fun findAll() {
-    }
 }

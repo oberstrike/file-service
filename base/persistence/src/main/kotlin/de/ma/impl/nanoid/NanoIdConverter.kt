@@ -4,7 +4,7 @@ import de.ma.domain.nanoid.NanoId
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 
-@Converter
+@Converter(autoApply = true)
 class NanoIdConverter : AttributeConverter<NanoId, String> {
 
     override fun convertToEntityAttribute(dbData: String): NanoId {

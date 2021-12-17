@@ -14,14 +14,12 @@ import kotlinx.coroutines.withContext
 
 class CreateDataFileUseCaseImpl(
     private val dataFileGateway: DataFileGateway,
-    private val nanoIdGateway: NanoIdGateway
-) : CreateDataFileUseCase,
-    BaseUseCase by BaseUseCaseImpl(nanoIdGateway) {
+) : CreateDataFileUseCase {
 
     private val scope = Dispatchers.IO + Job()
 
     //this use case has the task of creating a data file
-    override suspend fun <T : DataFileCreate> invoke(dataFileCreate: T): Result<DataFileOverview> = withContext(scope) {
+    override suspend fun <T : DataFileCreate> invoke(dataFileCreate: T): Result<DataFileOverview> {
 
         //saves the data file ignore that the data file might already exist in the database
         val dataFile: Result<DataFileOverview> = dataFileGateway.save(dataFileCreate)
@@ -31,7 +29,7 @@ class CreateDataFileUseCaseImpl(
 
         if (dataFile.isFailure || dataFileShow == null) {
 
-            return@withContext Result.failure(
+            return Result.failure(
                 DataFileException.InvalidDataFileException(
                     dataFile.exceptionOrNull()?.message
                         ?: "There was an error saving the data file"
@@ -39,7 +37,7 @@ class CreateDataFileUseCaseImpl(
             )
         }
 
-        return@withContext Result.success(dataFileShow)
+        return Result.success(dataFileShow)
     }
 
 

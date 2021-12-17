@@ -1,14 +1,17 @@
-package de.ma.impl.content.gateway
+package de.ma.impl.content
 
 import de.ma.domain.content.*
+import de.ma.domain.datafile.DataFileSearch
 import de.ma.domain.nanoid.NanoId
+import de.ma.impl.content.DataFileContentSearchDTO
 import de.ma.impl.content.repository.DataFileContentRepositoryImpl
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
-class DataFileContentGatewayImpl(
-    private val dataFileContentRepositoryImpl: DataFileContentRepositoryImpl
-) : DataFileContentGateway {
+class DataFileContentGatewayImpl: DataFileContentGateway {
+
+    val dataFileContentRepositoryImpl: DataFileContentRepositoryImpl = DataFileContentRepositoryImpl()
+
 
     override suspend fun getContent(search: DataFileContentSearch): Result<DataFileContentShow> {
         val dataFileContentShow = dataFileContentRepositoryImpl.findByNanoId(search.id)
@@ -40,5 +43,9 @@ class DataFileContentGatewayImpl(
         }
     }
 
+
+    override fun toContentSearch(dataFileSearch: DataFileSearch): DataFileContentSearch {
+        return DataFileContentSearchDTO(dataFileSearch.id)
+    }
 
 }

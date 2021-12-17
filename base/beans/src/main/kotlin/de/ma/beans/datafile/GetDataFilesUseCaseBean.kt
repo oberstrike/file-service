@@ -1,4 +1,4 @@
-package de.ma.beans
+package de.ma.beans.datafile
 
 import de.ma.datafile.api.datafile.GetDataFilesUseCase
 import de.ma.datafile.impl.datafile.GetDataFilesUseCaseImpl

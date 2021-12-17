@@ -15,8 +15,8 @@ import java.util.*
 @QuarkusTestResource(DatabaseTestResource::class)
 abstract class AbstractDatabaseTest {
 
-    fun withContentCreate(block: (DataFileContentCreate) -> Unit){
-        return block(dataFileContentCreate(input()))
+    fun withContentCreate(text: String = UUID.randomUUID().toString(), block: (DataFileContentCreate) -> Unit) {
+        return block(dataFileContentCreate(input(text)))
     }
 
 

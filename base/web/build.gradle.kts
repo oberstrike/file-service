@@ -29,6 +29,8 @@ dependencies {
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-vertx")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
+    implementation("io.quarkus:quarkus-smallrye-openapi")
+
     //Kotlin coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC2")
 

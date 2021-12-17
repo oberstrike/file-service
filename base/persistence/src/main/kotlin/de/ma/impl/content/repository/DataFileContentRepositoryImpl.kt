@@ -17,8 +17,7 @@ import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class DataFileContentRepositoryImpl(
-    @ConfigProperty(name = "datafile.content.folder")
-    private val domainPath: String
+    private val domainPath: String = "/home/oberstrike/Desktop/content"
 ) : DataFileContentRepository {
 
     private val scope = Dispatchers.IO + Job()

@@ -8,6 +8,7 @@ import de.ma.domain.shared.SearchParams
 import de.ma.domain.shared.SortParams
 import de.ma.impl.shared.pagedMap
 import de.ma.impl.shared.toPagedList
+import io.quarkus.hibernate.reactive.panache.Panache
 import io.quarkus.panache.common.Sort
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +20,6 @@ import javax.transaction.Transactional
 @ApplicationScoped
 class DataFileGatewayImpl(
     private val dataFileRepository: DataFileRepository,
-    private val dataFileContentRepositoryImpl: DataFileContentRepositoryImpl
 ) : DataFileGateway {
 
     private val scope = Dispatchers.IO + Job()
@@ -27,22 +27,16 @@ class DataFileGatewayImpl(
     override suspend fun find(dataFileSearch: DataFileSearch): DataFileShow? {
         return withContext(scope) {
             val nanoId = dataFileSearch.id
-
             val dataFile = dataFileRepository.findById(nanoId).awaitSuspending() ?: return@withContext null
-
-            val dataFileContentShow = dataFileContentRepositoryImpl.findByNanoId(nanoId) ?: return@withContext null
-
-            return@withContext DataFileShowDTO(dataFileContentShow, dataFile.extension, dataFile.name)
+            return@withContext DataFileShowDTO(dataFile.extension, dataFile.name)
         }
     }
 
     override suspend fun delete(dataFileDelete: DataFileSearch): Result<Boolean> = withContext(scope) {
         val nanoId = dataFileDelete.id
-        val deleted = dataFileContentRepositoryImpl.deleteById(nanoId)
-        if (deleted) {
-            dataFileRepository.deleteById(nanoId).awaitSuspending()
-            return@withContext Result.success(true)
-        }
+        val deleted = dataFileRepository.deleteById(nanoId).awaitSuspending()
+        if (deleted == true) Result.success(true) else Result.failure(RuntimeException("Could not delete data file"))
+
 
         //TODO implement error handling
         return@withContext Result.failure(RuntimeException("Could not delete data file"))
@@ -51,22 +45,20 @@ class DataFileGatewayImpl(
     @Transactional
     override suspend fun <T : DataFileCreate> save(dataFileCreate: T): Result<DataFileOverview> {
         val dataFileEntity = DataFileEntity(dataFileCreate.name, dataFileCreate.extension)
-        val result = dataFileRepository.persist(dataFileEntity).awaitSuspending()
 
-        val dataFileContentOverview = dataFileContentRepositoryImpl.save(dataFileCreate.content, result.id!!)
 
-        if (dataFileContentOverview != null) {
-            result.size = dataFileContentOverview.size
+        println("Trying to save")
+        val result = Panache.withTransaction {
+            dataFileRepository.persist(dataFileEntity)
+        }.awaitSuspending()
+        println("saved")
+
+        return try {
             dataFileRepository.persist(result).awaitSuspending()
-
-            return Result.success(result.toOverviewDTO())
+            Result.success(result.toOverviewDTO())
+        } catch (e: Exception) {
+            Result.failure(RuntimeException("Could not save data file"))
         }
-
-        // println("I'm deleting the wrong datafile")
-        // deleteById(result.id!!)
-
-        //TODO implement own exception
-        return Result.failure(RuntimeException("Could not save data file"))
     }
 
     override suspend fun findAll(
