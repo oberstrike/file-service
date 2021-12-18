@@ -10,7 +10,7 @@ class FindFileContentByNanoIdImpl(
     private val domain: String
 ): FindFileContentByNanoId {
     override suspend fun findByNanoId(nanoId: NanoId): DataFileContentShow? {
-        val file = File(domain, nanoId.toString())
+        val file = File(domain, nanoId.value.toString())
         if (!file.exists()) {
             return null
         }

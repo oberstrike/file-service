@@ -9,7 +9,7 @@ import java.io.Serializable
 class NanoIdGenerator : IdentifierGenerator {
 
     override fun generate(session: SharedSessionContractImplementor?, any: Any?): Serializable {
-        return NanoIdDTO(NanoIdUtils.randomNanoId())
+        return NanoIdEntity(NanoIdUtils.randomNanoId())
     }
 
 }

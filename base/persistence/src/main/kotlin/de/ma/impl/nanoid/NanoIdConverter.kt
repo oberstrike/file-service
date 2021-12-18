@@ -1,20 +1,17 @@
 package de.ma.impl.nanoid
 
-import de.ma.domain.nanoid.NanoId
+import javax.enterprise.context.ApplicationScoped
 import javax.persistence.AttributeConverter
-import javax.persistence.Converter
 
-@Converter(autoApply = true)
-class NanoIdConverter : AttributeConverter<NanoId, String> {
+@ApplicationScoped
+class NanoIdConverter : AttributeConverter<NanoIdEntity, String> {
 
-    override fun convertToEntityAttribute(dbData: String): NanoId {
-        println("convertToEntityAttribute: $dbData")
-        return NanoIdDTO(dbData)
+    override fun convertToEntityAttribute(dbData: String): NanoIdEntity {
+        return NanoIdEntity(dbData)
     }
 
-    override fun convertToDatabaseColumn(attribute: NanoId): String {
-        println("convertToDatabaseColumn: ${attribute.value}")
-        return attribute.value
+    override fun convertToDatabaseColumn(attribute: NanoIdEntity?): String {
+        return attribute?.value ?: ""
     }
 
 }

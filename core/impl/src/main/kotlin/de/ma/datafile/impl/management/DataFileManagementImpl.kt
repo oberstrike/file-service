@@ -7,12 +7,17 @@ import de.ma.datafile.api.datafile.CreateDataFileUseCase
 import de.ma.datafile.api.management.DataFileManagement
 import de.ma.datafile.api.datafile.DeleteDataFileUseCase
 import de.ma.datafile.api.datafile.GetDataFileUseCase
+import de.ma.datafile.api.datafile.GetDataFilesUseCase
 import de.ma.datafile.impl.shared.BaseUseCase
 import de.ma.datafile.impl.shared.BaseUseCaseImpl
 import de.ma.domain.content.DataFileContentDelete
 import de.ma.domain.content.DataFileContentGateway
 import de.ma.domain.datafile.*
 import de.ma.domain.nanoid.NanoIdGateway
+import de.ma.domain.shared.PagedList
+import de.ma.domain.shared.PagedParams
+import de.ma.domain.shared.SearchParams
+import de.ma.domain.shared.SortParams
 import java.lang.RuntimeException
 
 class DataFileManagementImpl(
@@ -22,6 +27,7 @@ class DataFileManagementImpl(
     private val deleteDataFileContentUseCase: DeleteDataFileContentUseCase,
     private val getDataFileUseCase: GetDataFileUseCase,
     private val getDataFileContentUseCase: GetDataFileContentUseCase,
+    private val getDataFilesUseCase: GetDataFilesUseCase,
     private val dataFileContentGateway: DataFileContentGateway
 ) : DataFileManagement {
 
@@ -119,6 +125,22 @@ class DataFileManagementImpl(
 
         dataFileShow.content = dataFileContentResult.getOrNull()!!
         return Result.success(dataFileShow)
+    }
+
+
+    override suspend fun getDataFiles(
+        pagedParams: PagedParams,
+        searchParams: SearchParams? ,
+        sortParams: SortParams?
+    ): Result<PagedList<DataFileOverview>> {
+        val result = getDataFilesUseCase(pagedParams, searchParams, sortParams)
+
+        if (result.isFailure) {
+            println("Could not get datafiles")
+            println(result.exceptionOrNull()?.message ?: "No error message")
+            return Result.failure(RuntimeException("Could not get datafiles"))
+        }
+        return result
     }
 
 }

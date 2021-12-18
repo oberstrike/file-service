@@ -5,19 +5,15 @@ import de.ma.domain.datafile.DataFileGateway
 import de.ma.domain.datafile.DataFileSearch
 import de.ma.domain.datafile.DataFileShow
 import de.ma.domain.datafile.exceptions.DataFileException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.withContext
 
 class GetDataFileUseCaseImpl(
     private val dataFileGateway: DataFileGateway
 ) : GetDataFileUseCase {
 
-    private val scope = Dispatchers.IO + Job()
 
-    override suspend fun invoke(dataFileSearch: DataFileSearch): Result<DataFileShow> = withContext(scope) {
+    override suspend fun invoke(dataFileSearch: DataFileSearch): Result<DataFileShow> {
         val result = dataFileGateway.find(dataFileSearch)
-            ?: return@withContext Result.failure(DataFileException.NotFoundException(dataFileSearch.id.value))
-        return@withContext Result.success(result)
+            ?: return Result.failure(DataFileException.NotFoundException(dataFileSearch.id.value))
+        return Result.success(result)
     }
 }

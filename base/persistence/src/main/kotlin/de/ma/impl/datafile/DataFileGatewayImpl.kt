@@ -25,21 +25,19 @@ class DataFileGatewayImpl(
     private val scope = Dispatchers.IO + Job()
 
     override suspend fun find(dataFileSearch: DataFileSearch): DataFileShow? {
-        return withContext(scope) {
-            val nanoId = dataFileSearch.id
-            val dataFile = dataFileRepository.findById(nanoId).awaitSuspending() ?: return@withContext null
-            return@withContext DataFileShowDTO(dataFile.extension, dataFile.name)
-        }
+        val nanoId = dataFileSearch.id
+        val dataFile = dataFileRepository.findById(nanoId.toEntity()).awaitSuspending() ?: return null
+        return DataFileShowDTO(dataFile.extension, dataFile.name)
+
     }
 
-    override suspend fun delete(dataFileDelete: DataFileSearch): Result<Boolean> = withContext(scope) {
+    override suspend fun delete(dataFileDelete: DataFileSearch): Result<Boolean> {
         val nanoId = dataFileDelete.id
-        val deleted = dataFileRepository.deleteById(nanoId).awaitSuspending()
+        val deleted = dataFileRepository.deleteById(nanoId.toEntity()).awaitSuspending()
         if (deleted == true) Result.success(true) else Result.failure(RuntimeException("Could not delete data file"))
 
-
         //TODO implement error handling
-        return@withContext Result.failure(RuntimeException("Could not delete data file"))
+        return Result.failure(RuntimeException("Could not delete data file"))
     }
 
     @Transactional

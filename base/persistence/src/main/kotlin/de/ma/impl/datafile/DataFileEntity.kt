@@ -2,22 +2,23 @@ package de.ma.impl.datafile
 
 import de.ma.domain.datafile.DataFile
 import de.ma.domain.nanoid.NanoId
+import de.ma.impl.nanoid.NanoIdEntity
 import de.ma.impl.shared.AbstractBaseEntity
 import org.hibernate.Hibernate
-import javax.persistence.Cacheable
-import javax.persistence.Entity
-import javax.persistence.Table
+import javax.persistence.*
 
 
 @Entity(name = "data_file")
 @Table(name = "data_file")
-@Cacheable
+@AttributeOverrides(
+    value = [
+        AttributeOverride(name ="value", column = Column(name = "data_file_id")),
+    ]
+)
 data class DataFileEntity(
     override var name: String,
     override var extension: String
-) : AbstractBaseEntity(), DataFile<NanoId> {
-
-    override var size: Long = 0
+) : AbstractBaseEntity(), DataFile<NanoIdEntity> {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

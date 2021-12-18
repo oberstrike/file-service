@@ -3,7 +3,6 @@ package de.ma.impl.datafile
 import de.ma.impl.utils.TransactionalQuarkusTest
 import de.ma.impl.utils.AbstractDatabaseTest
 import io.smallrye.mutiny.coroutines.awaitSuspending
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBe
@@ -18,7 +17,6 @@ class DataFileRepositoryTest : AbstractDatabaseTest() {
     @Inject
     lateinit var dataFileRepository: DataFileRepository
 
-    val scope = Dispatchers.IO
 
     @BeforeEach
     fun setup() = runBlocking {
@@ -27,7 +25,7 @@ class DataFileRepositoryTest : AbstractDatabaseTest() {
     }
 
     @Test
-    fun test() = runTest {
+    fun `tests if persistens works`() = runTest {
         val persist = dataFileRepository.persist(DataFileEntity("Markus",  "txt")).awaitSuspending()
         persist.name shouldBe "Markus"
 

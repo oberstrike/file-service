@@ -6,6 +6,7 @@ import de.ma.datafile.api.content.GetDataFileContentUseCase
 import de.ma.datafile.api.datafile.CreateDataFileUseCase
 import de.ma.datafile.api.datafile.DeleteDataFileUseCase
 import de.ma.datafile.api.datafile.GetDataFileUseCase
+import de.ma.datafile.api.datafile.GetDataFilesUseCase
 import de.ma.datafile.impl.utils.AbstractImplTest
 import de.ma.datafile.impl.utils.NanoIdGatewayImpl
 import de.ma.domain.content.DataFileContentGateway
@@ -30,6 +31,8 @@ class DataFileManagementImplTest : AbstractImplTest() {
 
     private val getDataFileContentUseCase = mockk<GetDataFileContentUseCase>()
 
+    private val getDataFilesUseCase = mockk<GetDataFilesUseCase>()
+
     private val dataFileContentGateway = mockk<DataFileContentGateway>()
 
     private val dataFileManagement = DataFileManagementImpl(
@@ -39,6 +42,7 @@ class DataFileManagementImplTest : AbstractImplTest() {
         deleteDataFileContentUseCase = deleteDataFileContentUseCase,
         getDataFileUseCase,
         getDataFileContentUseCase,
+        getDataFilesUseCase,
         dataFileContentGateway
     )
 

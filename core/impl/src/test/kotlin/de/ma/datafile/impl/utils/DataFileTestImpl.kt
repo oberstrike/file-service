@@ -23,7 +23,6 @@ class DataFileTestImpl : DataFileTest {
     override fun withDataFileOverview(name: String, size: Long, id: NanoId, block: (DataFileOverview) -> Unit) {
         return DataFileOverviewImpl(
             name = name,
-            size = size,
             id = id
         ).let(block)
     }
@@ -67,7 +66,6 @@ data class DataFileDeleteImpl(
 
 data class DataFileOverviewImpl(
     override val name: String,
-    override val size: Long,
     override val id: NanoId
 ) : DataFileOverview
 

@@ -29,6 +29,7 @@ class DataFileManagementBean(
     deleteDataFileContentUseCase,
     getDataFileUseCase,
     getDataFileContentUseCase,
+    getDataFilesUseCase,
     dataFileContentGateway
 ) {
 }

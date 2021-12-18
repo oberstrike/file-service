@@ -21,8 +21,8 @@ class GetDataFilesUseCaseImpl(
         pagedParams: PagedParams,
         searchParams: SearchParams?,
         sortParams: SortParams?
-    ): Result<PagedList<DataFileOverview>> = withContext(scope) {
-        return@withContext dataFileGateway.findAll(pagedParams, searchParams, sortParams)
+    ): Result<PagedList<DataFileOverview>> {
+        return dataFileGateway.findAll(pagedParams, searchParams, sortParams)
     }
 
 }
