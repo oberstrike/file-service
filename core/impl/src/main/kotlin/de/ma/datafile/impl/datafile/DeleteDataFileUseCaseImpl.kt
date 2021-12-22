@@ -16,13 +16,13 @@ class DeleteDataFileUseCaseImpl(
 
     private val scope = Dispatchers.IO + Job()
 
-    override suspend fun <T : DataFileSearch> invoke(dataFileDelete: T): Result<Boolean> = withContext(scope) {
+    override suspend fun <T : DataFileSearch> invoke(dataFileDelete: T): Result<Boolean> {
         val dataFileDeletedResult = dataFileGateway.delete(dataFileDelete)
 
         if (dataFileDeletedResult.isFailure) {
-            return@withContext Result.failure(dataFileDeletedResult.exceptionOrNull()!!)
+            return Result.failure(dataFileDeletedResult.exceptionOrNull()!!)
         }
-        return@withContext Result.success(dataFileDeletedResult.getOrNull()!!)
+        return Result.success(dataFileDeletedResult.getOrNull()!!)
     }
 
 

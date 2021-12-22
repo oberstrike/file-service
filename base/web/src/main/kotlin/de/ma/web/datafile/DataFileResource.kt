@@ -1,11 +1,12 @@
 package de.ma.web.datafile
 
-import de.ma.datafile.api.management.DataFileManagement
-import de.ma.domain.datafile.DataFileOverview
-import de.ma.domain.datafile.DataFileShow
+import de.ma.datafile.api.management.DataFileManagementUseCase
+import de.ma.domain.datafile.DataFileSearch
 import de.ma.domain.shared.PagedList
+import de.ma.web.datafile.form.*
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody
 import org.jboss.resteasy.reactive.MultipartForm
 import javax.ws.rs.*
@@ -14,13 +15,18 @@ import javax.ws.rs.core.Response
 
 @Path("/datafile")
 class DataFileResource(
-    private val dataFileManagement: DataFileManagement
+    private val dataFileManagementUseCase: DataFileManagementUseCase
 ) {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    suspend fun getDataFile(@PathParam(value = "id") id: String): Response {
-        val dataFileResult = dataFileManagement.getDataFile(DataFileSearchImpl(id.toNanoId()))
+    suspend fun getDataFile(
+        @Parameter(
+            name = "id",
+            schema = Schema(implementation = String::class)
+        ) @PathParam(value = "id") dataFileSearch: DataFileSearch
+    ): Response {
+        val dataFileResult = dataFileManagementUseCase.getDataFile(dataFileSearch)
         if (dataFileResult.isFailure) {
             throw dataFileResult.exceptionOrNull()!!
         }
@@ -29,7 +35,10 @@ class DataFileResource(
         val file = dataFileShow.content.file
 
         val responseBuilder = Response.ok(file)
-        responseBuilder.header("Content-Disposition", "attachment;filename= ${dataFileShow.name}.${dataFileShow.extension}")
+        responseBuilder.header(
+            "Content-Disposition",
+            "attachment;filename= ${dataFileShow.name}.${dataFileShow.extension}"
+        )
         return responseBuilder.build()
     }
 
@@ -41,19 +50,36 @@ class DataFileResource(
             schema = Schema(implementation = DataFileCreateForm::class)
         )]
     )
-    suspend fun create(@MultipartForm dataFileCreateForm: DataFileCreateForm) {
-        println(dataFileCreateForm)
-        dataFileManagement.createDataFile(
+    suspend fun create(@MultipartForm dataFileCreateForm: DataFileCreateForm): DataFileOverviewForm {
+        val dataFileOverviewResult = dataFileManagementUseCase.createDataFile(
             dataFileCreateForm.toDataFileCreate()
         )
+
+        if (dataFileOverviewResult.isFailure) {
+            throw dataFileOverviewResult.exceptionOrNull()!!
+        }
+
+        return dataFileOverviewResult.getOrNull()!!.toImpl()
+    }
+
+
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    suspend fun deleteFile(@PathParam(value = "id") id: String) {
+        val deletedResult = dataFileManagementUseCase.deleteDataFile(DataFileDeleteForm(id.toNanoId()))
+
+        if (deletedResult.isFailure) {
+            throw deletedResult.exceptionOrNull()!!
+        }
     }
 
     @GET
     @Path("/files")
     @Produces(MediaType.APPLICATION_JSON)
-    suspend fun getFiles(): PagedList<DataFileOverviewImpl> {
+    suspend fun getFiles(): PagedList<DataFileOverviewForm> {
 
-        val dataFilesResult = dataFileManagement.getDataFiles(
+        val dataFilesResult = dataFileManagementUseCase.getDataFiles(
             PagedParamsImpl(0, 10)
         )
         if (dataFilesResult.isFailure) {
@@ -62,8 +88,8 @@ class DataFileResource(
 
         val pagedList = dataFilesResult.getOrNull()!!
 
-        return pagedList.pagedMap {
-            it.toImpl()
+        return pagedList.pagedMap { dataFileOverview ->
+            dataFileOverview.toImpl()
         }
     }
 

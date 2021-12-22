@@ -1,4 +1,4 @@
-package de.ma.web.datafile
+package de.ma.web.datafile.form
 
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.datafile.DataFileCreate
@@ -24,7 +24,7 @@ class DataFileCreateForm {
     var content: File? = null
 
     override fun toString(): String {
-        return "DataFileCreateForm(name=$name, extension=$extension, content=${content?.name})"
+        return "DataFileCreateForm(name=$name, extension=$extension, content=${content?.name?: "name is null"})"
     }
 }
 

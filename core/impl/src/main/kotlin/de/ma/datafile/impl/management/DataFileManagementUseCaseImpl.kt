@@ -4,23 +4,19 @@ import de.ma.datafile.api.content.CreateDataFileContentUseCase
 import de.ma.datafile.api.content.DeleteDataFileContentUseCase
 import de.ma.datafile.api.content.GetDataFileContentUseCase
 import de.ma.datafile.api.datafile.CreateDataFileUseCase
-import de.ma.datafile.api.management.DataFileManagement
+import de.ma.datafile.api.management.DataFileManagementUseCase
 import de.ma.datafile.api.datafile.DeleteDataFileUseCase
 import de.ma.datafile.api.datafile.GetDataFileUseCase
 import de.ma.datafile.api.datafile.GetDataFilesUseCase
-import de.ma.datafile.impl.shared.BaseUseCase
-import de.ma.datafile.impl.shared.BaseUseCaseImpl
-import de.ma.domain.content.DataFileContentDelete
 import de.ma.domain.content.DataFileContentGateway
 import de.ma.domain.datafile.*
-import de.ma.domain.nanoid.NanoIdGateway
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
 import de.ma.domain.shared.SortParams
 import java.lang.RuntimeException
 
-class DataFileManagementImpl(
+class DataFileManagementUseCaseImpl(
     private val createDataFileContentUseCase: CreateDataFileContentUseCase,
     private val createDataFileUseCase: CreateDataFileUseCase,
     private val deleteDataFileUseCase: DeleteDataFileUseCase,
@@ -29,11 +25,11 @@ class DataFileManagementImpl(
     private val getDataFileContentUseCase: GetDataFileContentUseCase,
     private val getDataFilesUseCase: GetDataFilesUseCase,
     private val dataFileContentGateway: DataFileContentGateway
-) : DataFileManagement {
+) : DataFileManagementUseCase {
 
 
     //create Data File whole process
-    override suspend fun createDataFile(createDataFile: DataFileCreate): Result<Unit> {
+    override suspend fun createDataFile(createDataFile: DataFileCreate): Result<DataFileOverview> {
 
         //uses the createDataFileUseCase to create a datafile
         val dataFileOverviewResult = createDataFileUseCase(createDataFile)
@@ -74,7 +70,7 @@ class DataFileManagementImpl(
         }
 
         //if the datafile and the datafile content were created return Result a success
-        return Result.success(Unit)
+        return Result.success(dataFileOverview)
     }
 
     /*
@@ -83,7 +79,9 @@ class DataFileManagementImpl(
     override suspend fun deleteDataFile(deleteDataFile: DataFileDelete): Result<Unit> {
 
         //first delete the datafile content
-        val dataFileContentDeleted = deleteDataFileContentUseCase(deleteDataFile as DataFileContentDelete)
+        val dataFileContentDeleted = deleteDataFileContentUseCase(
+            dataFileContentGateway.toContentDelete(deleteDataFile)
+        )
 
         //if the datafile content couldn't be deleted
         if (dataFileContentDeleted.isFailure) {
@@ -96,10 +94,15 @@ class DataFileManagementImpl(
         val dataFileDeleted = deleteDataFileUseCase(deleteDataFile)
 
         if (dataFileDeleted.isFailure) {
+            //recover the datafile content
+
+
             return Result.failure(
                 dataFileDeleted.exceptionOrNull() ?: RuntimeException("Could not delete datafile")
             )
         }
+
+
         return Result.success(Unit)
     }
 
@@ -130,7 +133,7 @@ class DataFileManagementImpl(
 
     override suspend fun getDataFiles(
         pagedParams: PagedParams,
-        searchParams: SearchParams? ,
+        searchParams: SearchParams?,
         sortParams: SortParams?
     ): Result<PagedList<DataFileOverview>> {
         val result = getDataFilesUseCase(pagedParams, searchParams, sortParams)

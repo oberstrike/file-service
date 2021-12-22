@@ -6,8 +6,8 @@ import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
 import de.ma.domain.shared.SortParams
 
-interface DataFileManagement {
-    suspend fun createDataFile(createDataFile: DataFileCreate): Result<Unit>
+interface DataFileManagementUseCase {
+    suspend fun createDataFile(createDataFile: DataFileCreate): Result<DataFileOverview>
 
     suspend fun deleteDataFile(deleteDataFile: DataFileDelete): Result<Unit>
 

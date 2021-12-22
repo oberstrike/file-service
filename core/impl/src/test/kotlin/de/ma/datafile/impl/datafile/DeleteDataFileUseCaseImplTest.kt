@@ -12,8 +12,6 @@ class DeleteDataFileUseCaseImplTest : AbstractImplTest() {
 
     private val dataFileGateway = mockk<DataFileGateway>()
 
-    private val nanoIdGateway = NanoIdGatewayImpl()
-
     private val deletedDataFileUseCaseImpl = DeleteDataFileUseCaseImpl(
         dataFileGateway
     )
@@ -59,6 +57,8 @@ class DeleteDataFileUseCaseImplTest : AbstractImplTest() {
                 result.isSuccess `should be` true
 
                 result.getOrNull() `should be` true
+
+                //check if dataFiles are empty
 
                 coVerify(exactly = 1) { dataFileGateway.delete(any()) }
 

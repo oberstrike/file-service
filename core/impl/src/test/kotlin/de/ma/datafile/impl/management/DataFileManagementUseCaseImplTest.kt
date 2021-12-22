@@ -8,7 +8,6 @@ import de.ma.datafile.api.datafile.DeleteDataFileUseCase
 import de.ma.datafile.api.datafile.GetDataFileUseCase
 import de.ma.datafile.api.datafile.GetDataFilesUseCase
 import de.ma.datafile.impl.utils.AbstractImplTest
-import de.ma.datafile.impl.utils.NanoIdGatewayImpl
 import de.ma.domain.content.DataFileContentGateway
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -17,7 +16,7 @@ import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBe
 import org.junit.jupiter.api.Test
 
-class DataFileManagementImplTest : AbstractImplTest() {
+class DataFileManagementUseCaseImplTest : AbstractImplTest() {
 
     private val createDataFileContentUseCase = mockk<CreateDataFileContentUseCase>()
 
@@ -35,7 +34,7 @@ class DataFileManagementImplTest : AbstractImplTest() {
 
     private val dataFileContentGateway = mockk<DataFileContentGateway>()
 
-    private val dataFileManagement = DataFileManagementImpl(
+    private val dataFileManagement = DataFileManagementUseCaseImpl(
         createDataFileContentUseCase = createDataFileContentUseCase,
         createDataFileUseCase = createDataFileUseCase,
         deleteDataFileUseCase = deleteDataFileUseCase,

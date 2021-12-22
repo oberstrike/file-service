@@ -2,8 +2,10 @@ package de.ma.impl.content.repository
 
 import de.ma.impl.utils.AbstractDatabaseTest
 import io.quarkus.test.junit.QuarkusTest
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldNotBe
 import org.junit.jupiter.api.Test
@@ -22,7 +24,10 @@ class FindFileContentByNanoIdImplTest : AbstractDatabaseTest() {
         val findFileContentByNanoIdImpl = FindFileContentByNanoIdImpl(dir.absolutePath)
 
         //create new file
-        File(dir, nanoId.toString()).createNewFile()
+        withContext(Dispatchers.IO) {
+            File(dir, nanoId.value).createNewFile()
+        }
+
 
         val result = findFileContentByNanoIdImpl.findByNanoId(nanoId)
 

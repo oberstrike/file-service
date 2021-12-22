@@ -6,11 +6,16 @@ import de.ma.domain.content.DataFileContentShow
 import de.ma.domain.nanoid.NanoId
 import java.io.File
 
-interface DataFileContentRepository : SaveFileContent, FindFileContentByNanoId {
+interface DataFileContentRepository {
 
-    fun exists(nanoId: NanoId): File?
+    suspend fun findByNanoId(nanoId: NanoId): DataFileContentShow?
 
-    fun reset()
+    suspend fun save(content: DataFileContentCreate, nanoId: NanoId): DataFileContentOverview?
 
-    fun deleteById(id: NanoId): Boolean
+    suspend fun reset()
+
+    suspend fun deleteByNanoId(nanoId: NanoId): Boolean?
+
+    suspend fun restoreByNanoId(nanoId: NanoId): Boolean?
+
 }

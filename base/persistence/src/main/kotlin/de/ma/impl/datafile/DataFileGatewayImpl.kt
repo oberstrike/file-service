@@ -1,7 +1,6 @@
 package de.ma.impl.datafile
 
 import de.ma.domain.datafile.*
-import de.ma.impl.content.repository.DataFileContentRepositoryImpl
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
@@ -13,7 +12,6 @@ import io.quarkus.panache.common.Sort
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.withContext
 import javax.enterprise.context.ApplicationScoped
 import javax.transaction.Transactional
 
@@ -32,12 +30,9 @@ class DataFileGatewayImpl(
     }
 
     override suspend fun delete(dataFileDelete: DataFileSearch): Result<Boolean> {
-        val nanoId = dataFileDelete.id
-        val deleted = dataFileRepository.deleteById(nanoId.toEntity()).awaitSuspending()
-        if (deleted == true) Result.success(true) else Result.failure(RuntimeException("Could not delete data file"))
-
-        //TODO implement error handling
-        return Result.failure(RuntimeException("Could not delete data file"))
+        val nanoIdEntity = dataFileDelete.id.toEntity()
+        val deleted = dataFileRepository.delete("data_file_id", nanoIdEntity.value).awaitSuspending()
+        return if (deleted == 1L) Result.success(true) else Result.failure(RuntimeException("Could not delete data file in database"))
     }
 
     @Transactional

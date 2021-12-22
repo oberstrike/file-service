@@ -5,6 +5,8 @@ import de.ma.domain.content.DataFileContentOverview
 import de.ma.domain.content.DataFileContentShow
 import de.ma.domain.nanoid.NanoId
 import de.ma.impl.content.repository.api.DataFileContentRepository
+import de.ma.impl.content.repository.api.FindFileContentByNanoId
+import de.ma.impl.content.repository.api.SaveFileContent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -17,7 +19,11 @@ import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class DataFileContentRepositoryImpl(
-    private val domainPath: String = "/home/oberstrike/Desktop/content"
+    @ConfigProperty(name = "datafile.content.folder")
+    private val domainPath: String,
+    private val trashPath: String,
+    private val saveFileContent: SaveFileContent,
+    private val findFileContentByNanoId: FindFileContentByNanoId
 ) : DataFileContentRepository {
 
     private val scope = Dispatchers.IO + Job()
@@ -26,10 +32,7 @@ class DataFileContentRepositoryImpl(
 
     private lateinit var domain: File
 
-    private val saveFileContent = SaveFileContentImpl(domainPath)
-
-    private val findFileContentByNanoId = FindFileContentByNanoIdImpl(domainPath)
-
+    private lateinit var trash: File
 
     @PreDestroy
     fun destroy() {
@@ -38,20 +41,8 @@ class DataFileContentRepositoryImpl(
 
     @PostConstruct
     fun init() {
-        val folder = File(domainPath)
-        val isDirectory = folder.isDirectory
-        if (isDirectory) {
-            domain = folder
-            return
-        }
-
-        val created = File(domainPath).mkdir()
-        if (!created) {
-            throw IllegalStateException("Could not create folder $folder")
-        }
-
-        domain = File(domainPath)
-
+        domain = createFolder(domainPath) ?: throw IllegalStateException("Could not create domain folder")
+        trash = createFolder(trashPath) ?: throw IllegalStateException("Could not create trash folder")
     }
 
     override suspend fun findByNanoId(nanoId: NanoId): DataFileContentShow? {
@@ -66,24 +57,39 @@ class DataFileContentRepositoryImpl(
             return@withContext saveFileContent.save(content, nanoId)
         }
 
-    override fun exists(nanoId: NanoId): File? {
+    override suspend fun deleteByNanoId(nanoId: NanoId): Boolean? {
         val file = File(domain, nanoId.value)
-        return if (file.exists()) file else null
+        return if (file.exists()) file.delete() else false
     }
 
-    //resets the domain
-    override fun reset() {
+    override suspend fun reset() = withContext(scope) {
         domain.listFiles()?.forEach { file ->
             file.delete()
         }
+        Unit
+    }
+
+    override suspend fun restoreByNanoId(nanoId: NanoId): Boolean? {
+        TODO("Not yet implemented")
     }
 
 
-    override fun deleteById(id: NanoId): Boolean {
-        val file = File(domain, id.toString())
-        return file.delete()
-    }
+    private fun createFolder(folderPath: String): File? {
+        val folder = File(folderPath)
+        val isDirectory = folder.isDirectory
 
+        if (isDirectory) {
+            return folder
+        }
+
+        val created = folder.mkdir()
+
+        if (created) {
+            return folder
+        }
+
+        return null
+    }
 
 }
 
