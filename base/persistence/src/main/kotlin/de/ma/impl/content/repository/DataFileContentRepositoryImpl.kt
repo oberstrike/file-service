@@ -66,10 +66,6 @@ class DataFileContentRepositoryImpl(
         Unit
     }
 
-    override suspend fun restoreByNanoId(nanoId: NanoId): Boolean? {
-        TODO("Not yet implemented")
-    }
-
 
     private fun createFolder(folderPath: String): File? {
         val folder = File(folderPath)

@@ -16,6 +16,4 @@ interface DataFileContentRepository {
 
     suspend fun deleteByNanoId(nanoId: NanoId): Boolean?
 
-    suspend fun restoreByNanoId(nanoId: NanoId): Boolean?
-
 }

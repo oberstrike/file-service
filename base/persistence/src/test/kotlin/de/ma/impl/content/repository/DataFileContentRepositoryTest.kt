@@ -4,6 +4,7 @@ import de.ma.impl.utils.AbstractDatabaseTest
 import io.quarkus.test.junit.QuarkusTest
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldNotBe
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.junit.jupiter.api.AfterEach
@@ -38,18 +39,23 @@ class DataFileContentRepositoryTest : AbstractDatabaseTest() {
 
 
     @Test
-    fun `saves an file and check if its exists`() = runBlocking {
+    fun `saves an file and check if its exists`() = runBlocking(Dispatchers.IO) {
 
         val domain = File(domainPath)
 
         val nanoId = nanoId()
 
-        val newFile = File(domain, nanoId.value)
+        //create a file with the nanoId value as name
+        File(domain, nanoId.value).createNewFile()
 
+        var files = domain.listFiles() ?: emptyArray()
 
-        val exists = dataFileContentRepositoryImpl.deleteByNanoId(nanoId)
+        files.isNotEmpty() shouldBe true
 
-        exists shouldNotBe null
+        dataFileContentRepositoryImpl.reset()
+
+        files = domain.listFiles() ?: emptyArray()
+        files.isEmpty() shouldBe true
         Unit
     }
 

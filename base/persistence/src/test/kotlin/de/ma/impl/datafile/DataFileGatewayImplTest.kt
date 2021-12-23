@@ -5,7 +5,7 @@ import de.ma.impl.utils.AbstractDatabaseTest
 import de.ma.impl.utils.TransactionalQuarkusTest
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import kotlinx.coroutines.runBlocking
-import org.amshove.kluent.should
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldNotBe
 import org.junit.jupiter.api.BeforeEach
@@ -89,6 +89,24 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
 
         find shouldNotBe null
         Unit
+    }
+
+
+    @Test
+    fun `delete a datafile and recover it`() = runTest {
+
+        val dataFileEntity = DataFileEntity("test", "txt")
+        val result = dataFileRepository.persist(dataFileEntity).awaitSuspending()
+
+        result.deleted shouldBe false
+
+        val deleteResult = dataFileGateway.delete(DataFileSearchDTO(result.id!!))
+
+        deleteResult.isSuccess shouldBe true
+
+        dataFileRepository.findById(result.id!!).awaitSuspending()?.deleted shouldBe true
+        Unit
+
 
     }
 
