@@ -1,6 +1,8 @@
 package de.ma.impl.datafile
 
 import de.ma.domain.datafile.*
+import de.ma.domain.datafile.exceptions.DataFileException
+import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
@@ -22,34 +24,44 @@ class DataFileGatewayImpl(
 
     private val scope = Dispatchers.IO + Job()
 
-    override suspend fun find(dataFileSearch: DataFileSearch): DataFileShow? {
+    override suspend fun find(dataFileSearch: DataFileSearch): Result<DataFileShow> {
         val nanoId = dataFileSearch.id
-        val dataFile = dataFileRepository.findById(nanoId.toEntity()).awaitSuspending() ?: return null
-        return DataFileShowDTO(dataFile.extension, dataFile.name)
-
+        val dataFile = dataFileRepository.findById(nanoId.toEntity()).awaitSuspending() ?: return Result.failure(
+            DataFileException.NotFoundException(nanoId.value)
+        )
+        return Result.success(DataFileShowDTO(dataFile.extension, dataFile.name))
     }
 
-    override suspend fun delete(dataFileDelete: DataFileSearch): Result<Boolean> {
+    override suspend fun delete(dataFileDelete: DataFileSearch): Result<DataFile> {
         val nanoIdEntity = dataFileDelete.id.toEntity()
-        val deleted = dataFileRepository.delete("data_file_id", nanoIdEntity.value).awaitSuspending()
-        return if (deleted == 1L) Result.success(true) else Result.failure(RuntimeException("Could not delete data file in database"))
+
+        val dataFileEntity =
+            dataFileRepository.find("data_file_id", nanoIdEntity.value).firstResult<DataFileEntity>().awaitSuspending()
+                ?: return Result.failure(DataFileException.NotFoundException(nanoIdEntity.value))
+
+        dataFileEntity.deleted = true
+
+        return try {
+            Result.success(
+                dataFileRepository.persist(dataFileEntity).awaitSuspending()
+            )
+        } catch (e: Exception) {
+            Result.failure(RuntimeException("Could not delete data file in database"))
+        }
     }
 
     @Transactional
     override suspend fun <T : DataFileCreate> save(dataFileCreate: T): Result<DataFileOverview> {
         val dataFileEntity = DataFileEntity(dataFileCreate.name, dataFileCreate.extension)
 
-
-        println("Trying to save")
-        val result = Panache.withTransaction {
-            dataFileRepository.persist(dataFileEntity)
-        }.awaitSuspending()
-        println("saved")
-
         return try {
-            dataFileRepository.persist(result).awaitSuspending()
+            val result = Panache.withTransaction {
+                dataFileRepository.persist(dataFileEntity)
+            }.awaitSuspending()
             Result.success(result.toOverviewDTO())
+
         } catch (e: Exception) {
+            e.printStackTrace()
             Result.failure(RuntimeException("Could not save data file"))
         }
     }
@@ -75,6 +87,18 @@ class DataFileGatewayImpl(
         }
 
         return Result.success(result)
+    }
+
+    override suspend fun purge(dataFile: DataFile) {
+        dataFileRepository.delete("data_file_id", dataFile.id!!.value).awaitSuspending()
+    }
+
+
+    override suspend fun recover(dataFile: DataFile) {
+        val entity = dataFile as DataFileEntity
+        entity.deleted = false
+
+        dataFileRepository.persist(entity).awaitSuspending()
     }
 
 

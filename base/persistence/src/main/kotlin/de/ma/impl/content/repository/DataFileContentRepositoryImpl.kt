@@ -21,7 +21,6 @@ import javax.enterprise.context.ApplicationScoped
 class DataFileContentRepositoryImpl(
     @ConfigProperty(name = "datafile.content.folder")
     private val domainPath: String,
-    private val trashPath: String,
     private val saveFileContent: SaveFileContent,
     private val findFileContentByNanoId: FindFileContentByNanoId
 ) : DataFileContentRepository {
@@ -32,7 +31,6 @@ class DataFileContentRepositoryImpl(
 
     private lateinit var domain: File
 
-    private lateinit var trash: File
 
     @PreDestroy
     fun destroy() {
@@ -42,7 +40,6 @@ class DataFileContentRepositoryImpl(
     @PostConstruct
     fun init() {
         domain = createFolder(domainPath) ?: throw IllegalStateException("Could not create domain folder")
-        trash = createFolder(trashPath) ?: throw IllegalStateException("Could not create trash folder")
     }
 
     override suspend fun findByNanoId(nanoId: NanoId): DataFileContentShow? {

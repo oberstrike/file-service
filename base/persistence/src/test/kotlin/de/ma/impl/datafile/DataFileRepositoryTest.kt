@@ -25,7 +25,7 @@ class DataFileRepositoryTest : AbstractDatabaseTest() {
     }
 
     @Test
-    fun `tests if persistens works`() = runTest {
+    fun `tests if persistens works`() = runBlocking {
         val persist = dataFileRepository.persist(DataFileEntity("Markus",  "txt")).awaitSuspending()
         persist.name shouldBe "Markus"
 
@@ -39,7 +39,7 @@ class DataFileRepositoryTest : AbstractDatabaseTest() {
 
         println(dataFileEntity)
 
-
+        Unit
     }
 
 }

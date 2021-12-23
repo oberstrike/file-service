@@ -51,7 +51,7 @@ class DataFileResource(
         )]
     )
     suspend fun create(@MultipartForm dataFileCreateForm: DataFileCreateForm): DataFileOverviewForm {
-        val dataFileOverviewResult = dataFileManagementUseCase.createDataFile(
+        val dataFileOverviewResult = dataFileManagementUseCase.dataFileCreate(
             dataFileCreateForm.toDataFileCreate()
         )
 

@@ -20,3 +20,5 @@ kluent = { module = "org.amshove.kluent:kluent", version.ref = "kluentVersion" }
 jnanoid = {module = "com.aventrix.jnanoid:jnanoid", version.ref = "jnanoid"}
 kotlin-faker = {module = "io.github.serpro69:kotlin-faker", version.ref = "kotlinFakerVersion"}
 mockk = {module = "io.mockk:mockk", version.ref = "mockkVersion"}
+kotlinCoroutines = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin"}
+kotlinCoroutinesTest = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin"}

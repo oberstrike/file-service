@@ -1,21 +1,15 @@
 package de.ma.impl.datafile
 
-import de.ma.domain.datafile.DataFile
-import de.ma.domain.datafile.DataFileDelete
 import de.ma.domain.datafile.DataFileGateway
-import de.ma.domain.datafile.DataFileSearch
 import de.ma.impl.utils.AbstractDatabaseTest
 import de.ma.impl.utils.TransactionalQuarkusTest
-import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.should
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldNotBe
-import org.hibernate.reactive.mutiny.Mutiny
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
 import javax.inject.Inject
 
 @TransactionalQuarkusTest
@@ -29,12 +23,13 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
 
 
     @BeforeEach
-    fun setup() = runTest() {
+    fun setup() = runBlocking {
         dataFileRepository.deleteAll().awaitSuspending()
+        Unit
     }
 
     @Test
-    fun `tests if the save action works`() = runTest {
+    fun `tests if the save action works`() = runBlocking {
         val input = "Mein Leben".byteInputStream()
 
         val contentCreate = dataFileContentCreate(input)
@@ -44,11 +39,15 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
 
         result.isSuccess shouldBe true
 
-        dataFileRepository.findAll().list<DataFileEntity>().awaitSuspending().isEmpty() shouldBe false
+        val all = dataFileRepository.findAll().list<DataFileEntity>().awaitSuspending()
+
+        all.isEmpty() shouldBe false
+
+        Unit
     }
 
     @Test
-    fun `tests if the delete action works`() = runTest {
+    fun `tests if the delete action works`() = runBlocking {
 
         val dataFileEntity = DataFileEntity("test", "txt")
         val result = dataFileRepository.persist(dataFileEntity).awaitSuspending()
@@ -63,14 +62,17 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
 
 
         all = dataFileRepository.findAll().list<DataFileEntity>().awaitSuspending()
-        all.isEmpty() shouldBe true
+        all.isEmpty() shouldBe false
+
+        all.first().deleted shouldBe true
 
 
+        Unit
     }
 
 
     @Test
-    fun `Test if the find method works`() = runTest {
+    fun `Test if the find method works`() = runBlocking {
 
         val persisted = dataFileRepository.persist(
             DataFileEntity(
@@ -86,6 +88,8 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
         val find = dataFileGateway.find(dataFileSearch)
 
         find shouldNotBe null
+        Unit
+
     }
 
 }

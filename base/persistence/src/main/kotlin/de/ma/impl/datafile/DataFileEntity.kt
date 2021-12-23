@@ -5,6 +5,8 @@ import de.ma.domain.nanoid.NanoId
 import de.ma.impl.nanoid.NanoIdEntity
 import de.ma.impl.shared.AbstractBaseEntity
 import org.hibernate.Hibernate
+import org.hibernate.annotations.CreationTimestamp
+import java.time.LocalDateTime
 import javax.persistence.*
 
 
@@ -18,7 +20,15 @@ import javax.persistence.*
 data class DataFileEntity(
     override var name: String,
     override var extension: String
-) : AbstractBaseEntity(), DataFile<NanoIdEntity> {
+) : AbstractBaseEntity(), DataFile {
+
+    @get:CreationTimestamp
+    @get:Column(name = "created_at")
+    override var createdAt: LocalDateTime = LocalDateTime.now()
+
+    @get:Column(name = "deleted")
+    var deleted: Boolean = false
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

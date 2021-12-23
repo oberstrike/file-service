@@ -18,7 +18,7 @@ class FindFileContentByNanoIdImplTest : AbstractDatabaseTest() {
 
 
     @Test
-    fun `find FileContent successfully`(@TempDir dir: File) = runTest {
+    fun `find FileContent successfully`(@TempDir dir: File) = runBlocking {
         val nanoId = nanoId()
 
         val findFileContentByNanoIdImpl = FindFileContentByNanoIdImpl(dir.absolutePath)
@@ -36,7 +36,7 @@ class FindFileContentByNanoIdImplTest : AbstractDatabaseTest() {
 
 
     @Test
-    fun `find FileContent fails`(@TempDir dir: File) = runTest {
+    fun `find FileContent fails`(@TempDir dir: File) = runBlocking {
         val nanoId = nanoId()
 
         val findFileContentByNanoIdImpl = FindFileContentByNanoIdImpl(dir.absolutePath)
@@ -44,5 +44,6 @@ class FindFileContentByNanoIdImplTest : AbstractDatabaseTest() {
         val result = findFileContentByNanoIdImpl.findByNanoId(nanoId)
 
         result shouldBe null
+        Unit
     }
 }

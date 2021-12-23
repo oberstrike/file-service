@@ -4,6 +4,7 @@ import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.content.DataFileContentShow
 import de.ma.domain.datafile.*
 import de.ma.domain.nanoid.NanoId
+import java.time.LocalDateTime
 
 class DataFileTestImpl : DataFileTest {
 
@@ -23,7 +24,9 @@ class DataFileTestImpl : DataFileTest {
     override fun withDataFileOverview(name: String, size: Long, id: NanoId, block: (DataFileOverview) -> Unit) {
         return DataFileOverviewImpl(
             name = name,
-            id = id
+            id = id,
+            createdAt = LocalDateTime.now(),
+            extension = "txt",
         ).let(block)
     }
 
@@ -66,7 +69,9 @@ data class DataFileDeleteImpl(
 
 data class DataFileOverviewImpl(
     override val name: String,
-    override val id: NanoId
+    override val id: NanoId,
+    override val createdAt: LocalDateTime,
+    override val extension: String
 ) : DataFileOverview
 
 data class DataFileCreateImpl(

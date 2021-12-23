@@ -38,7 +38,7 @@ class DataFileContentRepositoryTest : AbstractDatabaseTest() {
 
 
     @Test
-    fun `saves an file and check if its exists`() = runTest {
+    fun `saves an file and check if its exists`() = runBlocking {
 
         val domain = File(domainPath)
 
@@ -50,10 +50,7 @@ class DataFileContentRepositoryTest : AbstractDatabaseTest() {
         val exists = dataFileContentRepositoryImpl.deleteByNanoId(nanoId)
 
         exists shouldNotBe null
-
-
-
-
+        Unit
     }
 
 

@@ -34,13 +34,13 @@ dependencies{
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-arc")
 
-    //Kotlin coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC2")
 
 
     // https://mvnrepository.com/artifact/io.smallrye.reactive/mutiny-kotlin
     implementation("io.smallrye.reactive:mutiny-kotlin:1.2.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0-RC2")
+
+    implementation(libs.kotlinCoroutines)
+    testImplementation(libs.kotlinCoroutinesTest)
 
     testImplementation(libs.junit5Jupiter)
     testImplementation(libs.junit5JupiterApi)
