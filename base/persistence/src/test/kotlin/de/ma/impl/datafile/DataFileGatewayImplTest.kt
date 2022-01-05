@@ -56,7 +56,7 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
         all.isEmpty() shouldBe false
 
 
-        val deleted = dataFileGateway.delete(DataFileSearchDTO(result.id!!))
+        val deleted = dataFileGateway.delete(DataFileSearchParamsDTO(result.id!!))
 
         deleted.isSuccess shouldBe true
 
@@ -100,7 +100,7 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
 
         result.deleted shouldBe false
 
-        val deleteResult = dataFileGateway.delete(DataFileSearchDTO(result.id!!))
+        val deleteResult = dataFileGateway.delete(DataFileSearchParamsDTO(result.id!!))
 
         deleteResult.isSuccess shouldBe true
 

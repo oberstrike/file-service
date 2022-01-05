@@ -1,6 +1,7 @@
 package de.ma.datafile.impl.management
 
 import de.ma.datafile.impl.utils.AbstractImplTest
+import de.ma.datafile.impl.utils.inputStream
 import de.ma.domain.content.DataFileContentGateway
 import de.ma.domain.datafile.DataFileGateway
 import io.mockk.coEvery
@@ -23,36 +24,44 @@ class DataFileManagementUseCaseImplTest : AbstractImplTest() {
 
     @Test
     fun `create successfully a data file`() {
-        withDataFileCreate("txt", "test") { dataFileCreate ->
-            withDataFileOverview { dataFileOverview ->
-                withDataFileContentOverview(12) { dataFileContentOverview ->
-                    runBlocking {
+        val domain = "test"
 
-                        coEvery { dataFileGateway.save(dataFileCreate) } returns Result.success(dataFileOverview)
+        withDataFileContentCreate(inputStream()){
+            dataFileContentCreate ->
+            withDataFileCreate("txt", "testName", domain, dataFileContentCreate) { dataFileCreate ->
+                withDataFileOverview(domain = domain) { dataFileOverview ->
+                    withDataFileContentOverview(12) { dataFileContentOverview ->
+                        runBlocking {
 
-                        coEvery {
-                            dataFileContentGateway.saveContent(
-                                dataFileCreate.content,
-                                dataFileOverview.id
-                            )
-                        } returns Result.success(dataFileContentOverview)
+                            coEvery { dataFileGateway.save(dataFileCreate) } returns Result.success(dataFileOverview)
 
-                        val result = dataFileManagement.dataFileCreate(dataFileCreate)
+                            coEvery {
+                                dataFileContentGateway.saveContent(
+                                    dataFileCreate.content,
+                                    dataFileOverview
+                                )
+                            } returns Result.success(dataFileContentOverview)
 
-                        result.isSuccess shouldBe true
+                            val result = dataFileManagement.dataFileCreate(dataFileCreate)
+
+                            result.isSuccess shouldBe true
 
 
-                        coVerify(exactly = 1) { dataFileGateway.save(dataFileCreate) }
+                            coVerify(exactly = 1) { dataFileGateway.save(dataFileCreate) }
 
-                        coVerify(exactly = 1) {
-                            dataFileContentGateway.saveContent(
-                                dataFileCreate.content,
-                                dataFileOverview.id
-                            )
+                            coVerify(exactly = 1) {
+                                dataFileContentGateway.saveContent(
+                                    dataFileCreate.content,
+                                    dataFileOverview
+                                )
+                            }
                         }
                     }
                 }
             }
+
+
+
         }
     }
 

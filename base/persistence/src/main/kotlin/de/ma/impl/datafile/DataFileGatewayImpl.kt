@@ -2,7 +2,6 @@ package de.ma.impl.datafile
 
 import de.ma.domain.datafile.*
 import de.ma.domain.datafile.exceptions.DataFileException
-import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
@@ -12,8 +11,6 @@ import de.ma.impl.shared.toPagedList
 import io.quarkus.hibernate.reactive.panache.Panache
 import io.quarkus.panache.common.Sort
 import io.smallrye.mutiny.coroutines.awaitSuspending
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import javax.enterprise.context.ApplicationScoped
 import javax.transaction.Transactional
 
@@ -22,17 +19,15 @@ class DataFileGatewayImpl(
     private val dataFileRepository: DataFileRepository,
 ) : DataFileGateway {
 
-    private val scope = Dispatchers.IO + Job()
-
-    override suspend fun find(dataFileSearch: DataFileSearch): Result<DataFileShow> {
-        val nanoId = dataFileSearch.id
+    override suspend fun find(dataFileSearchParams: de.ma.domain.datafile.DataFileSearchParams): Result<DataFileShow> {
+        val nanoId = dataFileSearchParams.id
         val dataFile = dataFileRepository.findById(nanoId.toEntity()).awaitSuspending() ?: return Result.failure(
             DataFileException.NotFoundException(nanoId.value)
         )
-        return Result.success(DataFileShowDTO(dataFile.extension, dataFile.name))
+        return Result.success(DataFileShowDTO(dataFile.extension, dataFile.name, dataFileSearchParams.domain))
     }
 
-    override suspend fun delete(dataFileDelete: DataFileSearch): Result<DataFile> {
+    override suspend fun delete(dataFileDelete: de.ma.domain.datafile.DataFileSearchParams): Result<DataFile> {
         val nanoIdEntity = dataFileDelete.id.toEntity()
 
         val dataFileEntity =

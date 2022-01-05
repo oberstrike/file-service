@@ -1,31 +1,14 @@
 package de.ma.datafile.impl.utils
 
-import de.ma.domain.content.DataFileContentCreate
-import de.ma.domain.content.DataFileContentOverview
-import de.ma.domain.datafile.DataFileCreate
-import de.ma.domain.datafile.DataFileDelete
-import de.ma.domain.datafile.DataFileOverview
 import de.ma.domain.nanoid.NanoId
-import de.ma.domain.nanoid.NanoIdGateway
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
 import java.io.File
-import java.io.InputStream
 import java.util.*
 
 
 data class NanoIdImpl(override var value: String) : NanoId
-
-class NanoIdGatewayImpl : NanoIdGateway {
-    override fun toText(nanoId: NanoId): String {
-        return nanoId.value
-    }
-
-    override fun toNanoId(text: String): NanoId {
-        return NanoIdImpl(text)
-    }
-}
 
 data class PagedParamsImpl(
     override val page: Int,

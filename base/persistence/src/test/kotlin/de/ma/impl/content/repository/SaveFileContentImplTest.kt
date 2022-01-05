@@ -4,7 +4,6 @@ import de.ma.impl.utils.AbstractDatabaseTest
 import io.quarkus.test.junit.QuarkusTest
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should not be empty`
-import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldNotBe
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir

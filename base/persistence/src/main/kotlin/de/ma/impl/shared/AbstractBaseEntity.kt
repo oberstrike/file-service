@@ -1,12 +1,12 @@
 package de.ma.impl.shared
 
-import de.ma.domain.nanoid.NanoId
-import de.ma.domain.shared.HasId
-import de.ma.impl.nanoid.NanoIdConverter
 import de.ma.impl.nanoid.NanoIdEntity
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase
 import org.hibernate.annotations.GenericGenerator
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.EmbeddedId
+import javax.persistence.GeneratedValue
+import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
 abstract class AbstractBaseEntity : PanacheEntityBase() {

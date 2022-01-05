@@ -1,7 +1,6 @@
-package de.ma.web.infrastructure
+package de.ma.web.infrastructure.converter
 
-import de.ma.domain.datafile.DataFileSearch
-import de.ma.web.datafile.DataFileConverter
+import de.ma.domain.datafile.DataFileSearchParams
 import java.lang.reflect.Type
 import javax.ws.rs.ext.ParamConverter
 import javax.ws.rs.ext.ParamConverterProvider
@@ -16,8 +15,8 @@ class CustomParamConverterProvider : ParamConverterProvider {
         annotations: Array<out Annotation>
     ): ParamConverter<T>? {
         //returns a DataFileConverter if rawType is DataFileSearch
-        if (rawType == DataFileSearch::class.java) {
-            return DataFileConverter() as ParamConverter<T>
+        if (rawType == DataFileSearchParams::class.java) {
+            return DataFileSearchConverter() as ParamConverter<T>
         }
         return null
     }

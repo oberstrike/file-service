@@ -14,14 +14,14 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 @QuarkusTest
-class FindFileContentByNanoIdImplTest : AbstractDatabaseTest() {
+class FindFileContentImplTest : AbstractDatabaseTest() {
 
 
     @Test
-    fun `find FileContent successfully`(@TempDir dir: File) = runBlocking {
+    fun `find FileContent successfully`(@TempDir dir: File) = runTest {
         val nanoId = nanoId()
 
-        val findFileContentByNanoIdImpl = FindFileContentByNanoIdImpl(dir.absolutePath)
+        val findFileContentByNanoIdImpl = FindFileContentImpl(dir.absolutePath)
 
         //create new file
         withContext(Dispatchers.IO) {
@@ -29,21 +29,20 @@ class FindFileContentByNanoIdImplTest : AbstractDatabaseTest() {
         }
 
 
-        val result = findFileContentByNanoIdImpl.findByNanoId(nanoId)
+        val result = findFileContentByNanoIdImpl.find(nanoId)
 
         result shouldNotBe null
     }
 
 
     @Test
-    fun `find FileContent fails`(@TempDir dir: File) = runBlocking {
+    fun `find FileContent fails`(@TempDir dir: File) = runTest {
         val nanoId = nanoId()
 
-        val findFileContentByNanoIdImpl = FindFileContentByNanoIdImpl(dir.absolutePath)
+        val findFileContentByNanoIdImpl = FindFileContentImpl(dir.absolutePath)
 
-        val result = findFileContentByNanoIdImpl.findByNanoId(nanoId)
+        val result = findFileContentByNanoIdImpl.find(nanoId)
 
         result shouldBe null
-        Unit
     }
 }

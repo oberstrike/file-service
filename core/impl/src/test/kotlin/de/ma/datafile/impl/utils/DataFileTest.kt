@@ -10,31 +10,37 @@ interface DataFileTest {
         content: DataFileContentShow = DataFileContentShowImpl(file()),
         name: String = "test",
         extension: String = "txt",
+        domain: String?,
         block: (DataFileShow) -> Unit
     )
 
     fun withDataFileDelete(
         targetId: NanoId = nanoId(),
-        block: (DataFileDelete) -> Unit
+        domain: String?,
+        block: (DeleteParamsDataFile) -> Unit
     )
 
     fun withDataFileOverview(
         name: String = "",
         size: Long = 0,
         id: NanoId = nanoId(),
+        domain: String?,
         block: (DataFileOverview) -> Unit
     )
 
     fun withDataFileCreate(
         extension: String,
         name: String,
-        content: DataFileContentCreate = DataFileContentCreateImpl(inputStream()),
+        domain: String,
+        content: DataFileContentCreate,
         block: (DataFileCreate) -> Unit
+
     )
 
     fun withDataFileSearch(
         nanoId: NanoId,
-        block: (DataFileSearch) -> Unit
+        domain: String?,
+        block: (DataFileSearchParams) -> Unit
     )
 
 

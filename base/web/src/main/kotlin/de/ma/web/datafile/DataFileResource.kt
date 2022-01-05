@@ -1,7 +1,7 @@
 package de.ma.web.datafile
 
 import de.ma.datafile.api.management.DataFileManagementUseCase
-import de.ma.domain.datafile.DataFileSearch
+import de.ma.domain.datafile.DataFileSearchParams
 import de.ma.domain.shared.PagedList
 import de.ma.web.datafile.form.*
 import org.eclipse.microprofile.openapi.annotations.media.Content
@@ -24,9 +24,9 @@ class DataFileResource(
         @Parameter(
             name = "id",
             schema = Schema(implementation = String::class)
-        ) @PathParam(value = "id") dataFileSearch: DataFileSearch
+        ) @PathParam(value = "id") dataFileSearchParams: DataFileSearchParams
     ): Response {
-        val dataFileResult = dataFileManagementUseCase.getDataFile(dataFileSearch)
+        val dataFileResult = dataFileManagementUseCase.getDataFile(dataFileSearchParams)
         if (dataFileResult.isFailure) {
             throw dataFileResult.exceptionOrNull()!!
         }
@@ -67,7 +67,7 @@ class DataFileResource(
     @Path("/{id}")
     @Produces(MediaType.TEXT_PLAIN)
     suspend fun deleteFile(@PathParam(value = "id") id: String) {
-        val deletedResult = dataFileManagementUseCase.deleteDataFile(DataFileDeleteForm(id.toNanoId()))
+        val deletedResult = dataFileManagementUseCase.deleteDataFile(DeleteFormParamsDataFile(id.toNanoId()))
 
         if (deletedResult.isFailure) {
             throw deletedResult.exceptionOrNull()!!
@@ -79,7 +79,7 @@ class DataFileResource(
     @Produces(MediaType.APPLICATION_JSON)
     suspend fun getFiles(): PagedList<DataFileOverviewForm> {
 
-        val dataFilesResult = dataFileManagementUseCase.getDataFiles(
+        val dataFilesResult = dataFileManagementUseCase.getDataFilesPaged(
             PagedParamsImpl(0, 10)
         )
         if (dataFilesResult.isFailure) {

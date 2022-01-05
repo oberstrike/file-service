@@ -8,7 +8,8 @@ data class DataFileOverviewDTO(
     override val id: NanoId,
     override val name: String,
     override val createdAt: LocalDateTime,
-    override val extension: String
+    override val extension: String,
+    override val domain: String?
 ) : DataFileOverview
 
 
@@ -16,5 +17,6 @@ fun DataFileEntity.toOverviewDTO() : DataFileOverview = DataFileOverviewDTO(
     id = id!!,
     name = name,
     createdAt = createdAt,
-    extension = extension
+    extension = extension,
+    domain = domain
 )

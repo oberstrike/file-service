@@ -7,4 +7,5 @@ interface DataFileShow {
     val name: String
     val extension: String
     var content: DataFileContentShow
+    val domain: String?
 }

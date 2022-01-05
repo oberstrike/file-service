@@ -19,7 +19,9 @@ import javax.persistence.*
 )
 data class DataFileEntity(
     override var name: String,
-    override var extension: String
+    override var extension: String,
+    @get:Column(name = "domain", columnDefinition = "varchar(255)")
+    override var domain: String = ""
 ) : AbstractBaseEntity(), DataFile {
 
     @get:CreationTimestamp

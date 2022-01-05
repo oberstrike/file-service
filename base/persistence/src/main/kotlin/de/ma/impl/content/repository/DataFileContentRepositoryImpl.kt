@@ -3,9 +3,9 @@ package de.ma.impl.content.repository
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.content.DataFileContentOverview
 import de.ma.domain.content.DataFileContentShow
-import de.ma.domain.nanoid.NanoId
+import de.ma.domain.datafile.DataFileSearchParams
 import de.ma.impl.content.repository.api.DataFileContentRepository
-import de.ma.impl.content.repository.api.FindFileContentByNanoId
+import de.ma.impl.content.repository.api.FindFileContent
 import de.ma.impl.content.repository.api.SaveFileContent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -22,14 +22,14 @@ class DataFileContentRepositoryImpl(
     @ConfigProperty(name = "datafile.content.folder")
     private val domainPath: String,
     private val saveFileContent: SaveFileContent,
-    private val findFileContentByNanoId: FindFileContentByNanoId
+    private val findFileContent: FindFileContent
 ) : DataFileContentRepository {
 
     private val scope = Dispatchers.IO + Job()
 
     private val jobs: MutableSet<Job> = Collections.synchronizedSet(mutableSetOf())
 
-    private lateinit var domain: File
+    private lateinit var baseFolder: File
 
 
     @PreDestroy
@@ -39,28 +39,31 @@ class DataFileContentRepositoryImpl(
 
     @PostConstruct
     fun init() {
-        domain = createFolder(domainPath) ?: throw IllegalStateException("Could not create domain folder")
+        baseFolder = createFolder(domainPath) ?: throw IllegalStateException("Could not create domain folder")
     }
 
-    override suspend fun findByNanoId(nanoId: NanoId): DataFileContentShow? {
+    override suspend fun find(searchParams: DataFileSearchParams): DataFileContentShow? {
         return withContext(scope) {
-            return@withContext findFileContentByNanoId.findByNanoId(nanoId)
+            return@withContext findFileContent.find(searchParams)
         }
     }
 
     //saves the content to the file system synchron
-    override suspend fun save(content: DataFileContentCreate, nanoId: NanoId): DataFileContentOverview? =
+    override suspend fun save(
+        content: DataFileContentCreate,
+        searchParams: DataFileSearchParams
+    ): DataFileContentOverview? =
         withContext(scope) {
-            return@withContext saveFileContent.save(content, nanoId)
+            return@withContext saveFileContent.save(content, searchParams)
         }
 
-    override suspend fun deleteByNanoId(nanoId: NanoId): Boolean? {
-        val file = File(domain, nanoId.value)
+    override suspend fun deleteByNanoId(searchParams: DataFileSearchParams): Boolean? {
+        val file = File(baseFolder, searchParams.id.value)
         return if (file.exists()) file.delete() else false
     }
 
     override suspend fun reset() = withContext(scope) {
-        domain.listFiles()?.forEach { file ->
+        baseFolder.listFiles()?.forEach { file ->
             file.delete()
         }
         Unit

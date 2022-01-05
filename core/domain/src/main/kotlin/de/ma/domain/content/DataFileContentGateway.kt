@@ -1,19 +1,15 @@
 package de.ma.domain.content
 
-import de.ma.domain.datafile.DataFileDelete
-import de.ma.domain.datafile.DataFileSearch
-import de.ma.domain.nanoid.NanoId
+import de.ma.domain.datafile.DataFileOverview
+import de.ma.domain.datafile.DeleteParamsDataFile
+import de.ma.domain.datafile.DataFileSearchParams
 
 interface DataFileContentGateway {
 
-    suspend fun getContent(search: DataFileContentSearch): Result<DataFileContentShow>
+    suspend fun getContent(dataFileSearchParams: DataFileSearchParams): Result<DataFileContentShow>
 
-    suspend fun saveContent(contentCreate: DataFileContentCreate, nanoId: NanoId): Result<DataFileContentOverview>
+    suspend fun saveContent(contentCreate: DataFileContentCreate, dataFileOverview: DataFileOverview): Result<DataFileContentOverview>
 
-    suspend fun deleteContent(search: DataFileContentSearch): Result<Unit>
-
-    fun toContentSearch(dataFileSearch: DataFileSearch): DataFileContentSearch
-
-    fun toContentDelete(deleteDataFile: DataFileDelete): DataFileContentDelete
+    suspend fun deleteContent(deleteParams: DeleteParamsDataFile): Result<Unit>
 
 }

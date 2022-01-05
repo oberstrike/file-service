@@ -3,11 +3,10 @@ package de.ma.impl.utils
 
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.datafile.DataFileCreate
-import de.ma.domain.datafile.DataFileSearch
 import de.ma.domain.nanoid.NanoId
 import de.ma.impl.content.DataFileContentCreateDTO
-import de.ma.impl.content.DataFileCreateDTO
-import de.ma.impl.datafile.DataFileSearchDTO
+import de.ma.impl.datafile.utils.DataFileCreateDTO
+import de.ma.impl.datafile.DataFileSearchParamsDTO
 import de.ma.impl.nanoid.NanoIdDTO
 import io.quarkus.test.common.QuarkusTestResource
 import java.io.InputStream
@@ -31,17 +30,27 @@ abstract class AbstractDatabaseTest {
         return DataFileContentCreateDTO(input)
     }
 
-    fun dataFileSearch(nanoId: NanoId = nanoId()): DataFileSearchDTO {
-        return DataFileSearchDTO(
-            nanoId
+    fun dataFileSearch(
+        nanoId: NanoId = nanoId(),
+        domain: String? = null
+    ): DataFileSearchParamsDTO {
+        return DataFileSearchParamsDTO(
+            nanoId,
+            domain
         )
     }
 
 
-    fun dataFileCreate(extension: String, name: String, content: DataFileContentCreate): DataFileCreate =
+    fun dataFileCreate(
+        extension: String,
+        name: String,
+        content: DataFileContentCreate,
+        domain: String
+    ): DataFileCreate =
         DataFileCreateDTO(
             content,
             extension,
-            name
+            name,
+            domain
         )
 }

@@ -2,6 +2,7 @@ package de.ma.web.datafile.form
 
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.datafile.DataFileCreate
+import de.ma.domain.nanoid.NanoId
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType
 import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.jboss.resteasy.reactive.PartType
@@ -33,7 +34,7 @@ fun DataFileCreateForm.toDataFileCreate(): DataFileCreate {
         name = name!!,
         extension = extension!!,
         content = DataFileContentCreateImpl(
-            input = content!!.inputStream()
+            input = content!!.inputStream(),
         )
     )
 }
@@ -41,10 +42,12 @@ fun DataFileCreateForm.toDataFileCreate(): DataFileCreate {
 data class DataFileCreateImpl(
     override val name: String,
     override val extension: String,
-    override val content: DataFileContentCreate
+    override val content: DataFileContentCreate,
+    override val domain: String
 ) : DataFileCreate
 
 
 data class DataFileContentCreateImpl(
-    override val input: InputStream
+    override val input: InputStream,
+    override val nanoId: NanoId
 ) : DataFileContentCreate

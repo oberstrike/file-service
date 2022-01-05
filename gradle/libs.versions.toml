@@ -5,6 +5,7 @@ junitJupiterVersion = "5.4.2"
 kluentVersion = "1.68"
 kotlinFakerVersion = "1.9.0"
 mockkVersion = "1.12.1"
+kotlinCoroutinesVersion = "1.6.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -20,5 +21,5 @@ kluent = { module = "org.amshove.kluent:kluent", version.ref = "kluentVersion" }
 jnanoid = {module = "com.aventrix.jnanoid:jnanoid", version.ref = "jnanoid"}
 kotlin-faker = {module = "io.github.serpro69:kotlin-faker", version.ref = "kotlinFakerVersion"}
 mockk = {module = "io.mockk:mockk", version.ref = "mockkVersion"}
-kotlinCoroutines = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin"}
-kotlinCoroutinesTest = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin"}
+kotlinCoroutines = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinCoroutinesVersion"}
+kotlinCoroutinesTest = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinCoroutinesVersion"}

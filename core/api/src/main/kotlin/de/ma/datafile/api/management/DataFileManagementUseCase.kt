@@ -7,13 +7,14 @@ import de.ma.domain.shared.SearchParams
 import de.ma.domain.shared.SortParams
 
 interface DataFileManagementUseCase {
+
     suspend fun dataFileCreate(createDataFile: DataFileCreate): Result<DataFileOverview>
 
-    suspend fun deleteDataFile(deleteDataFile: DataFileDelete): Result<Unit>
+    suspend fun deleteDataFile(dataFileDelete: DeleteParamsDataFile): Result<Unit>
 
-    suspend fun getDataFile(dataFileSearch: DataFileSearch): Result<DataFileShow>
+    suspend fun getDataFile(dataFileSearchParams: de.ma.domain.datafile.DataFileSearchParams): Result<DataFileShow>
 
-    suspend fun getDataFiles(
+    suspend fun getDataFilesPaged(
         pagedParams: PagedParams,
         searchParams: SearchParams? = null,
         sortParams: SortParams? = null

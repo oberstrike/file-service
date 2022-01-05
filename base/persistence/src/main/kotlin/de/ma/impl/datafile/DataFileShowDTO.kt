@@ -6,6 +6,7 @@ import de.ma.domain.datafile.DataFileShow
 data class DataFileShowDTO(
     override val extension: String,
     override val name: String,
+    override val domain: String?
 ) : DataFileShow{
 
     override lateinit var content: DataFileContentShow
