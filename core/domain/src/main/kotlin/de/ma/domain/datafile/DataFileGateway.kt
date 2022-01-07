@@ -8,9 +8,9 @@ import de.ma.domain.shared.SortParams
 
 //The DataFileGateway interface is the gateway to the data file domain.
 interface DataFileGateway {
-    suspend fun find(dataFileSearchParams: de.ma.domain.datafile.DataFileSearchParams): Result<DataFileShow>
+    suspend fun find(dataFileSearchParams: DataFileSearchParams): Result<DataFileShow>
 
-    suspend fun delete(dataFileDelete: de.ma.domain.datafile.DataFileSearchParams): Result<DataFile>
+    suspend fun delete(dataFileDelete: DataFileSearchParams): Result<DataFile>
 
     suspend fun <T : DataFileCreate> save(dataFileCreate: T): Result<DataFileOverview>
 

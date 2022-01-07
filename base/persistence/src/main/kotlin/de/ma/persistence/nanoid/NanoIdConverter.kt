@@ -1,4 +1,4 @@
-package de.ma.impl.nanoid
+package de.ma.persistence.nanoid
 
 import javax.enterprise.context.ApplicationScoped
 import javax.persistence.AttributeConverter

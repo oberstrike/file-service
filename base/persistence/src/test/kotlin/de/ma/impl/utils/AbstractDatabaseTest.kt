@@ -4,7 +4,7 @@ package de.ma.impl.utils
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.datafile.DataFileCreate
 import de.ma.domain.nanoid.NanoId
-import de.ma.impl.content.DataFileContentCreateDTO
+import de.ma.persistence.content.DataFileContentCreateDTO
 import de.ma.impl.datafile.utils.DataFileCreateDTO
 import de.ma.impl.datafile.DataFileSearchParamsDTO
 import de.ma.impl.nanoid.NanoIdDTO
@@ -24,10 +24,17 @@ abstract class AbstractDatabaseTest {
         return text.byteInputStream()
     }
 
+    fun searchParams(nanoId: NanoId, domain: String?): DataFileSearchParamsDTO {
+        return DataFileSearchParamsDTO(
+            nanoId,
+            domain
+        )
+    }
+
     fun nanoId(text: String = UUID.randomUUID().toString()): NanoId = NanoIdDTO(text)
 
     fun dataFileContentCreate(input: InputStream): DataFileContentCreate {
-        return DataFileContentCreateDTO(input)
+        return de.ma.persistence.content.DataFileContentCreateDTO(input)
     }
 
     fun dataFileSearch(

@@ -1,7 +1,8 @@
-package de.ma.impl.datafile
+package de.ma.persistence.datafile
 
 import de.ma.domain.nanoid.NanoId
 import de.ma.impl.nanoid.NanoIdEntity
+import de.ma.persistence.nanoid.NanoIdEntity
 import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase
 import javax.enterprise.context.ApplicationScoped
 
@@ -9,6 +10,6 @@ import javax.enterprise.context.ApplicationScoped
 class DataFileRepository: PanacheRepositoryBase<DataFileEntity, NanoIdEntity> {
 }
 
-fun NanoId.toEntity(): NanoIdEntity{
+fun NanoId.toEntity(): NanoIdEntity {
     return NanoIdEntity(this.value)
 }

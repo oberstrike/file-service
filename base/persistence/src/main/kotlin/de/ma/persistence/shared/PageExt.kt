@@ -1,4 +1,4 @@
-package de.ma.impl.shared
+package de.ma.persistence.shared
 
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams

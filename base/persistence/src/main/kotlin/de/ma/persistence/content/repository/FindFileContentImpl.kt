@@ -1,9 +1,8 @@
-package de.ma.impl.content.repository
+package de.ma.persistence.content.repository
 
 import de.ma.domain.content.DataFileContentShow
 import de.ma.domain.datafile.DataFileSearchParams
-import de.ma.impl.content.DataFileContentShowDTO
-import de.ma.impl.content.repository.api.FindFileContent
+import de.ma.persistence.content.repository.api.FindFileContent
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
@@ -23,6 +22,6 @@ class FindFileContentImpl(
         if (!file.exists()) {
             return null
         }
-        return DataFileContentShowDTO(file)
+        return de.ma.persistence.content.DataFileContentShowDTO(file)
     }
 }

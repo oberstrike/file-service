@@ -1,4 +1,4 @@
-package de.ma.impl.content.repository.api
+package de.ma.persistence.content.repository.api
 
 import de.ma.domain.content.DataFileContentShow
 import de.ma.domain.datafile.DataFileSearchParams

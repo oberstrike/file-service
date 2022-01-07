@@ -1,4 +1,4 @@
-package de.ma.impl.nanoid
+package de.ma.persistence.nanoid
 
 import de.ma.domain.nanoid.NanoId
 

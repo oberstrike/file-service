@@ -1,12 +1,12 @@
-package de.ma.impl.content.repository
+package de.ma.persistence.content.repository
 
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.content.DataFileContentOverview
 import de.ma.domain.content.DataFileContentShow
 import de.ma.domain.datafile.DataFileSearchParams
-import de.ma.impl.content.repository.api.DataFileContentRepository
-import de.ma.impl.content.repository.api.FindFileContent
-import de.ma.impl.content.repository.api.SaveFileContent
+import de.ma.persistence.content.repository.api.DataFileContentRepository
+import de.ma.persistence.content.repository.api.FindFileContent
+import de.ma.persistence.content.repository.api.SaveFileContent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext

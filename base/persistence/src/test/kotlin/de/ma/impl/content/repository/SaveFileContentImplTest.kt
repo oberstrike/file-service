@@ -12,18 +12,18 @@ import java.io.File
 @QuarkusTest
 class SaveFileContentImplTest : AbstractDatabaseTest() {
 
-
     @Test
-    fun save(@TempDir targetDir: File) {
+    fun `save successfully a new file content`(@TempDir targetDir: File) {
         val saveFileContentImpl = SaveFileContentImpl(targetDir.absolutePath)
 
         val nanoId = nanoId()
+        val searchParams = searchParams(nanoId, null)
 
         val inputText = "Mein Text"
 
         withContentCreate(inputText) { contentCreate ->
             runBlocking {
-                saveFileContentImpl.save(contentCreate, nanoId)
+                saveFileContentImpl.save(contentCreate, searchParams)
 
                 val listFiles = targetDir.listFiles()
                 listFiles shouldNotBe null

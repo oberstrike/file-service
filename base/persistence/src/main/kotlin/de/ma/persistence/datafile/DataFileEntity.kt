@@ -1,4 +1,4 @@
-package de.ma.impl.datafile
+package de.ma.persistence.datafile
 
 import de.ma.domain.datafile.DataFile
 import de.ma.domain.nanoid.NanoId

@@ -1,6 +1,6 @@
-package de.ma.impl.shared
+package de.ma.persistence.shared
 
-import de.ma.impl.nanoid.NanoIdEntity
+import de.ma.persistence.nanoid.NanoIdEntity
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase
 import org.hibernate.annotations.GenericGenerator
 import javax.persistence.Column

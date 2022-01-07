@@ -20,16 +20,21 @@ class FindFileContentImplTest : AbstractDatabaseTest() {
     @Test
     fun `find FileContent successfully`(@TempDir dir: File) = runTest {
         val nanoId = nanoId()
+        val domain = "domain"
+        val searchParams = searchParams(nanoId, domain)
 
         val findFileContentByNanoIdImpl = FindFileContentImpl(dir.absolutePath)
 
         //create new file
+        val parent = dir.absolutePath + "/${domain}"
+
+
         withContext(Dispatchers.IO) {
-            File(dir, nanoId.value).createNewFile()
+            File(parent).mkdirs()
+            File(parent, nanoId.value).createNewFile()
         }
 
-
-        val result = findFileContentByNanoIdImpl.find(nanoId)
+        val result = findFileContentByNanoIdImpl.find(searchParams)
 
         result shouldNotBe null
     }
@@ -38,10 +43,12 @@ class FindFileContentImplTest : AbstractDatabaseTest() {
     @Test
     fun `find FileContent fails`(@TempDir dir: File) = runTest {
         val nanoId = nanoId()
+        val domain = "domain"
+        val searchParams = searchParams(nanoId, domain)
 
         val findFileContentByNanoIdImpl = FindFileContentImpl(dir.absolutePath)
 
-        val result = findFileContentByNanoIdImpl.find(nanoId)
+        val result = findFileContentByNanoIdImpl.find(searchParams)
 
         result shouldBe null
     }

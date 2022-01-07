@@ -1,15 +1,15 @@
-package de.ma.impl.content
+package de.ma.persistence.content
 
 import de.ma.domain.content.*
 import de.ma.domain.datafile.DataFileOverview
 import de.ma.domain.datafile.DataFileSearchParams
 import de.ma.domain.datafile.DeleteParamsDataFile
-import de.ma.impl.content.repository.DataFileContentRepositoryImpl
+import de.ma.persistence.content.repository.DataFileContentRepositoryImpl
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class DataFileContentGatewayImpl(
-    private val dataFileContentRepositoryImpl: DataFileContentRepositoryImpl
+    private val dataFileContentRepositoryImpl: de.ma.persistence.content.repository.DataFileContentRepositoryImpl
 ) : DataFileContentGateway {
 
     override suspend fun saveContent(

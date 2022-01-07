@@ -1,4 +1,4 @@
-package de.ma.impl.content
+package de.ma.persistence.content
 
 import de.ma.domain.content.DataFileContentOverview
 

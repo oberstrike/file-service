@@ -33,7 +33,7 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
         val input = "Mein Leben".byteInputStream()
 
         val contentCreate = dataFileContentCreate(input)
-        val dataFileCreate = dataFileCreate("txt", "test", contentCreate)
+        val dataFileCreate = dataFileCreate("txt", "test", contentCreate, "test")
 
         val result = dataFileGateway.save(dataFileCreate)
 
@@ -56,7 +56,7 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
         all.isEmpty() shouldBe false
 
 
-        val deleted = dataFileGateway.delete(DataFileSearchParamsDTO(result.id!!))
+        val deleted = dataFileGateway.delete(DataFileSearchParamsDTO(result.id!!, "test"))
 
         deleted.isSuccess shouldBe true
 
@@ -100,7 +100,7 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
 
         result.deleted shouldBe false
 
-        val deleteResult = dataFileGateway.delete(DataFileSearchParamsDTO(result.id!!))
+        val deleteResult = dataFileGateway.delete(DataFileSearchParamsDTO(result.id!!, null))
 
         deleteResult.isSuccess shouldBe true
 

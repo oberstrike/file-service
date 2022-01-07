@@ -18,7 +18,7 @@ import javax.inject.Inject
 class DataFileContentRepositoryTest : AbstractDatabaseTest() {
 
     @Inject
-    lateinit var dataFileContentRepositoryImpl: DataFileContentRepositoryImpl
+    lateinit var dataFileContentRepositoryImpl: de.ma.persistence.content.repository.DataFileContentRepositoryImpl
 
     @ConfigProperty(name = "datafile.content.folder")
     lateinit var domainPath: String

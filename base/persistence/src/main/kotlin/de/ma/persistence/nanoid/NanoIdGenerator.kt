@@ -1,4 +1,4 @@
-package de.ma.impl.nanoid
+package de.ma.persistence.nanoid
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils
 import org.hibernate.engine.spi.SharedSessionContractImplementor

@@ -1,4 +1,4 @@
-package de.ma.impl.datafile
+package de.ma.persistence.datafile
 
 import de.ma.domain.content.DataFileContentShow
 import de.ma.domain.datafile.DataFileShow
