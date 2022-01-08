@@ -24,9 +24,17 @@ class SaveFileContentImpl(
         searchParams: DataFileSearchParams
     ): DataFileContentOverview? {
 
+
         val targetDomain = searchParams.domain?.prefixIfNot("/") ?: ""
 
-        val file = File(baseFolder + targetDomain, searchParams.id.value)
+        val targetUrl = baseFolder + targetDomain
+
+        if(!Files.exists(File(targetUrl).toPath())){
+            Files.createDirectories(File(targetUrl).toPath())
+        }
+
+
+        val file = File(targetUrl, searchParams.id.value)
 
         return try {
             Files.copy(content.input, file.toPath())

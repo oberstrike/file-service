@@ -1,7 +1,6 @@
 package de.ma.persistence.datafile
 
 import de.ma.domain.nanoid.NanoId
-import de.ma.impl.nanoid.NanoIdEntity
 import de.ma.persistence.nanoid.NanoIdEntity
 import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase
 import javax.enterprise.context.ApplicationScoped

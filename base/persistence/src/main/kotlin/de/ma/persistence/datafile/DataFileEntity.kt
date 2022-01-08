@@ -1,9 +1,7 @@
 package de.ma.persistence.datafile
 
 import de.ma.domain.datafile.DataFile
-import de.ma.domain.nanoid.NanoId
-import de.ma.impl.nanoid.NanoIdEntity
-import de.ma.impl.shared.AbstractBaseEntity
+import de.ma.persistence.shared.AbstractBaseEntity
 import org.hibernate.Hibernate
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime

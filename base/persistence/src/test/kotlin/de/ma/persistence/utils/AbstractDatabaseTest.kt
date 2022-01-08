@@ -1,13 +1,12 @@
-package de.ma.impl.utils
+package de.ma.persistence.utils
 
 
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.datafile.DataFileCreate
 import de.ma.domain.nanoid.NanoId
-import de.ma.persistence.content.DataFileContentCreateDTO
-import de.ma.impl.datafile.utils.DataFileCreateDTO
-import de.ma.impl.datafile.DataFileSearchParamsDTO
-import de.ma.impl.nanoid.NanoIdDTO
+import de.ma.persistence.datafile.utils.DataFileCreateDTO
+import de.ma.persistence.datafile.DataFileSearchParamsDTO
+import de.ma.persistence.nanoid.NanoIdDTO
 import io.quarkus.test.common.QuarkusTestResource
 import java.io.InputStream
 import java.util.*

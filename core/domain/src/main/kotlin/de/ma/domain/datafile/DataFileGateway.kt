@@ -24,4 +24,6 @@ interface DataFileGateway {
 
     suspend fun purge(dataFile: DataFile)
 
+    suspend fun exists(name: String, extension: String, domain: String): Boolean
+
 }

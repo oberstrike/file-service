@@ -1,4 +1,4 @@
-package de.ma.impl.utils
+package de.ma.persistence.utils
 
 import io.quarkus.test.junit.QuarkusTest
 import javax.enterprise.inject.Stereotype

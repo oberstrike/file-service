@@ -1,15 +1,13 @@
-package de.ma.impl.content.repository
+package de.ma.persistence.content.repository
 
-import de.ma.impl.utils.AbstractDatabaseTest
+import de.ma.persistence.utils.AbstractDatabaseTest
 import io.quarkus.test.junit.QuarkusTest
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldNotBe
 import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 

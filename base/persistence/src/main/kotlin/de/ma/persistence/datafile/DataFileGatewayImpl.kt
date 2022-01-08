@@ -6,6 +6,8 @@ import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
 import de.ma.domain.shared.SortParams
+import de.ma.persistence.shared.pagedMap
+import de.ma.persistence.shared.toPagedList
 import io.quarkus.hibernate.reactive.panache.Panache
 import io.quarkus.panache.common.Sort
 import io.smallrye.mutiny.coroutines.awaitSuspending
@@ -45,7 +47,7 @@ class DataFileGatewayImpl(
 
     @Transactional
     override suspend fun <T : DataFileCreate> save(dataFileCreate: T): Result<DataFileOverview> {
-        val dataFileEntity = DataFileEntity(dataFileCreate.name, dataFileCreate.extension)
+        val dataFileEntity = DataFileEntity(dataFileCreate.name, dataFileCreate.extension, dataFileCreate.domain)
 
         return try {
             val result = Panache.withTransaction {
@@ -92,6 +94,14 @@ class DataFileGatewayImpl(
         entity.deleted = false
 
         dataFileRepository.persist(entity).awaitSuspending()
+    }
+
+    override suspend fun exists(name: String, extension: String, domain: String): Boolean {
+        val dataFileEntities =
+            dataFileRepository.find("name = ?1 and extension = ?2 and domain = ?3", name, extension, domain)
+                .list<DataFileEntity>()
+                .awaitSuspending()
+        return dataFileEntities.isNotEmpty()
     }
 
 

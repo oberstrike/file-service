@@ -36,6 +36,7 @@ dependencies{
 
 
 
+
     // https://mvnrepository.com/artifact/io.smallrye.reactive/mutiny-kotlin
     implementation("io.smallrye.reactive:mutiny-kotlin:1.2.0")
 

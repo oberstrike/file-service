@@ -1,11 +1,9 @@
-package de.ma.impl.content.repository
+package de.ma.persistence.content.repository
 
-import de.ma.impl.utils.AbstractDatabaseTest
+import de.ma.persistence.utils.AbstractDatabaseTest
 import io.quarkus.test.junit.QuarkusTest
 import kotlinx.coroutines.*
-import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBe
-import org.amshove.kluent.shouldNotBe
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

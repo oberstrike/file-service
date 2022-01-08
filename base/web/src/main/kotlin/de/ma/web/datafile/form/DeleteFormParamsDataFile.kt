@@ -5,5 +5,5 @@ import de.ma.domain.nanoid.NanoId
 
 data class DeleteFormParamsDataFile(
     override val id: NanoId,
-    override val domain: String?
+    override val domain: String
 ) : DeleteParamsDataFile

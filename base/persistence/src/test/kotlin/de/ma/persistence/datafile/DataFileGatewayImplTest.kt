@@ -1,8 +1,8 @@
-package de.ma.impl.datafile
+package de.ma.persistence.datafile
 
 import de.ma.domain.datafile.DataFileGateway
-import de.ma.impl.utils.AbstractDatabaseTest
-import de.ma.impl.utils.TransactionalQuarkusTest
+import de.ma.persistence.utils.AbstractDatabaseTest
+import de.ma.persistence.utils.TransactionalQuarkusTest
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest

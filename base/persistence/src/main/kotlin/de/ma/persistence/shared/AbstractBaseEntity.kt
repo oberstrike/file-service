@@ -16,7 +16,7 @@ abstract class AbstractBaseEntity : PanacheEntityBase() {
     @get:GeneratedValue(generator = "nano-generator")
     @get:GenericGenerator(
         name = "nano-generator",
-        strategy = "de.ma.impl.nanoid.NanoIdGenerator"
+        strategy = "de.ma.persistence.nanoid.NanoIdGenerator"
     )
     @get:Column(columnDefinition = "CHAR(21)")
     var id: NanoIdEntity? = null

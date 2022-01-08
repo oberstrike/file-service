@@ -1,4 +1,4 @@
-package de.ma.impl.datafile.utils
+package de.ma.persistence.datafile.utils
 
 import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.datafile.DataFileCreate

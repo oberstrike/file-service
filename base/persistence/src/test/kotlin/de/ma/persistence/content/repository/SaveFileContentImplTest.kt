@@ -1,6 +1,6 @@
-package de.ma.impl.content.repository
+package de.ma.persistence.content.repository
 
-import de.ma.impl.utils.AbstractDatabaseTest
+import de.ma.persistence.utils.AbstractDatabaseTest
 import io.quarkus.test.junit.QuarkusTest
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should not be empty`

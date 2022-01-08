@@ -8,24 +8,32 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.jboss.resteasy.reactive.PartType
 import java.io.File
 import java.io.InputStream
+import javax.validation.constraints.NotNull
 import javax.ws.rs.FormParam
 import javax.ws.rs.core.MediaType
 
 class DataFileCreateForm {
 
+    @FormParam("domain")
+    @NotNull
+    var domain: String? = null
+
     @FormParam("name")
+    @NotNull
     var name: String? = null
 
     @FormParam("extension")
+    @NotNull
     var extension: String? = null
 
     @FormParam("content")
     @PartType(MediaType.APPLICATION_OCTET_STREAM)
     @Schema(type = SchemaType.STRING, format = "binary", description = "file data")
+    @NotNull
     var content: File? = null
 
     override fun toString(): String {
-        return "DataFileCreateForm(name=$name, extension=$extension, content=${content?.name?: "name is null"})"
+        return "DataFileCreateForm(name=$name, extension=$extension, content=${content?.name ?: "name is null"})"
     }
 }
 
@@ -35,7 +43,8 @@ fun DataFileCreateForm.toDataFileCreate(): DataFileCreate {
         extension = extension!!,
         content = DataFileContentCreateImpl(
             input = content!!.inputStream(),
-        )
+        ),
+        domain = domain!!
     )
 }
 
@@ -49,5 +58,4 @@ data class DataFileCreateImpl(
 
 data class DataFileContentCreateImpl(
     override val input: InputStream,
-    override val nanoId: NanoId
 ) : DataFileContentCreate

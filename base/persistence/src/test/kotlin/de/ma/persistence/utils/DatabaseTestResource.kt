@@ -1,4 +1,4 @@
-package de.ma.impl.utils
+package de.ma.persistence.utils
 
 import com.github.dockerjava.api.model.ExposedPort
 import com.github.dockerjava.api.model.HostConfig

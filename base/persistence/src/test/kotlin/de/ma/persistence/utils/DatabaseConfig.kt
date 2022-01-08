@@ -1,4 +1,4 @@
-package de.ma.impl.utils
+package de.ma.persistence.utils
 
 
 object DatabaseConfig {

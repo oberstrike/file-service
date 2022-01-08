@@ -2,6 +2,7 @@ package de.ma.web.datafile
 
 import de.ma.datafile.api.management.DataFileManagementUseCase
 import de.ma.domain.datafile.DataFileSearchParams
+import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.web.datafile.form.*
 import org.eclipse.microprofile.openapi.annotations.media.Content
@@ -9,6 +10,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody
 import org.jboss.resteasy.reactive.MultipartForm
+import javax.validation.Valid
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -24,9 +26,14 @@ class DataFileResource(
         @Parameter(
             name = "id",
             schema = Schema(implementation = String::class)
-        ) @PathParam(value = "id") dataFileSearchParams: DataFileSearchParams
+        ) @PathParam(value = "id") nanoId: NanoId,
+        @QueryParam("domain") domain: String = ""
     ): Response {
-        val dataFileResult = dataFileManagementUseCase.getDataFile(dataFileSearchParams)
+
+        val dataFileResult = dataFileManagementUseCase.getDataFile(
+            DataFileSearchParamsImpl(nanoId, domain)
+        )
+
         if (dataFileResult.isFailure) {
             throw dataFileResult.exceptionOrNull()!!
         }
@@ -50,7 +57,7 @@ class DataFileResource(
             schema = Schema(implementation = DataFileCreateForm::class)
         )]
     )
-    suspend fun create(@MultipartForm dataFileCreateForm: DataFileCreateForm): DataFileOverviewForm {
+    suspend fun create(@MultipartForm @Valid dataFileCreateForm: DataFileCreateForm): DataFileOverviewForm {
         val dataFileOverviewResult = dataFileManagementUseCase.dataFileCreate(
             dataFileCreateForm.toDataFileCreate()
         )
@@ -64,10 +71,13 @@ class DataFileResource(
 
 
     @DELETE
-    @Path("/{id}")
+    @Path("{domain}/{id}")
     @Produces(MediaType.TEXT_PLAIN)
-    suspend fun deleteFile(@PathParam(value = "id") id: String) {
-        val deletedResult = dataFileManagementUseCase.deleteDataFile(DeleteFormParamsDataFile(id.toNanoId()))
+    suspend fun deleteFile(
+        @PathParam(value = "id") id: String,
+        @PathParam(value = "domain") domain: String
+    ) {
+        val deletedResult = dataFileManagementUseCase.deleteDataFile(DeleteFormParamsDataFile(id.toNanoId(), domain))
 
         if (deletedResult.isFailure) {
             throw deletedResult.exceptionOrNull()!!

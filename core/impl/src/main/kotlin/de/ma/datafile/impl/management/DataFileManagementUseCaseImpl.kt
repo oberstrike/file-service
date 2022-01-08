@@ -7,11 +7,11 @@ import de.ma.datafile.impl.management.internal.internalGetDataFile
 import de.ma.datafile.impl.management.internal.internalGetDataFilesPaged
 import de.ma.domain.content.DataFileContentGateway
 import de.ma.domain.datafile.*
+import de.ma.domain.datafile.exceptions.DataFileException
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
 import de.ma.domain.shared.SortParams
-import java.lang.RuntimeException
 
 class DataFileManagementUseCaseImpl(
     internal val dataFileGateway: DataFileGateway,
@@ -22,6 +22,13 @@ class DataFileManagementUseCaseImpl(
         create Data File whole process
      */
     override suspend fun dataFileCreate(createDataFile: DataFileCreate): Result<DataFileOverview> {
+
+        val alreadyExists: Boolean = dataFileGateway.exists(createDataFile.name, createDataFile.extension, createDataFile.domain)
+
+        if(alreadyExists) {
+            return Result.failure(DataFileException.AlreadyExistsException(createDataFile.name, createDataFile.extension, createDataFile.domain))
+        }
+
         return internalCreate(createDataFile)
     }
 
