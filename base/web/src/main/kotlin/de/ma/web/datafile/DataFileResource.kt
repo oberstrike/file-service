@@ -71,11 +71,11 @@ class DataFileResource(
 
 
     @DELETE
-    @Path("{domain}/{id}")
+    @Path("/{id}")
     @Produces(MediaType.TEXT_PLAIN)
     suspend fun deleteFile(
         @PathParam(value = "id") id: String,
-        @PathParam(value = "domain") domain: String
+        @QueryParam(value = "domain") domain: String = ""
     ) {
         val deletedResult = dataFileManagementUseCase.deleteDataFile(DeleteFormParamsDataFile(id.toNanoId(), domain))
 

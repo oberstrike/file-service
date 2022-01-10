@@ -3,6 +3,7 @@ package de.ma.persistence.content.repository
 import de.ma.persistence.utils.AbstractDatabaseTest
 import io.quarkus.test.junit.QuarkusTest
 import kotlinx.coroutines.*
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBe
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.junit.jupiter.api.AfterEach
@@ -24,20 +25,20 @@ class DataFileContentRepositoryTest : AbstractDatabaseTest() {
     @BeforeEach
     fun setup() {
         runBlocking {
-            dataFileContentRepositoryImpl.reset()
+            dataFileContentRepositoryImpl.deleteAll()
         }
     }
 
     @AfterEach
     fun tearDown() {
         runBlocking {
-            dataFileContentRepositoryImpl.reset()
+            dataFileContentRepositoryImpl.deleteAll()
         }
     }
 
 
     @Test
-    fun `saves an file and check if its exists`() = runBlocking(Dispatchers.IO) {
+    fun `saves an file and check if its exists`() = runTest {
 
         val domain = File(domainPath)
 
@@ -50,11 +51,11 @@ class DataFileContentRepositoryTest : AbstractDatabaseTest() {
 
         files.isNotEmpty() shouldBe true
 
-        dataFileContentRepositoryImpl.reset()
+        dataFileContentRepositoryImpl.deleteAll()
 
         files = domain.listFiles() ?: emptyArray()
         files.isEmpty() shouldBe true
-        Unit
+
     }
 
 

@@ -2,8 +2,10 @@ package de.ma.persistence.datafile
 
 import de.ma.domain.datafile.DataFileOverview
 import de.ma.domain.nanoid.NanoId
+import io.quarkus.runtime.annotations.RegisterForReflection
 import java.time.LocalDateTime
 
+@RegisterForReflection
 data class DataFileOverviewDTO(
     override val id: NanoId,
     override val name: String,

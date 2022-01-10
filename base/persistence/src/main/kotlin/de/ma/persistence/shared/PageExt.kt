@@ -8,6 +8,7 @@ import io.smallrye.mutiny.coroutines.awaitSuspending
 
 suspend inline fun <T : Any> PanacheQuery<T>.toPagedList(pagedParams: PagedParams): PagedList<T> {
     val targetPage = this.page<T>(Page.of(pagedParams.page, pagedParams.size))
+
     return PagedListImpl(
         pagedParams.page,
         targetPage.pageCount().awaitSuspending(),

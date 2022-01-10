@@ -4,7 +4,6 @@ import de.ma.domain.content.*
 import de.ma.domain.datafile.DataFileOverview
 import de.ma.domain.datafile.DataFileSearchParams
 import de.ma.domain.datafile.DeleteParamsDataFile
-import de.ma.persistence.content.repository.DataFileContentRepositoryImpl
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
@@ -33,7 +32,7 @@ class DataFileContentGatewayImpl(
 
     override suspend fun deleteContent(deleteParams: DeleteParamsDataFile): Result<Unit> {
         return try {
-            if (dataFileContentRepositoryImpl.deleteByNanoId(deleteParams) == true) {
+            if (dataFileContentRepositoryImpl.delete(deleteParams) == true) {
                 Result.success(Unit)
             } else {
                 Result.failure(RuntimeException("File not found"))

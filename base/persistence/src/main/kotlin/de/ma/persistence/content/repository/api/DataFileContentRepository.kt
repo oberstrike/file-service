@@ -11,8 +11,8 @@ interface DataFileContentRepository {
 
     suspend fun save(content: DataFileContentCreate, searchParams: DataFileSearchParams): DataFileContentOverview?
 
-    suspend fun reset()
+    suspend fun deleteAll()
 
-    suspend fun deleteByNanoId(searchParams: DataFileSearchParams): Boolean?
+    suspend fun delete(searchParams: DataFileSearchParams): Boolean?
 
 }

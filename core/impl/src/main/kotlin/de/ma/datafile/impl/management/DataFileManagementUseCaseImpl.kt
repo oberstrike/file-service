@@ -23,6 +23,7 @@ class DataFileManagementUseCaseImpl(
      */
     override suspend fun dataFileCreate(createDataFile: DataFileCreate): Result<DataFileOverview> {
 
+        //check if the file already exists
         val alreadyExists: Boolean = dataFileGateway.exists(createDataFile.name, createDataFile.extension, createDataFile.domain)
 
         if(alreadyExists) {

@@ -6,9 +6,11 @@ import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
 import de.ma.domain.shared.SortParams
-import de.ma.persistence.shared.pagedMap
+import de.ma.persistence.shared.PagedListImpl
 import de.ma.persistence.shared.toPagedList
 import io.quarkus.hibernate.reactive.panache.Panache
+import io.quarkus.hibernate.reactive.panache.PanacheQuery
+import io.quarkus.panache.common.Page
 import io.quarkus.panache.common.Sort
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import javax.enterprise.context.ApplicationScoped
@@ -51,10 +53,11 @@ class DataFileGatewayImpl(
 
         return try {
             val result = Panache.withTransaction {
-                dataFileRepository.persist(dataFileEntity)
+                dataFileRepository.persist(dataFileEntity).map {
+                    it.toOverviewDTO()
+                }
             }.awaitSuspending()
-            Result.success(result.toOverviewDTO())
-
+            Result.success(result)
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(RuntimeException("Could not save data file"))
@@ -73,15 +76,21 @@ class DataFileGatewayImpl(
             sort = Sort.by(sortParams.sortBy, Sort.Direction.Ascending)
         }
 
-        val allDataFiles = if (sort == null) dataFileRepository.findAll() else dataFileRepository.findAll(sort)
+        val allDataFiles: PanacheQuery<DataFileOverviewDTO> =
+            (if (sort == null) dataFileRepository.findAll() else dataFileRepository.findAll(sort)).project(
+                DataFileOverviewDTO::class.java
+            )
 
-        val pagedList: PagedList<DataFileEntity> = allDataFiles.toPagedList(pagedParams)
+        val targetPage = allDataFiles.page<DataFileOverviewDTO>(Page.of(pagedParams.page, pagedParams.size))
+        val pageCount = targetPage.pageCount().awaitSuspending()
+        val content = targetPage.list<DataFileOverviewDTO>().awaitSuspending()
 
-        val result = pagedList.pagedMap {
-            it.toOverviewDTO()
-        }
-
-        return Result.success(result)
+        val pagedList: PagedList<DataFileOverview> = PagedListImpl(
+            pagedParams.page,
+            pageCount,
+            content
+        )
+        return Result.success(pagedList)
     }
 
     override suspend fun purge(dataFile: DataFile) {

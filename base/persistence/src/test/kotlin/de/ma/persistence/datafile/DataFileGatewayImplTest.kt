@@ -1,6 +1,7 @@
 package de.ma.persistence.datafile
 
 import de.ma.domain.datafile.DataFileGateway
+import de.ma.persistence.datafile.utils.PagedParamsDTO
 import de.ma.persistence.utils.AbstractDatabaseTest
 import de.ma.persistence.utils.TransactionalQuarkusTest
 import io.smallrye.mutiny.coroutines.awaitSuspending
@@ -107,6 +108,23 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
         dataFileRepository.findById(result.id!!).awaitSuspending()?.deleted shouldBe true
         Unit
 
+
+    }
+
+    @Test
+    fun `tests if find all works`() = runTest {
+        val dataFileEntity = DataFileEntity("test", "txt")
+        val persistedEntity = dataFileRepository.persist(dataFileEntity).awaitSuspending()
+
+        val all = dataFileGateway.findAll(
+            PagedParamsDTO(10, 0)
+        )
+
+
+        all.isSuccess shouldBe true
+        val result = all.getOrNull()!!
+
+        result.items.isEmpty() shouldBe false
 
     }
 

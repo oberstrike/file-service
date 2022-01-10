@@ -27,15 +27,7 @@ class DataFileContentRepositoryImpl(
 
     private val scope = Dispatchers.IO + Job()
 
-    private val jobs: MutableSet<Job> = Collections.synchronizedSet(mutableSetOf())
-
     private lateinit var baseFolder: File
-
-
-    @PreDestroy
-    fun destroy() {
-        jobs.forEach { it.cancel() }
-    }
 
     @PostConstruct
     fun init() {
@@ -57,16 +49,17 @@ class DataFileContentRepositoryImpl(
             return@withContext saveFileContent.save(content, searchParams)
         }
 
-    override suspend fun deleteByNanoId(searchParams: DataFileSearchParams): Boolean? {
+    override suspend fun delete(searchParams: DataFileSearchParams): Boolean? = withContext(scope) {
         val file = File(baseFolder, searchParams.id.value)
-        return if (file.exists()) file.delete() else false
+        return@withContext if (file.exists()) file.delete() else false
     }
 
-    override suspend fun reset() = withContext(scope) {
-        baseFolder.listFiles()?.forEach { file ->
-            file.delete()
+    override suspend fun deleteAll() {
+        withContext(scope) {
+            baseFolder.listFiles()?.forEach { file ->
+                file.deleteRecursively()
+            }
         }
-        Unit
     }
 
 
