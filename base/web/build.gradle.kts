@@ -10,6 +10,9 @@ val quarkusPlatformGroupId: String by project
 val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
 
+val testcontainersVersion = "1.16.2"
+
+
 sourceSets {
     getByName("main").java.srcDirs("src/main/kotlin")
     getByName("test").java.srcDirs("src/test/kotlin")
@@ -36,6 +39,12 @@ dependencies {
 
     //Kotlin coroutines
     implementation(libs.kotlinCoroutines)
+
+    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
+    testImplementation("io.quarkus:quarkus-junit5")
+    testImplementation("io.quarkiverse.mockk:quarkus-junit5-mockk:0.2.0")
 
 }
 

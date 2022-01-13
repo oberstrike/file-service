@@ -21,7 +21,7 @@ class DataFileGatewayImpl(
     private val dataFileRepository: DataFileRepository,
 ) : DataFileGateway {
 
-    override suspend fun find(dataFileSearchParams: de.ma.domain.datafile.DataFileSearchParams): Result<DataFileShow> {
+    override suspend fun find(dataFileSearchParams: DataFileSearchParams): Result<DataFileShow> {
         val nanoId = dataFileSearchParams.id
         val dataFile = dataFileRepository.findById(nanoId.toEntity()).awaitSuspending() ?: return Result.failure(
             DataFileException.NotFoundException(nanoId.value)
@@ -29,7 +29,7 @@ class DataFileGatewayImpl(
         return Result.success(DataFileShowDTO(dataFile.extension, dataFile.name, dataFileSearchParams.domain))
     }
 
-    override suspend fun delete(dataFileDelete: de.ma.domain.datafile.DataFileSearchParams): Result<DataFile> {
+    override suspend fun delete(dataFileDelete: DataFileSearchParams): Result<DataFile> {
         val nanoIdEntity = dataFileDelete.id.toEntity()
 
         val dataFileEntity =
@@ -73,13 +73,14 @@ class DataFileGatewayImpl(
 
         if (sortParams != null) {
             //Todo implement own sorting mechanism
-            sort = Sort.by(sortParams.sortBy, Sort.Direction.Ascending)
+            sort = Sort.by(sortParams.sortBy, Sort.Direction.valueOf(sortParams.direction))
         }
 
-        val allDataFiles: PanacheQuery<DataFileOverviewDTO> =
-            (if (sort == null) dataFileRepository.findAll() else dataFileRepository.findAll(sort)).project(
-                DataFileOverviewDTO::class.java
-            )
+        var allDataFiles: PanacheQuery<DataFileOverviewDTO> = dataFileRepository.find(
+            sort, searchParams
+        ).project(
+            DataFileOverviewDTO::class.java
+        )
 
         val targetPage = allDataFiles.page<DataFileOverviewDTO>(Page.of(pagedParams.page, pagedParams.size))
         val pageCount = targetPage.pageCount().awaitSuspending()
