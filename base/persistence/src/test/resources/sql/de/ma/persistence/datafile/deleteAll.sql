@@ -1,1 +1,1 @@
-delete * from data_file;
+DELETE from data_file;

@@ -1,0 +1,71 @@
+@import 'tailwindcss/base'
+@import 'tailwindcss/components'
+@import 'tailwindcss/utilities'
+
+$primary: #1a3d80
+$secondary: #0e214b
+$box: #30519d
+
+ul
+  list-style-type: none
+  margin: 0
+  padding: 0
+  overflow: hidden
+  background-color: $primary
+
+li
+  float: left
+
+  a
+    display: block
+    color: white
+    text-align: center
+    padding: 14px 16px
+    text-decoration: none
+
+  &:hover
+    background-color: $secondary
+
+  .active
+    background-color: $secondary
+
+.domain
+  background-color: $box
+  border: 1px solid black
+  border-radius: 0.4rem
+  padding: 10px
+  font-size: 0.9rem
+
+  &:hover
+    transform: scale(1.2)
+    outline: none
+    transition: transform 0.17s linear
+
+  &:not(:hover)
+    transform: scale(1)
+    outline: none
+    transition: transform 0.17s linear
+
+.text-input
+  @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight
+
+  &:focus
+    outline: none
+    border-color: $primary
+    box-shadow: 0 0 0 2px $primary
+
+.text-label
+  @apply block text-gray-700 text-sm font-bold mb-2
+
+.logout-btn
+  color: $primary
+  background-color: $secondary
+  &:hover
+    transform: scale(1.2)
+    transition: transform 0.17s linear
+    background-color: $primary
+  svg
+    &:hover
+      fill: white
+.file-input
+  display: none
