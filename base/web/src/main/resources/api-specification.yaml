@@ -1,0 +1,307 @@
+openapi: 3.0.3
+info:
+  title: Datafile-Service
+  description: Datafile-Service
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/api/v1'
+paths:
+  /folders:
+    get:
+      summary: Get all folders
+      operationId: getFolders
+      tags:
+        - folder
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Folder'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /folders/{id}:
+    get:
+      summary: Get a folder
+      operationId: getFolder
+      tags:
+        - folder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Folder not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete a folder
+      operationId: deleteFolder
+      tags:
+        - folder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Folder not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /folders/{id}/datafiles:
+    get:
+      description: 'Fetch all datafiles from folder'
+      operationId: getDatafilesFromFolder
+      parameters:
+        - name: id
+          in: path
+          description: 'Id of folder'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Folder'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      description: 'Create a new datafile in folder'
+      operationId: createDatafileInFolder
+      parameters:
+        - name: id
+          in: path
+          description: 'Id of folder'
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: 'Datafile to create'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Datafile'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Datafile'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      description: 'Delete all datafiles from folder'
+      operationId: deleteDatafilesFromFolder
+      parameters:
+        - name: id
+          in: path
+          description: 'Id of folder'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /datafiles/{id}:
+    get:
+      description: 'Get a datafile'
+      operationId: getDatafileById
+      parameters:
+        - name: id
+          in: path
+          description: 'Id of datafile'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Datafile'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Datafile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      description: 'Update a datafile'
+      operationId: updateDatafile
+      parameters:
+        - name: id
+          in: path
+          description: 'Id of datafile'
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: 'Datafile to update'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Datafile'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Datafile'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Datafile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      description: 'Delete a datafile'
+      operationId: deleteDatafile
+      parameters:
+        - name: id
+          in: path
+          description: 'Id of datafile'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Datafile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /datafiles/{id}/download:
+    get:
+      description: 'Download a datafile'
+      operationId: downloadDatafile
+      parameters:
+        - name: id
+          in: path
+          description: 'Id of datafile'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Datafile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    File:
+      type: string
+      description: 'File'
+      format: binary
+    DataFileContentCreate:
+      type: object
+      properties:
+        file:
+          $ref: '#/components/schemas/File'
+    DatafileCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        folder:
+          type: integer
+        file:
+          $ref: '#/components/schemas/File'
+

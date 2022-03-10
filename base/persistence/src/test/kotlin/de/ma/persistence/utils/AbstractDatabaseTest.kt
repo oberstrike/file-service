@@ -5,8 +5,9 @@ import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.datafile.DataFileCreate
 import de.ma.domain.nanoid.NanoId
 import de.ma.persistence.datafile.utils.DataFileCreateDTO
-import de.ma.persistence.datafile.DataFileSearchParamsDTO
-import de.ma.persistence.nanoid.NanoIdDTO
+import de.ma.persistence.datafile.data.DataFileSearchParamsDTO
+import de.ma.persistence.datafile.content.data.DataFileContentCreateDTO
+import de.ma.persistence.shared.nanoid.NanoIdDTO
 import io.quarkus.test.common.QuarkusTestResource
 import java.io.InputStream
 import java.util.*
@@ -25,15 +26,14 @@ abstract class AbstractDatabaseTest {
 
     fun searchParams(nanoId: NanoId, domain: String?): DataFileSearchParamsDTO {
         return DataFileSearchParamsDTO(
-            nanoId,
-            domain
+            nanoId
         )
     }
 
     fun nanoId(text: String = UUID.randomUUID().toString()): NanoId = NanoIdDTO(text)
 
     fun dataFileContentCreate(input: InputStream): DataFileContentCreate {
-        return de.ma.persistence.content.DataFileContentCreateDTO(input)
+        return DataFileContentCreateDTO(input)
     }
 
     fun dataFileSearch(
@@ -41,8 +41,7 @@ abstract class AbstractDatabaseTest {
         domain: String? = null
     ): DataFileSearchParamsDTO {
         return DataFileSearchParamsDTO(
-            nanoId,
-            domain
+            nanoId
         )
     }
 

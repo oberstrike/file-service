@@ -1,0 +1,47 @@
+package de.ma.folder
+
+import de.ma.datafile.api.management.FolderManagementUseCase
+import de.ma.domain.folder.*
+import de.ma.domain.shared.PagedList
+import de.ma.domain.shared.PagedParams
+import de.ma.domain.shared.SearchParams
+import de.ma.domain.shared.SortParams
+
+class FolderManagementUseCaseImpl(
+    private val folderGateway: FolderGateway
+) : FolderManagementUseCase {
+
+    override suspend fun createFolder(folderCreate: FolderCreate): Result<FolderShow> {
+        val oldFolder = folderGateway.getFolderByParams(folderCreate.toParams())
+
+        if(oldFolder.isSuccess){
+            return Result.failure(RuntimeException("A folder with the name: ${folderCreate.name} exists already"))
+        }
+
+        return folderGateway.createFolder(folderCreate)
+    }
+
+    override suspend fun getFoldersPaged(
+        pagedParams: PagedParams,
+        searchParams: SearchParams?,
+        sortParams: SortParams?
+    ): Result<PagedList<FolderOverview>> {
+        return folderGateway.getFoldersPaged(pagedParams, searchParams, sortParams)
+    }
+
+    override suspend fun getFolder(params: FolderSearchParams): Result<FolderShow> {
+        return folderGateway.getFolderByParams(params)
+    }
+
+    override suspend fun deleteFolder(params: FolderSearchParams): Result<Boolean> {
+        return with(folderGateway) {
+            deleteFolder(params)
+        }
+    }
+
+    override suspend fun updateFolder(folderUpdate: FolderUpdate): Result<FolderOverview> {
+        return folderGateway.updateFolder(folderUpdate)
+    }
+
+
+}

@@ -1,5 +1,6 @@
 package de.ma.persistence.content.repository
 
+import de.ma.persistence.datafile.content.repository.DataFileContentRepositoryImpl
 import de.ma.persistence.utils.AbstractDatabaseTest
 import io.quarkus.test.junit.QuarkusTest
 import kotlinx.coroutines.*
@@ -17,7 +18,7 @@ import javax.inject.Inject
 class DataFileContentRepositoryTest : AbstractDatabaseTest() {
 
     @Inject
-    lateinit var dataFileContentRepositoryImpl: de.ma.persistence.content.repository.DataFileContentRepositoryImpl
+    lateinit var dataFileContentRepositoryImpl: DataFileContentRepositoryImpl
 
     @ConfigProperty(name = "datafile.content.folder")
     lateinit var domainPath: String
@@ -45,7 +46,7 @@ class DataFileContentRepositoryTest : AbstractDatabaseTest() {
         val nanoId = nanoId()
 
         //create a file with the nanoId value as name
-        File(domain, nanoId.value).createNewFile()
+        File(domain, nanoId.id).createNewFile()
 
         var files = domain.listFiles() ?: emptyArray()
 

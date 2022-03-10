@@ -9,10 +9,6 @@ import java.io.InputStream
 
 class DataFileContentTestImpl : DataFileContentTest {
 
-    override fun withDataFileContentShow(file: File, block: (DataFileContentShow) -> Unit) {
-        DataFileContentShowImpl(file).apply(block)
-    }
-
     override fun withDataFileContentOverview(size: Long, block: (DataFileContentOverview) -> Unit) {
         DataFileContentOverviewImpl(size).apply(block)
     }
@@ -26,11 +22,6 @@ class DataFileContentTestImpl : DataFileContentTest {
 
 
 }
-
-
-data class DataFileContentShowImpl(
-    override val file: File
-) : DataFileContentShow
 
 data class DataFileContentCreateImpl(
     override val input: InputStream

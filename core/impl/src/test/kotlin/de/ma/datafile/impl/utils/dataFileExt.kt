@@ -8,7 +8,7 @@ import java.io.File
 import java.util.*
 
 
-data class NanoIdImpl(override var value: String) : NanoId
+data class NanoIdImpl(override var id: String) : NanoId
 
 data class PagedParamsImpl(
     override val page: Int,

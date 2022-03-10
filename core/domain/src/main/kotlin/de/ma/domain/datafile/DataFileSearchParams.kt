@@ -4,5 +4,4 @@ import de.ma.domain.nanoid.NanoId
 
 interface DataFileSearchParams {
     val id: NanoId
-    val domain: String?
 }

@@ -1,5 +1,2 @@
-INSERT INTO data_file (data_file_id, domain, name, extension, deleted, created_at)
-VALUES ('AkpCLfGR_nXV_HoMd6dd4', 'service-a', 'word', 'doc', false, '2019-01-01 00:00:00.000000'),
-       ('AkpCLfGR_nXV_HoMd6dd5', 'service-a', 'excel', 'docx', false, '2019-01-01 00:00:00.000000'),
-       ('AkpCLfGR_nXV_HoMd6dd6', 'service-b', 'pdf', 'pdf', false, '2019-01-01 00:00:00.000000'),
-       ('AkpCLfGR_nXV_HoMd6dd7', 'service-c', 'text', 'txt', false, '2019-01-01 00:00:00.000000');
+INSERT INTO public.folder (folder_id, name, size) VALUES ('1', 'Test', 3);
+INSERT INTO public.datafileentity (data_file_id, created_at, deleted, extension, name, folder_folder_id) VALUES ('1', '2022-03-08 07:00:33.000000', false, 'txt', 'test', '1');

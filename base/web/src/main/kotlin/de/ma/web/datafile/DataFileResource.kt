@@ -1,7 +1,7 @@
 package de.ma.web.datafile
 
 import de.ma.datafile.api.management.DataFileManagementUseCase
-import de.ma.domain.datafile.DataFileSearchParams
+import de.ma.domain.datafile.DataFileShow
 import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.web.datafile.form.*
@@ -31,7 +31,7 @@ class DataFileResource(
     ): Response {
 
         val dataFileResult = dataFileManagementUseCase.getDataFile(
-            DataFileSearchParamsImpl(nanoId, domain)
+            DataFileSearchParamsImpl(nanoId)
         )
 
         if (dataFileResult.isFailure) {
@@ -57,8 +57,9 @@ class DataFileResource(
             schema = Schema(implementation = DataFileCreateForm::class)
         )]
     )
-    suspend fun create(@MultipartForm @Valid dataFileCreateForm: DataFileCreateForm): DataFileOverviewForm {
-        val dataFileOverviewResult = dataFileManagementUseCase.dataFileCreate(
+    suspend fun create(@QueryParam("domain") domain: String, @MultipartForm @Valid dataFileCreateForm: DataFileCreateForm): DataFileShow? {
+        val dataFileOverviewResult = dataFileManagementUseCase.createDataFile(
+            FolderSearchParamsImpl(id = null, name = domain),
             dataFileCreateForm.toDataFileCreate()
         )
 
@@ -66,7 +67,7 @@ class DataFileResource(
             throw dataFileOverviewResult.exceptionOrNull()!!
         }
 
-        return dataFileOverviewResult.getOrNull()!!.toImpl()
+        return dataFileOverviewResult.getOrNull()
     }
 
 
@@ -77,7 +78,7 @@ class DataFileResource(
         @PathParam(value = "id") id: String,
         @QueryParam(value = "domain") domain: String = ""
     ) {
-        val deletedResult = dataFileManagementUseCase.deleteDataFile(DeleteFormParamsDataFile(id.toNanoId(), domain))
+        val deletedResult = dataFileManagementUseCase.deleteDataFile(DeleteFormParamsDataFile(id.toNanoId()))
 
         if (deletedResult.isFailure) {
             throw deletedResult.exceptionOrNull()!!
@@ -87,7 +88,7 @@ class DataFileResource(
     @GET
     @Path("/files")
     @Produces(MediaType.APPLICATION_JSON)
-    suspend fun getFiles(): PagedList<DataFileOverviewForm> {
+    suspend fun getFiles(): PagedList<DataFileShow> {
 
         val dataFilesResult = dataFileManagementUseCase.getDataFilesPaged(
             PagedParamsImpl(0, 10)
@@ -96,11 +97,7 @@ class DataFileResource(
             throw RuntimeException(dataFilesResult.exceptionOrNull()?.message ?: "")
         }
 
-        val pagedList = dataFilesResult.getOrNull()!!
-
-        return pagedList.pagedMap { dataFileOverview ->
-            dataFileOverview.toImpl()
-        }
+        return dataFilesResult.getOrNull()!!
     }
 
 }

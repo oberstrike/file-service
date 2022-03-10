@@ -1,6 +1,6 @@
 package de.ma.persistence.shared
 
-import de.ma.persistence.nanoid.NanoIdEntity
+import de.ma.persistence.shared.nanoid.NanoIdEntity
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase
 import org.hibernate.annotations.GenericGenerator
 import javax.persistence.Column
@@ -16,7 +16,7 @@ abstract class AbstractBaseEntity : PanacheEntityBase() {
     @get:GeneratedValue(generator = "nano-generator")
     @get:GenericGenerator(
         name = "nano-generator",
-        strategy = "de.ma.persistence.nanoid.NanoIdGenerator"
+        strategy = "de.ma.persistence.shared.nanoid.NanoIdGenerator"
     )
     @get:Column(columnDefinition = "CHAR(21)")
     var id: NanoIdEntity? = null

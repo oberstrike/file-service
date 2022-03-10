@@ -1,8 +1,9 @@
 package de.ma.persistence.datafile
 
+import de.ma.persistence.datafile.data.DataFileEntity
+import de.ma.persistence.datafile.data.DataFileRepository
 import de.ma.persistence.utils.TransactionalQuarkusTest
 import de.ma.persistence.utils.AbstractDatabaseTest
-import de.ma.persistence.utils.sql.Sql
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -27,18 +28,7 @@ class DataFileRepositoryTest : AbstractDatabaseTest() {
 
     @Test
     fun `tests if persistence works`() = runTest {
-        val persist = dataFileRepository.persist(DataFileEntity("Markus", "txt")).awaitSuspending()
-        persist.name shouldBe "Markus"
 
-        val result = dataFileRepository.findAll().list<DataFileEntity>().awaitSuspending()
-        result.isNotEmpty() shouldBe true
-
-
-        val dataFileEntity = result.first()
-        dataFileEntity.name shouldBe "Markus"
-        dataFileEntity.extension shouldBe "txt"
-
-        println(dataFileEntity)
     }
 
 }

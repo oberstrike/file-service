@@ -9,11 +9,6 @@ import java.io.InputStream
 
 interface DataFileContentTest {
 
-    fun withDataFileContentShow(
-        file: File,
-        block: (DataFileContentShow) -> Unit
-    )
-
     fun withDataFileContentCreate(
         input: InputStream,
         block: (DataFileContentCreate) -> Unit

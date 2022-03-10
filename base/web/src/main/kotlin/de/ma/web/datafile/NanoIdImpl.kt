@@ -3,7 +3,7 @@ package de.ma.web.datafile
 import de.ma.domain.nanoid.NanoId
 
 data class NanoIdImpl(
-    override var value: String
+    override var id: String
 ) : NanoId
 
 fun String.toNanoId(): NanoId {

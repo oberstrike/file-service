@@ -4,4 +4,5 @@ import java.io.File
 
 interface DataFileContentShow {
     val file: File
+    val size: Long
 }

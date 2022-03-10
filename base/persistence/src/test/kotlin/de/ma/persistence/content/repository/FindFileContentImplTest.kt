@@ -1,5 +1,6 @@
 package de.ma.persistence.content.repository
 
+import de.ma.persistence.datafile.content.repository.FindFileContentImpl
 import de.ma.persistence.utils.AbstractDatabaseTest
 import io.quarkus.test.junit.QuarkusTest
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +30,7 @@ class FindFileContentImplTest : AbstractDatabaseTest() {
 
         withContext(Dispatchers.IO) {
             File(parent).mkdirs()
-            File(parent, nanoId.value).createNewFile()
+            File(parent, nanoId.id).createNewFile()
         }
 
         val result = findFileContentByNanoIdImpl.find(searchParams)

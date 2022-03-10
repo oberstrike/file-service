@@ -12,7 +12,10 @@ import javax.enterprise.inject.spi.CDI
 
 object SqlFileProcessor {
     suspend fun processTargetFile(targetFile: String) = withContext(Dispatchers.IO) {
+        println("Processing file: $targetFile")
+
         val mutinySessionFactory = getMutinySessionFactory()
+
 
         val inputStream =
             this::class.java.getResource(targetFile)?.openStream() ?: throw FileNotFoundException(
@@ -36,6 +39,7 @@ object SqlFileProcessor {
                 nextCommand = ""
             }
         }
+        println("Processed file: $targetFile")
     }
 
     private fun getMutinySessionFactory(): Mutiny.SessionFactory {

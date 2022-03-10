@@ -11,7 +11,7 @@ class NanoIdParamConverter: ParamConverter<NanoId> {
     }
 
     override fun toString(value: NanoId): String {
-        return value.value
+        return value.id
     }
 
 }

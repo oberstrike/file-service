@@ -1,2 +1,2 @@
-INSERT INTO data_file (data_file_id, domain, name, extension, deleted, created_at)
-VALUES ('AkpCLfGR_nXV_HoMd6dd4', 'service-a', 'word', 'doc', true, '2019-01-01 00:00:00.000000');
+UPDATE public.folder SET name = 'Test', size = 3 WHERE folder_id = '1';
+UPDATE public.datafileentity SET created_at = '2022-03-08 07:00:33.000000', deleted = true, extension = 'txt', name = 'test', folder_folder_id = '1' WHERE data_file_id = '1';

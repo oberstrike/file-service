@@ -1,9 +1,14 @@
 package de.ma.persistence.datafile
 
 import de.ma.domain.datafile.DataFileGateway
+import de.ma.persistence.datafile.data.DataFileEntity
+import de.ma.persistence.datafile.data.DataFileRepository
+import de.ma.persistence.datafile.data.DataFileSearchParamsDTO
 import de.ma.persistence.datafile.utils.PagedParamsDTO
 import de.ma.persistence.datafile.utils.SearchParamsImpl
 import de.ma.persistence.datafile.utils.SortParamsImpl
+import de.ma.persistence.folder.data.FolderEntity
+import de.ma.persistence.folder.data.FolderRepository
 import de.ma.persistence.utils.AbstractDatabaseTest
 import de.ma.persistence.utils.TransactionalQuarkusTest
 import de.ma.persistence.utils.sql.Sql
@@ -28,10 +33,14 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
     @Inject
     lateinit var dataFileRepository: DataFileRepository
 
+    @Inject
+    lateinit var folderRepository: FolderRepository
+
 
     @AfterEach
     fun tearDown() = runTest {
         dataFileRepository.deleteAll().awaitSuspending()
+        folderRepository.deleteAll().awaitSuspending()
         Unit
     }
 
@@ -56,14 +65,16 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
     @Test
     fun `tests if the delete action works`() = runTest {
 
-        val dataFileEntity = DataFileEntity("test", "txt")
+        val folder = folderRepository.persist(FolderEntity(0, "test")).awaitSuspending()
+
+        val dataFileEntity = DataFileEntity("test", "txt", folder)
         val result = dataFileRepository.persist(dataFileEntity).awaitSuspending()
 
         var all = dataFileRepository.findAll().list<DataFileEntity>().awaitSuspending()
         all.isEmpty() shouldBe false
 
 
-        val deleted = dataFileGateway.delete(DataFileSearchParamsDTO(result.id!!, "test"))
+        val deleted = dataFileGateway.deleteById(result.id!!)
 
         deleted.isSuccess shouldBe true
 
@@ -81,18 +92,20 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
     @Test
     fun `Test if the find method works`() = runTest {
 
+        val folder = folderRepository.persist(FolderEntity(0, "test")).awaitSuspending()
+
+
         val persisted = dataFileRepository.persist(
             DataFileEntity(
                 "test",
-                "txt"
+                "txt",
+                folder
             )
         ).awaitSuspending()
 
-        val dataFileSearch = dataFileSearch(
-            persisted.id!!
-        )
 
-        val find = dataFileGateway.find(dataFileSearch)
+
+        val find = dataFileGateway.findById(  persisted.id!!)
 
         find shouldNotBe null
         Unit
@@ -102,12 +115,15 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
     @Test
     fun `delete a datafile and recover it`() = runTest {
 
-        val dataFileEntity = DataFileEntity("test", "txt")
+        val folder = folderRepository.persist(FolderEntity(0, "test")).awaitSuspending()
+
+
+        val dataFileEntity = DataFileEntity("test", "txt", folder)
         val result = dataFileRepository.persist(dataFileEntity).awaitSuspending()
 
         result.deleted shouldBe false
 
-        val deleteResult = dataFileGateway.delete(DataFileSearchParamsDTO(result.id!!, null))
+        val deleteResult = dataFileGateway.deleteById(result.id!!)
 
         deleteResult.isSuccess shouldBe true
 
@@ -139,7 +155,7 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
 
         val all = dataFileGateway.findAll(
             PagedParamsDTO(10, 0),
-            sortParams = SortParamsImpl(direction.name, "domain")
+   //         sortParams = SortParamsImpl(direction.name, "domain")
         )
 
         all.isSuccess shouldBe true
@@ -148,11 +164,6 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
         val items = result.items
 
         items.isEmpty() shouldBe false
-        val domains = items.map { it.domain ?: "" }
-
-        //check if the strings are sorted correctly ascending
-        checkSorted(domains, direction)
-
     }
 
     @Test
@@ -161,15 +172,14 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
 
         val all = dataFileGateway.findAll(
             PagedParamsDTO(10, 0),
-            SearchParamsImpl("domain", "service-a")
+            SearchParamsImpl("folder.name", "Test")
         )
 
         all.isSuccess shouldBe true
         val result = all.getOrNull()!!
 
-        for (item in result.items) {
-            assert(item.domain == "service-a")
-        }
+        result.items.size shouldBe 1
+
 
     }
 
@@ -215,16 +225,6 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
     @Test
     fun `tests if exists works if deleted is false`() = runTest {
 
-        val dataFile = dataFileRepository.persist(
-            DataFileEntity(
-                "test",
-                "txt"
-            )
-        ).awaitSuspending()
-
-        val exists = dataFileGateway.exists(dataFile.name, dataFile.extension, dataFile.domain)
-
-        exists shouldBe true
     }
 
 
