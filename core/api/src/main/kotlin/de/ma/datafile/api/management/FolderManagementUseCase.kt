@@ -1,6 +1,15 @@
-package de.ma.datafile.api.management
+package de.ma.datafile.api.management/ 0°
+bedeckt
+0 %
+0 l/m²
+ O
+8 km/h
 
+
+import de.ma.domain.datafile.DataFileCreate
+import de.ma.domain.datafile.DataFileShow
 import de.ma.domain.folder.*
+import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
@@ -16,13 +25,19 @@ interface FolderManagementUseCase {
     ): Result<PagedList<FolderOverview>>
 
     //returns the folder with content
-    suspend fun getFolder(params: FolderSearchParams): Result<FolderShow>
+    suspend fun getFolderById(params: NanoId): Result<FolderShow>
 
     //delete folder and children files
-    suspend fun deleteFolder(params: FolderSearchParams): Result<Boolean>
+    suspend fun deleteFolder(id: NanoId): Result<Boolean>
 
     //updating a folder to rename it
     suspend fun updateFolder(folderUpdate: FolderUpdate): Result<FolderOverview>
 
     suspend fun createFolder(folderCreate: FolderCreate): Result<FolderShow>
+
+    suspend fun createDataFileInFolder(id: NanoId, dataFileCreateForm: DataFileCreate): Result<DataFileShow>
+
+    suspend fun deleteDatafilesFromFolder(id: NanoId): Result<Unit>
+
+    suspend fun getDataFilesFromFolder(id: NanoId, limit: Int?, page: Int?): PagedList<DataFileShow>
 }

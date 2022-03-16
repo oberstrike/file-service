@@ -7,5 +7,4 @@ interface DataFileCreate {
     val name: String
     val extension: String
     val content: DataFileContentCreate
-    val domain: String
 }

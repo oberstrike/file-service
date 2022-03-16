@@ -4,71 +4,134 @@ info:
   description: Datafile-Service
   version: 1.0.0
 servers:
-  - url: 'http://localhost:8080/api/v1'
+  - url: 'https://localhost:8080/api/v1'
 paths:
   /folders:
     get:
       summary: Get all folders
       operationId: getFolders
       tags:
-        - folder
+        - folders
+      parameters:
+        - name: limit
+          in: query
+          description: The number of items to return.
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          description: The page number to return.
+          required: false
+          schema:
+            type: integer
+            format: int32
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Folder'
+                $ref: '#/components/schemas/PagedFolderShow'
         '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+    post:
+      summary: Create a new folder
+      operationId: createFolder
+      tags:
+        - folders
+      requestBody:
+        description: Folder to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FolderCreate'
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderShow'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exception'
   /folders/{id}:
     get:
       summary: Get a folder
       operationId: getFolder
       tags:
-        - folder
+        - folders
       parameters:
         - name: id
           in: path
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/NanoId"
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Folder'
+                $ref: '#/components/schemas/FolderShow'
         '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
         '404':
           description: Folder not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
     delete:
       summary: Delete a folder
       operationId: deleteFolder
       tags:
-        - folder
+        - folders
       parameters:
         - name: id
           in: path
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/NanoId'
+    
       responses:
         '204':
           description: Successful operation
@@ -77,40 +140,60 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
         '404':
           description: Folder not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
   /folders/{id}/datafiles:
     get:
       description: 'Fetch all datafiles from folder'
       operationId: getDatafilesFromFolder
       parameters:
+        - name: limit
+          in: query
+          description: The number of items to return.
+          required: false
+          example: 10
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: page
+          in: query
+          description: The page number to return.
+          required: false
+          example: 1
+          schema:
+            type: integer
+            format: int32
+            default: 1
         - name: id
           in: path
           description: 'Id of folder'
           required: true
           schema:
-            type: integer
+            $ref: '#/components/schemas/NanoId'
+      tags:
+        - folders
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation returns a paged List of datafiles
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Folder'
+                $ref: '#/components/schemas/PagedDataFileShow'
         '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
     post:
+      tags:
+        - folders
       description: 'Create a new datafile in folder'
       operationId: createDatafileInFolder
       parameters:
@@ -119,28 +202,35 @@ paths:
           description: 'Id of folder'
           required: true
           schema:
-            type: integer
+            $ref: '#/components/schemas/NanoId'
       requestBody:
         description: 'Datafile to create'
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Datafile'
+              $ref: '#/components/schemas/DataFileCreate'
+          multipart/form-data:
+            schema:
+              type: string
+              format: binary
+              description: 'Content of the datafile in binary format'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Datafile'
+                $ref: '#/components/schemas/DataFileShow'
         '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
     delete:
+      tags:
+        - folders
       description: 'Delete all datafiles from folder'
       operationId: deleteDatafilesFromFolder
       parameters:
@@ -149,7 +239,7 @@ paths:
           description: 'Id of folder'
           required: true
           schema:
-            type: integer
+            $ref: '#/components/schemas/NanoId'
       responses:
         '204':
           description: Successful operation
@@ -158,38 +248,42 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
   /datafiles/{id}:
     get:
       description: 'Get a datafile'
       operationId: getDatafileById
+      tags:
+        - datafiles
       parameters:
         - name: id
           in: path
           description: 'Id of datafile'
           required: true
           schema:
-            type: integer
+            $ref: '#/components/schemas/NanoId'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Datafile'
+                $ref: '#/components/schemas/DataFileShow'
         '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
         '404':
           description: Datafile not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
     put:
+      tags:
+        - datafiles
       description: 'Update a datafile'
       operationId: updateDatafile
       parameters:
@@ -198,34 +292,36 @@ paths:
           description: 'Id of datafile'
           required: true
           schema:
-            type: integer
+            $ref: '#/components/schemas/NanoId'
       requestBody:
         description: 'Datafile to update'
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Datafile'
+              $ref: '#/components/schemas/DataFileUpdate'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Datafile'
+                $ref: '#/components/schemas/DataFileShow'
         '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
         '404':
           description: Datafile not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
     delete:
+      tags:
+        - datafiles
       description: 'Delete a datafile'
       operationId: deleteDatafile
       parameters:
@@ -234,7 +330,7 @@ paths:
           description: 'Id of datafile'
           required: true
           schema:
-            type: integer
+            $ref: '#/components/schemas/NanoId'
       responses:
         '204':
           description: Successful operation
@@ -243,15 +339,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
         '404':
           description: Datafile not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
   /datafiles/{id}/download:
     get:
+      tags:
+        - datafiles
       description: 'Download a datafile'
       operationId: downloadDatafile
       parameters:
@@ -260,7 +358,7 @@ paths:
           description: 'Id of datafile'
           required: true
           schema:
-            type: integer
+            $ref: '#/components/schemas/NanoId'
       responses:
         '200':
           description: Successful operation
@@ -274,34 +372,220 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
         '404':
           description: Datafile not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Exception'
 
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
   schemas:
-    File:
+    NanoId:
       type: string
-      description: 'File'
-      format: binary
-    DataFileContentCreate:
+      pattern: '^[0-9A-z_-]{21}$'
+      maxLength: 21
+      minLength: 21
+      description: 'These is a shorter alternative to UUID'
+      example: 'abcdefghijkwxyz012345'
+    DataFileCreate:
       type: object
-      properties:
-        file:
-          $ref: '#/components/schemas/File'
-    DatafileCreate:
-      type: object
+      additionalProperties: false
       properties:
         name:
           type: string
-        description:
+          minLength: 3
+          maxLength: 255
+          pattern: '^[a-zA-Z0-9-_ ]+$'
+          description: 'Name of the datafile'
+          example: 'MyProfile'
+        extension:
           type: string
-        folder:
+          minLength: 1
+          maxLength: 5
+          pattern: '^[a-zA-Z0-9]+$'
+          description: 'Extension of the datafile'
+          example: 'png'
+    DataFileShow:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          $ref: '#/components/schemas/NanoId'
+        name:
+          type: string
+          minLength: 3
+          maxLength: 255
+          pattern: '^[a-zA-Z0-9-_ ]+$'
+          description: 'Name of the datafile'
+        extension:
+          type: string
+          minLength: 1
+          maxLength: 5
+          pattern: '^[a-zA-Z0-9]+$'
+          description: 'Extension of the datafile'
+        folderId:
+          $ref: '#/components/schemas/NanoId'
+        version:
           type: integer
-        file:
-          $ref: '#/components/schemas/File'
+          minimum: 0
+          format: int64
+          description: 'Version of the datafile needed to verify the integrity of the datafile to update'
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Date and time when the datafile was created'
+    DataFileUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          $ref: '#/components/schemas/NanoId'
+        version:
+          type: integer
+          minimum: 0
+          description: 'Version of the datafile needed to verify the integrity of the datafile to update'
+          format: int64
+        name:
+          type: string
+          minLength: 3
+          maxLength: 255
+          pattern: '^[a-zA-Z0-9-_ ]+$'
+          description: 'New name for the datafile'
+        extension:
+          type: string
+          minLength: 1
+          maxLength: 5
+          pattern: '^[a-zA-Z0-9]+$'
+          description: 'New extension for the datafile'
+        folderId:
+          $ref: '#/components/schemas/NanoId'
+    FolderShow:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          $ref: '#/components/schemas/NanoId'
+        name:
+          type: string
+          minLength: 3
+          maxLength: 255
+          pattern: '^[a-zA-Z0-9-_ ]+$'
+          description: 'New name for the datafile'
+          example: 'Pictures'
+        size:
+          type: integer
+          minimum: 0
+          description: 'Size of the folder'
+          example: 1
+          format: int32
+        version:
+          type: integer
+          minimum: 0
+          maximum: 10000
+          example: '0'
+          format: int64
+          description: 'Version of the folder needed to verify the integrity of the folder to update'
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Date and time when the folder was created'
+    FolderCreate:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 255
+          pattern: '^[a-zA-Z0-9-_ ]+$'
+          description: 'Name of the folder'
+          example: 'Pictures'
+    Exception:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          description: 'Type of error'
+          example: '/datafiles/{id}'
+          maxLength: 2000
+          pattern: '^[a-zA-Z0-9-_/{}]+$'
+        title:
+          type: string
+          description: 'Title of the error'
+          example: 'Datafile not found'
+          pattern: '^[a-zA-Z0-9-_ ]+$'
+        status:
+          type: integer
+          description: 'Status code of the error'
+          example: 404
+          format: int32
+        detail:
+          type: string
+          description: 'Detail of the error'
+          example: 'The datafile with id {id} was not found'
+          pattern: '^[a-zA-Z0-9-_ ]+$'
+    PagedResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        page:
+          type: integer
+          minimum: 0
+          description: 'Page number'
+          example: '0'
+          format: int32
+        size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: 'Number of items per page'
+          example: '10'
+          format: int32
+        total:
+          type: integer
+          minimum: 0
+          description: 'Total number of items'
+          example: '100'
+          format: int32
+        totalPages:
+          type: integer
+          minimum: 0
+          description: 'Total number of pages'
+          example: '10'
+          format: int32
+    PagedFolderShow:
+      allOf:
+        - $ref: '#/components/schemas/PagedResponse'
+        - type: object
+          additionalProperties: false
+          properties:
+            data:
+              type: array
+              minItems: 0
+              maxItems: 100
+              items:
+                $ref: '#/components/schemas/FolderShow'
+    PagedDataFileShow:
+      allOf:
+        - $ref: '#/components/schemas/PagedResponse'
+        - type: object
+          additionalProperties: false
+          properties:
+            items:
+              type: array
+              minItems: 0
+              maxItems: 100
+              items:
+                $ref: '#/components/schemas/DataFileShow'
+security:
+  - ApiKeyAuth: []
+
 

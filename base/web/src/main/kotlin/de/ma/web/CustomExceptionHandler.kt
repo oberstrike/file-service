@@ -1,4 +1,4 @@
-package de.ma.web.infrastructure
+package de.ma.web
 
 import javax.ws.rs.core.Response
 import javax.ws.rs.ext.ExceptionMapper

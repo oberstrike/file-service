@@ -1,4 +1,4 @@
-package de.ma.web.infrastructure.converter
+package de.ma.web.converter
 
 import de.ma.domain.nanoid.NanoId
 import java.lang.reflect.Type

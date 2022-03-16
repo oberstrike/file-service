@@ -2,6 +2,7 @@ package de.ma.folder
 
 import de.ma.datafile.api.management.FolderManagementUseCase
 import de.ma.domain.folder.*
+import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
@@ -29,13 +30,13 @@ class FolderManagementUseCaseImpl(
         return folderGateway.getFoldersPaged(pagedParams, searchParams, sortParams)
     }
 
-    override suspend fun getFolder(params: FolderSearchParams): Result<FolderShow> {
+    override suspend fun getFolderById(params: NanoId): Result<FolderShow> {
         return folderGateway.getFolderByParams(params)
     }
 
-    override suspend fun deleteFolder(params: FolderSearchParams): Result<Boolean> {
+    override suspend fun deleteFolder(id: NanoId): Result<Boolean> {
         return with(folderGateway) {
-            deleteFolder(params)
+            deleteFolder(id)
         }
     }
 

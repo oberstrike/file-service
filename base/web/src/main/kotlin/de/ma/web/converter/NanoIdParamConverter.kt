@@ -1,7 +1,7 @@
-package de.ma.web.infrastructure.converter
+package de.ma.web.converter
 
 import de.ma.domain.nanoid.NanoId
-import de.ma.web.datafile.NanoIdImpl
+import de.ma.web.models.NanoIdImpl
 import javax.ws.rs.ext.ParamConverter
 
 class NanoIdParamConverter: ParamConverter<NanoId> {

@@ -1,4 +1,4 @@
-package de.ma.web.datafile
+package de.ma.web
 
 import org.junit.jupiter.api.Assertions.*
 
