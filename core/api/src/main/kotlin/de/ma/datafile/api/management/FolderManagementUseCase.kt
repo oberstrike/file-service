@@ -1,9 +1,4 @@
-package de.ma.datafile.api.management/ 0°
-bedeckt
-0 %
-0 l/m²
- O
-8 km/h
+package de.ma.datafile.api.management
 
 
 import de.ma.domain.datafile.DataFileCreate
@@ -13,7 +8,7 @@ import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
-import de.ma.domain.shared.SortParams
+import de.ma.domain.shared.SortParam
 
 interface FolderManagementUseCase {
 
@@ -21,7 +16,7 @@ interface FolderManagementUseCase {
     suspend fun getFoldersPaged(
         pagedParams: PagedParams,
         searchParams: SearchParams? = null,
-        sortParams: SortParams? = null
+        sortParams: SortParam? = null
     ): Result<PagedList<FolderOverview>>
 
     //returns the folder with content

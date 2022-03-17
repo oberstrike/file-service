@@ -1,6 +1,6 @@
 package de.ma.domain.shared
 
-interface SortParams {
+interface SortParam {
     val sortBy: String
     val direction: String
 }

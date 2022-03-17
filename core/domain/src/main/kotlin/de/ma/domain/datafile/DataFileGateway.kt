@@ -4,7 +4,7 @@ import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
-import de.ma.domain.shared.SortParams
+import de.ma.domain.shared.SortParam
 
 
 //The DataFileGateway interface is the gateway to the data file domain.
@@ -18,13 +18,13 @@ interface DataFileGateway {
     suspend fun findAll(
         pagedParams: PagedParams,
         searchParams: SearchParams? = null,
-        sortParams: SortParams? = null
+        sortParams: SortParam? = null
     ): Result<PagedList<DataFileShow>>
 
     suspend fun recover(dataFile: DataFile)
 
     suspend fun purge(dataFile: DataFile)
 
-    suspend fun exists(name: String, extension: String, domain: String): Boolean
+    suspend fun exists(name: String, extension: String): Boolean
 
 }

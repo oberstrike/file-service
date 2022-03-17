@@ -5,13 +5,13 @@ import de.ma.domain.datafile.DataFileShow
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
-import de.ma.domain.shared.SortParams
+import de.ma.domain.shared.SortParam
 import java.lang.RuntimeException
 
 suspend fun DataFileManagementUseCaseImpl.internalGetDataFilesPaged(
     pagedParams: PagedParams,
     searchParams: SearchParams?,
-    sortParams: SortParams?
+    sortParams: SortParam?
 ): Result<PagedList<DataFileShow>>  {
     val result = dataFileGateway.findAll(pagedParams, searchParams, sortParams)
 

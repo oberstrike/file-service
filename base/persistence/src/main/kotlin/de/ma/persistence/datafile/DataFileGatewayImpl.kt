@@ -9,7 +9,7 @@ import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
-import de.ma.domain.shared.SortParams
+import de.ma.domain.shared.SortParam
 import de.ma.persistence.datafile.data.DataFileEntity
 import de.ma.persistence.datafile.data.DataFileRepository
 import de.ma.persistence.datafile.data.DataFileShowDTO
@@ -84,7 +84,7 @@ class DataFileGatewayImpl(
     override suspend fun findAll(
         pagedParams: PagedParams,
         searchParams: SearchParams?,
-        sortParams: SortParams?
+        sortParams: SortParam?
     ): Result<PagedList<DataFileShow>> {
         var sort: Sort? = null
 

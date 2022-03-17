@@ -3,7 +3,7 @@ package de.ma.domain.folder
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
-import de.ma.domain.shared.SortParams
+import de.ma.domain.shared.SortParam
 
 interface FolderGateway {
 
@@ -18,7 +18,7 @@ interface FolderGateway {
     suspend fun getFoldersPaged(
         pagedParams: PagedParams,
         searchParams: SearchParams?,
-        sortParams: SortParams?
+        sortParams: SortParam?
     ): Result<PagedList<FolderOverview>>
 
 }

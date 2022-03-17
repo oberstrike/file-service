@@ -8,7 +8,7 @@ class AlreadyExistsDataCreateFileFilter(
     private val dataFileGateway: DataFileGateway
 ) : DataCreateFileFilter {
     override suspend fun accept(createDataFile: DataFileCreate): Result<DataFileCreate> {
-        val exists = dataFileGateway.exists(createDataFile.name, createDataFile.extension, createDataFile.domain)
+        val exists = dataFileGateway.exists(createDataFile.name, createDataFile.extension)
         return if (exists) Result.failure(RuntimeException("Data file already exists"))
         else Result.success(createDataFile)
     }

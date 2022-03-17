@@ -1,13 +1,11 @@
 package de.ma.datafile.api.management
 
 import de.ma.domain.datafile.*
-import de.ma.domain.folder.FolderOverview
 import de.ma.domain.folder.FolderSearchParams
-import de.ma.domain.folder.FolderShow
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
-import de.ma.domain.shared.SortParams
+import de.ma.domain.shared.SortParam
 
 interface DataFileManagementUseCase {
 
@@ -20,6 +18,6 @@ interface DataFileManagementUseCase {
     suspend fun getDataFilesPaged(
         pagedParams: PagedParams,
         searchParams: SearchParams? = null,
-        sortParams: SortParams? = null
+        sortParams: SortParam? = null
     ): Result<PagedList<DataFileShow>>
 }

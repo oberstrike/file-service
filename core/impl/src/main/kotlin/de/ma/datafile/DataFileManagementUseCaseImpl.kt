@@ -10,7 +10,7 @@ import de.ma.domain.folder.FolderSearchParams
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import de.ma.domain.shared.SearchParams
-import de.ma.domain.shared.SortParams
+import de.ma.domain.shared.SortParam
 
 class DataFileManagementUseCaseImpl(
     internal val dataFileGateway: DataFileGateway,
@@ -62,7 +62,7 @@ class DataFileManagementUseCaseImpl(
     override suspend fun getDataFilesPaged(
         pagedParams: PagedParams,
         searchParams: SearchParams?,
-        sortParams: SortParams?
+        sortParams: SortParam?
     ): Result<PagedList<DataFileShow>> {
         return internalGetDataFilesPaged(pagedParams, searchParams, sortParams)
     }

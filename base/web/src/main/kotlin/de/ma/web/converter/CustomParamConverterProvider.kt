@@ -1,6 +1,7 @@
 package de.ma.web.converter
 
 import de.ma.domain.nanoid.NanoId
+import de.ma.web.models.SortParamsContainer
 import java.lang.reflect.Type
 import javax.ws.rs.ext.ParamConverter
 import javax.ws.rs.ext.ParamConverterProvider
@@ -11,7 +12,8 @@ class CustomParamConverterProvider : ParamConverterProvider {
 
 
     private val converterByClass: Map<Class<*>, ParamConverter<*>> = mapOf(
-        NanoId::class.java to NanoIdParamConverter()
+        NanoId::class.java to NanoIdParamConverter(),
+        SortParamsContainer::class.java to SortParamsContainerConverter()
     )
 
 
@@ -23,6 +25,7 @@ class CustomParamConverterProvider : ParamConverterProvider {
         if (converterByClass.containsKey(rawType)) {
             return converterByClass[rawType] as ParamConverter<T>
         }
+
         return null
     }
 

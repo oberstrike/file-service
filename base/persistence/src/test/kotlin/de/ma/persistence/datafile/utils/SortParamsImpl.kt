@@ -1,8 +1,8 @@
 package de.ma.persistence.datafile.utils
 
-import de.ma.domain.shared.SortParams
+import de.ma.domain.shared.SortParam
 
 data class SortParamsImpl(
     override val direction: String,
     override val sortBy: String
-): SortParams
+): SortParam

@@ -99,7 +99,10 @@ class FoldersApi(
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    suspend fun getFolders(@QueryParam("limit") limit: Int = 10, @QueryParam("page") page: Int = 1) = handle {
+    suspend fun getFolders(@QueryParam("limit") limit: Int = 10,
+                           @QueryParam("page") page: Int = 1,
+                           @QueryParam("sort") sort: String? = null,
+                           ) = handle {
         folderManagementUseCase.getFoldersPaged(pagedParams = PagedParamsImpl(page, limit))
     }
 
