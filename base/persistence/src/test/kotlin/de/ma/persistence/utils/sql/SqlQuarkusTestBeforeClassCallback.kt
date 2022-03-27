@@ -12,11 +12,11 @@ class SqlQuarkusTestBeforeClassCallback : QuarkusTestBeforeClassCallback {
         val sql = testClass.annotations.filterIsInstance(Sql::class.java).firstOrNull()
 
         if (sql != null) {
-            val targetFiles = sql.value
+            val targetFiles = sql.before
             for (targetFile in targetFiles) {
                 SqlFileProcessor.processTargetFile(targetFile)
             }
-
         }
+
     }
 }

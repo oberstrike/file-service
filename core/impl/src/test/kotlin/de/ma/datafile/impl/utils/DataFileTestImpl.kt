@@ -20,8 +20,7 @@ class DataFileTestImpl : DataFileTest {
         return DataFileCreateImpl(
             content = content,
             extension = extension,
-            name = name,
-            domain = domain
+            name = name
         ).let(block)
     }
 
@@ -35,6 +34,5 @@ class DataFileTestImpl : DataFileTest {
 data class DataFileCreateImpl(
     override val content: DataFileContentCreate,
     override val extension: String,
-    override val name: String,
-    override val domain: String
+    override val name: String
 ) : DataFileCreate

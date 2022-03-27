@@ -1,16 +1,15 @@
 package de.ma.persistence.folder.data
 
-import de.ma.domain.folder.Folder
 import de.ma.domain.folder.FolderCreate
 import de.ma.domain.folder.FolderSearchParams
 
-data class FolderCreateDTO(override val name: String): FolderCreate {
+data class FolderCreateDTO(override val name: String) : FolderCreate {
     override fun toParams(): FolderSearchParams {
-        return FolderSearchParamsDTO(name = name, id = null)
+        return FolderSearchParamsDTO(id = null, name = name)
     }
 }
 
 
-fun FolderCreate.toEntity(): FolderEntity{
-    return FolderEntity(name = name, size = 0)
+fun FolderCreate.toEntity(): FolderEntity {
+    return FolderEntity(name = name)
 }

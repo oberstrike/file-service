@@ -1,12 +1,14 @@
 package de.ma.datafile.internal
 
 import de.ma.datafile.DataFileManagementUseCaseImpl
-import de.ma.domain.datafile.DeleteParamsDataFile
+import de.ma.domain.datafile.DeleteDataFileParams
 import java.lang.RuntimeException
 
-internal suspend fun DataFileManagementUseCaseImpl.internalDelete(dataFileDelete: DeleteParamsDataFile): Result<Unit>{
+internal suspend fun DataFileManagementUseCaseImpl.internalDelete(dataFileDelete: DeleteDataFileParams): Result<Unit>{
     //delete the datafile
-    val dataFileDeleteResult = dataFileGateway.deleteById(dataFileDelete.id)
+    val targetId = dataFileDelete.id
+
+    val dataFileDeleteResult = dataFileGateway.deleteById(targetId)
 
     val dataFile = dataFileDeleteResult.getOrNull()
 
@@ -22,13 +24,13 @@ internal suspend fun DataFileManagementUseCaseImpl.internalDelete(dataFileDelete
 
     //if the datafile content couldn't be deleted return Result a failure
     if (dataFileContentDeleteResult.isFailure) {
-        dataFileGateway.recover(dataFile)
+        dataFileGateway.recover(targetId)
 
         return Result.failure(
             dataFileContentDeleteResult.exceptionOrNull() ?: RuntimeException("Could not delete datafile content")
         )
     }
 
-    dataFileGateway.purge(dataFile)
+    dataFileGateway.purge(targetId)
     return Result.success(Unit)
 }

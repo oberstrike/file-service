@@ -4,6 +4,7 @@ import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.content.DataFileContentOverview
 import de.ma.domain.content.DataFileContentShow
 import de.ma.domain.datafile.DataFileSearchParams
+import de.ma.domain.datafile.DeleteDataFileParams
 import de.ma.domain.nanoid.NanoId
 
 interface DataFileContentRepository {
@@ -14,6 +15,6 @@ interface DataFileContentRepository {
 
     suspend fun deleteAll()
 
-    suspend fun delete(searchParams: DataFileSearchParams): Boolean?
+    suspend fun delete(searchParams: DeleteDataFileParams): Boolean?
 
 }

@@ -3,7 +3,6 @@ package de.ma.domain.datafile
 import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
-import de.ma.domain.shared.SearchParams
 import de.ma.domain.shared.SortParam
 
 
@@ -11,20 +10,22 @@ import de.ma.domain.shared.SortParam
 interface DataFileGateway {
     suspend fun findById(nanoId: NanoId): Result<DataFileShow>
 
-    suspend fun deleteById(nanoId: NanoId): Result<DataFile>
+    suspend fun deleteById(nanoId: NanoId): Result<Unit>
 
-    suspend fun <T : DataFileCreate> save(dataFileCreate: T): Result<DataFile>
+    suspend fun save(dataFileCreate: DataFileCreate, folderId: NanoId): Result<DataFileShow>
 
     suspend fun findAll(
         pagedParams: PagedParams,
-        searchParams: SearchParams? = null,
+        searchParams: DataFileSearchParams? = null,
         sortParams: SortParam? = null
     ): Result<PagedList<DataFileShow>>
 
-    suspend fun recover(dataFile: DataFile)
+    suspend fun recover(nanoId: NanoId): Boolean
 
-    suspend fun purge(dataFile: DataFile)
+    suspend fun purge(nanoId: NanoId): Boolean
 
     suspend fun exists(name: String, extension: String): Boolean
+
+    suspend fun updateDataFile(dataFileUpdate: DataFileUpdate): Result<DataFileShow>
 
 }

@@ -4,6 +4,7 @@ import de.ma.domain.content.DataFileContentCreate
 import de.ma.domain.content.DataFileContentOverview
 import de.ma.domain.content.DataFileContentShow
 import de.ma.domain.datafile.DataFileSearchParams
+import de.ma.domain.datafile.DeleteDataFileParams
 import de.ma.domain.nanoid.NanoId
 import de.ma.persistence.datafile.content.repository.api.DataFileContentRepository
 import de.ma.persistence.datafile.content.repository.api.FindFileContent
@@ -48,7 +49,7 @@ class DataFileContentRepositoryImpl(
             return@withContext saveFileContent.save(content, nanoId)
         }
 
-    override suspend fun delete(searchParams: DataFileSearchParams): Boolean? = withContext(scope) {
+    override suspend fun delete(searchParams: DeleteDataFileParams): Boolean? = withContext(scope) {
         val file = File(baseFolder, searchParams.id.id)
         return@withContext if (file.exists()) file.delete() else false
     }

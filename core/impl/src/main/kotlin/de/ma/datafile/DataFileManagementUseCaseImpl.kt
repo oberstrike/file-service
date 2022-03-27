@@ -6,16 +6,15 @@ import de.ma.datafile.internal.internalCreate
 import de.ma.datafile.internal.internalDelete
 import de.ma.domain.content.DataFileContentGateway
 import de.ma.domain.datafile.*
-import de.ma.domain.folder.FolderSearchParams
+import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
-import de.ma.domain.shared.SearchParams
 import de.ma.domain.shared.SortParam
 
 class DataFileManagementUseCaseImpl(
     internal val dataFileGateway: DataFileGateway,
     internal val dataFileContentGateway: DataFileContentGateway,
-    private val filters: List<DataCreateFileFilter> = listOf()
+    filters: List<DataCreateFileFilter> = listOf()
 ) : DataFileManagementUseCase {
 
     private val _filters = listOf<DataCreateFileFilter>(AlreadyExistsDataCreateFileFilter(dataFileGateway)) + filters
@@ -25,11 +24,12 @@ class DataFileManagementUseCaseImpl(
         create Data File whole process
      */
     override suspend fun createDataFile(
-        folderSearchParams: FolderSearchParams,
+        folderNanoId: NanoId,
         createDataFile: DataFileCreate
     ): Result<DataFileShow> {
 
         var target = createDataFile
+
         for (filter in _filters) {
             val newTarget = filter.accept(createDataFile)
             if (newTarget.isFailure) {
@@ -38,13 +38,13 @@ class DataFileManagementUseCaseImpl(
             target = newTarget.getOrNull()!!
         }
 
-        return internalCreate(target)
+        return internalCreate(target, folderNanoId)
     }
 
     /*
         delete data file and data file content
      */
-    override suspend fun deleteDataFile(dataFileDelete: DeleteParamsDataFile): Result<Unit> {
+    override suspend fun deleteDataFile(dataFileDelete: DeleteDataFileParams): Result<Unit> {
         return internalDelete(dataFileDelete)
     }
 
@@ -61,10 +61,15 @@ class DataFileManagementUseCaseImpl(
      */
     override suspend fun getDataFilesPaged(
         pagedParams: PagedParams,
-        searchParams: SearchParams?,
+        searchParams: DataFileSearchParams?,
         sortParams: SortParam?
     ): Result<PagedList<DataFileShow>> {
         return internalGetDataFilesPaged(pagedParams, searchParams, sortParams)
+    }
+
+
+    override suspend fun updateDataFile(dataFileUpdate: DataFileUpdate): Result<DataFileShow> {
+        return internalUpdate(dataFileUpdate)
     }
 
 }

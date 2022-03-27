@@ -4,5 +4,5 @@ import de.ma.domain.nanoid.NanoId
 
 interface FolderUpdate {
     val name: String
-    val id: NanoId
+    val version: Long
 }

@@ -1,9 +1,10 @@
 package de.ma.persistence.folder.data
 
 import de.ma.domain.folder.Folder
+import de.ma.domain.folder.FolderOverview
 import de.ma.domain.folder.FolderShow
+import de.ma.domain.nanoid.NanoId
 import de.ma.persistence.datafile.data.DataFileEntity
-import de.ma.persistence.datafile.data.toShow
 import de.ma.persistence.shared.AbstractBaseEntity
 import org.hibernate.Hibernate
 import javax.persistence.*
@@ -14,15 +15,25 @@ import javax.persistence.*
     AttributeOverride(name = "id", column = Column(name = "folder_id")),
 )
 class FolderEntity(
-    override var size: Long,
-    override var name: String,
+    override var name: String = "",
     @get:OneToMany(
         mappedBy = "folder",
         cascade = [CascadeType.ALL],
-        fetch = FetchType.LAZY
+        fetch = FetchType.LAZY,
+        orphanRemoval = true
     )
     override var dataFiles: MutableList<DataFileEntity> = mutableListOf()
 ) : AbstractBaseEntity(), Folder {
+
+
+    fun addDataFile(dataFile: DataFileEntity) {
+        dataFiles.add(dataFile)
+        dataFile.folder = this
+    }
+
+
+    @get:Version
+    var version: Long = 0
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -35,18 +46,29 @@ class FolderEntity(
 
     override fun hashCode(): Int = id.hashCode()
 
-    @Override
-    override fun toString(): String {
-        return "FolderEntity(id=$id, size=$size, dataFiles=$dataFiles, name='$name')"
-    }
 
 }
+
+data class FolderOverviewDTO(
+    override val id: NanoId,
+    override val name: String,
+    override var size: Long
+) : FolderOverview
 
 fun FolderEntity.toShow(): FolderShow {
     return FolderShowDTO(
         id = id!!,
         name = name,
-        dataFiles = dataFiles.map { it.toShow() },
-        size = size
+        dataFiles = emptyList(),
+        size = dataFiles.size
+    )
+}
+
+
+fun FolderEntity.toOverview(): FolderOverview {
+    return FolderOverviewDTO(
+        id = id!!,
+        name = name,
+        size = this.dataFiles.size.toLong()
     )
 }

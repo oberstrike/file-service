@@ -1,20 +1,14 @@
 package de.ma.persistence.datafile
 
-import de.ma.domain.datafile.DataFile
-import de.ma.domain.datafile.DataFileCreate
-import de.ma.domain.datafile.DataFileGateway
-import de.ma.domain.datafile.DataFileShow
+import de.ma.domain.datafile.*
 import de.ma.domain.folder.FolderGateway
 import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
-import de.ma.domain.shared.SearchParams
 import de.ma.domain.shared.SortParam
-import de.ma.persistence.datafile.data.DataFileEntity
-import de.ma.persistence.datafile.data.DataFileRepository
-import de.ma.persistence.datafile.data.DataFileShowDTO
-import de.ma.persistence.datafile.data.toEntity
+import de.ma.persistence.datafile.data.*
 import de.ma.persistence.folder.data.FolderCreateDTO
+import de.ma.persistence.folder.data.FolderEntity
 import de.ma.persistence.folder.data.FolderRepository
 import de.ma.persistence.folder.data.FolderSearchParamsDTO
 import de.ma.persistence.shared.PagedListImpl
@@ -26,10 +20,32 @@ import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 class DataFileGatewayImpl(
-    private val dataFileRepository: DataFileRepository,
-    private val folderGateway: FolderGateway,
-    private val folderRepository: FolderRepository
+    private val dataFileRepository: DataFileRepository
 ) : DataFileGateway {
+
+    override suspend fun updateDataFile(dataFileUpdate: DataFileUpdate): Result<DataFileShow> {
+        val dataFileEntity = (dataFileRepository.findById(dataFileUpdate.id.toEntity()).awaitSuspending()
+            ?: return Result.failure(RuntimeException("DataFile with id ${dataFileUpdate.id} not found")))
+
+        if(dataFileEntity.version != dataFileUpdate.version) {
+            return Result.failure(RuntimeException("DataFile with id ${dataFileUpdate.id} has been changed"))
+        }
+
+        if(dataFileUpdate.name != null) {
+            dataFileEntity.name = dataFileUpdate.name!!
+        }
+
+        if(dataFileUpdate.extension != null) {
+            dataFileEntity.extension = dataFileUpdate.extension!!
+        }
+
+        return try {
+            Result.success(dataFileRepository.persist(dataFileEntity).awaitSuspending().toShow())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 
     override suspend fun findById(nanoId: NanoId): Result<DataFileShow> {
         val dataFileEntity = dataFileRepository.findById(nanoId.toEntity()).awaitSuspending() ?: return Result.failure(
@@ -38,7 +54,7 @@ class DataFileGatewayImpl(
         return Result.success(DataFileShowDTO(dataFileEntity.extension, dataFileEntity.name, nanoId))
     }
 
-    override suspend fun deleteById(nanoId: NanoId): Result<DataFile> {
+    override suspend fun deleteById(nanoId: NanoId): Result<Unit> {
         val nanoIdEntity = nanoId.toEntity()
 
         val dataFileEntity =
@@ -48,30 +64,30 @@ class DataFileGatewayImpl(
         dataFileEntity.deleted = true
 
         return try {
-            Result.success(
-                dataFileRepository.persist(dataFileEntity).awaitSuspending()
-            )
+            dataFileRepository.persist(dataFileEntity).awaitSuspending()
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(RuntimeException("Could not delete data file in database"))
         }
     }
 
-    override suspend fun <T : DataFileCreate> save(dataFileCreate: T): Result<DataFile> {
+    override suspend fun exists(name: String, extension: String): Boolean {
+        return dataFileRepository.find(
+            "name = :name and extension =: extension", mapOf(
+                "name" to name,
+                "extension" to extension
+            )
+        ).firstResult<DataFileEntity>().awaitSuspending() != null
+    }
 
-        var folderResult = folderGateway.getFolderByParams(
-            FolderSearchParamsDTO(name = dataFileCreate.domain, id = null))
 
-        if(folderResult.isFailure){
-           folderResult = folderGateway.createFolder(FolderCreateDTO(dataFileCreate.domain))
-        }
+    override suspend fun save(dataFileCreate: DataFileCreate, folderId: NanoId): Result<DataFileShow> {
 
-        val folder = folderResult.getOrNull()?: return Result.failure(RuntimeException("Could not create folder"))
-
-        val entity = dataFileCreate.toEntity(folderRepository.findByName(folder.name)!!)
+        val entity = dataFileCreate.toEntity(FolderEntity().apply { id = folderId.toEntity() })
 
         return try {
             Result.success(
-                dataFileRepository.persist(entity).awaitSuspending()
+                dataFileRepository.persist(entity).awaitSuspending().toShow()
             )
         } catch (e: Exception) {
             Result.failure(RuntimeException("Could not save data file in database"))
@@ -83,7 +99,7 @@ class DataFileGatewayImpl(
 
     override suspend fun findAll(
         pagedParams: PagedParams,
-        searchParams: SearchParams?,
+        searchParams: DataFileSearchParams?,
         sortParams: SortParam?
     ): Result<PagedList<DataFileShow>> {
         var sort: Sort? = null
@@ -111,24 +127,16 @@ class DataFileGatewayImpl(
         return Result.success(pagedList)
     }
 
-    override suspend fun purge(dataFile: DataFile) {
-        dataFileRepository.delete("data_file_id", dataFile.id!!.id).awaitSuspending()
+    override suspend fun purge(nanoId: NanoId): Boolean {
+        return dataFileRepository.delete("data_file_id", nanoId.id).awaitSuspending() == 1L
     }
 
 
-    override suspend fun recover(dataFile: DataFile) {
-        val entity = dataFile as DataFileEntity
-        entity.deleted = false
-
-        dataFileRepository.persist(entity).awaitSuspending()
-    }
-
-    override suspend fun exists(name: String, extension: String, domain: String): Boolean {
-        val dataFileEntities =
-            dataFileRepository.find("name = ?1 and extension = ?2 and domain = ?3", name, extension, domain)
-                .list<DataFileEntity>()
-                .awaitSuspending()
-        return dataFileEntities.isNotEmpty()
+    override suspend fun recover(nanoId: NanoId): Boolean {
+        return dataFileRepository.update(
+            "update from DataFileEntity set deleted = false where data_file_id = :id",
+            mapOf("id" to nanoId.id)
+        ).awaitSuspending() == 1
     }
 
 

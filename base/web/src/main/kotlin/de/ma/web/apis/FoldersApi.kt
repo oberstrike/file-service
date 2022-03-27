@@ -1,23 +1,20 @@
 package de.ma.web.apis;
 
+
 import de.ma.datafile.api.management.FolderManagementUseCase
 import de.ma.domain.datafile.DataFileShow
-import de.ma.domain.folder.FolderCreate
 import de.ma.domain.folder.FolderOverview
 import de.ma.domain.folder.FolderShow
 import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
-import de.ma.web.models.DataFileCreateForm
-import de.ma.web.models.PagedParamsImpl
-import de.ma.web.models.toDataFileCreate
+import de.ma.web.models.*
+import de.ma.web.validators.IsNanoId
+import org.eclipse.microprofile.openapi.annotations.media.Content
+import org.eclipse.microprofile.openapi.annotations.media.Schema
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody
 import org.jboss.resteasy.reactive.MultipartForm
-
 import javax.ws.rs.*
-import javax.ws.rs.core.Response
-
-
-import javax.validation.constraints.*
-import javax.validation.Valid
 import javax.ws.rs.core.MediaType
 
 
@@ -29,30 +26,51 @@ class FoldersApi(
     @Path("/{id}/datafiles")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @RequestBody(
+        content = [
+            Content(
+                mediaType = MediaType.MULTIPART_FORM_DATA,
+                schema = Schema(implementation = DataFileCreateForm::class)
+            )
+        ]
+    )
     @Produces(MediaType.APPLICATION_JSON)
     suspend fun createDatafileInFolder(
-        @PathParam("id") @Pattern(regexp = "^[0-9A-z_-]{21}$") @Size(
-            min = 21,
-            max = 21
-        ) id: NanoId, @Valid @NotNull @MultipartForm dataFileCreateForm: DataFileCreateForm
+        @PathParam("id") @IsNanoId @Parameter(
+            name = "id", schema = Schema(
+                implementation = String::class
+            )
+        ) id: NanoId, @MultipartForm dataFileCreateForm: DataFileCreateForm
     ): DataFileShow = handle {
         folderManagementUseCase.createDataFileInFolder(id, dataFileCreateForm.toDataFileCreate())
     }
 
+    @Path("/create")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    suspend fun createFolder(@Valid @NotNull folderCreate: FolderCreate): FolderShow = handle {
-        folderManagementUseCase.createFolder(folderCreate)
+    @RequestBody(
+        content = [
+            Content(
+                mediaType = MediaType.APPLICATION_JSON,
+                schema = Schema(implementation = FolderCreateParams::class)
+            )
+        ]
+    )
+    suspend fun createFolder(folderCreate: FolderCreateParams): FolderOverview {
+        return handle {
+            folderManagementUseCase.createFolder(folderCreate)
+        }
     }
 
     @Path("/{id}/datafiles")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     suspend fun deleteDatafilesFromFolder(
-        @PathParam("id") @Pattern(regexp = "^[0-9A-z_-]{21}$") @Size(
-            min = 21,
-            max = 21
+        @PathParam("id") @IsNanoId @Parameter(
+            name = "id", schema = Schema(
+                implementation = String::class
+            )
         ) id: NanoId
     ): Unit = handle {
         folderManagementUseCase.deleteDatafilesFromFolder(id)
@@ -62,9 +80,10 @@ class FoldersApi(
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     suspend fun deleteFolder(
-        @PathParam("id") @Pattern(regexp = "^[0-9A-z_-]{21}$") @Size(
-            min = 21,
-            max = 21
+        @PathParam("id") @IsNanoId @Parameter(
+            name = "id", schema = Schema(
+                implementation = String::class
+            )
         ) id: NanoId
     ) = handle {
         folderManagementUseCase.deleteFolder(id)
@@ -74,14 +93,14 @@ class FoldersApi(
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     suspend fun getDatafilesFromFolder(
-        @PathParam("id") @Pattern(regexp = "^[0-9A-z_-]{21}$") @Size(
-            min = 21,
-            max = 21
+        @PathParam("id") @IsNanoId @Parameter(
+            name = "id", schema = Schema(
+                implementation = String::class
+            )
         ) id: NanoId,
-        @QueryParam("limit") @DefaultValue("10") limit: Int?,
-        @QueryParam("page") @DefaultValue("1") page: Int?
-    ): PagedList<DataFileShow> {
-        return folderManagementUseCase.getDataFilesFromFolder(id, limit, page)
+        @BeanParam pagedParamsForm: PagedParamsForm
+    ): PagedList<DataFileShow> = handle {
+        folderManagementUseCase.getDataFilesFromFolder(id, pagedParamsForm.toPagedParams())
     }
 
 
@@ -89,9 +108,10 @@ class FoldersApi(
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     suspend fun getFolder(
-        @PathParam("id") @Pattern(regexp = "^[0-9A-z_-]{21}$") @Size(
-            min = 21,
-            max = 21
+        @PathParam("id") @IsNanoId @Parameter(
+            name = "id", schema = Schema(
+                implementation = String::class
+            )
         ) id: NanoId
     ): FolderShow = handle {
         folderManagementUseCase.getFolderById(id)
@@ -99,11 +119,11 @@ class FoldersApi(
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    suspend fun getFolders(@QueryParam("limit") limit: Int = 10,
-                           @QueryParam("page") page: Int = 1,
-                           @QueryParam("sort") sort: String? = null,
-                           ) = handle {
-        folderManagementUseCase.getFoldersPaged(pagedParams = PagedParamsImpl(page, limit))
+    suspend fun getFolders(
+        @BeanParam pagedParamsForm: PagedParamsForm,
+        @QueryParam("sort") sort: String? = null
+    ) = handle {
+        folderManagementUseCase.getFoldersPaged(pagedParams = pagedParamsForm.toPagedParams())
     }
 
     private suspend fun <T> handle(block: suspend () -> Result<T>): T {

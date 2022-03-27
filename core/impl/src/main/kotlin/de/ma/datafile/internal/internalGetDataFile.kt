@@ -5,8 +5,12 @@ import de.ma.domain.datafile.DataFileSearchParams
 import de.ma.domain.datafile.DataFileShow
 
 suspend fun DataFileManagementUseCaseImpl.internalGetDataFile(dataFileSearchParams: DataFileSearchParams): Result<DataFileShow> {
+    if(dataFileSearchParams.id == null) {
+        return Result.failure(IllegalArgumentException("id must not be null"))
+    }
 
-    val dataFileShow = dataFileGateway.findById(dataFileSearchParams.id).getOrElse {
+
+    val dataFileShow = dataFileGateway.findById(dataFileSearchParams.id!!).getOrElse {
         return Result.failure(
             it
         )

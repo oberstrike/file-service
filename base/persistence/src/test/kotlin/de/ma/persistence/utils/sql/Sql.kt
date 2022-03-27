@@ -4,5 +4,6 @@ package de.ma.persistence.utils.sql
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 annotation class Sql(
-    val value: Array<String>
+    val before: Array<String> = [],
+    val after: Array<String> = [],
 )

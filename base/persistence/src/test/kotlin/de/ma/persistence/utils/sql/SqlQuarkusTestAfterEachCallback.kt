@@ -1,14 +1,12 @@
 package de.ma.persistence.utils.sql
 
-import de.ma.persistence.utils.sql.SqlFileProcessor.processTargetFile
-import io.quarkus.test.junit.callback.QuarkusTestBeforeEachCallback
+import io.quarkus.test.junit.callback.QuarkusTestAfterEachCallback
 import io.quarkus.test.junit.callback.QuarkusTestMethodContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
-class SqlQuarkusTestBeforeEachCallback : QuarkusTestBeforeEachCallback {
-
-    override fun beforeEach(context: QuarkusTestMethodContext) = runBlocking(
+class SqlQuarkusTestAfterEachCallback: QuarkusTestAfterEachCallback{
+    override fun afterEach(context: QuarkusTestMethodContext) = runBlocking(
         Dispatchers.IO
     ) {
         //get the package of the context.testInstance
@@ -20,16 +18,15 @@ class SqlQuarkusTestBeforeEachCallback : QuarkusTestBeforeEachCallback {
         val sqlAnnotations = context.testMethod.getAnnotationsByType(Sql::class.java)
         if (sqlAnnotations.isNotEmpty()) {
             for (sqlAnnotation in sqlAnnotations) {
-                val targetFiles = sqlAnnotation.before
+                val targetFiles = sqlAnnotation.after
                 for (targetFile in targetFiles) {
                     //put the package name add the target file name
-                    processTargetFile("$packageName/$targetFile")
+                    SqlFileProcessor.processTargetFile("$packageName/$targetFile")
                 }
             }
         }
 
 
     }
-
 
 }

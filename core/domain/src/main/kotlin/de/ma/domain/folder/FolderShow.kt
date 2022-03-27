@@ -5,7 +5,7 @@ import de.ma.domain.nanoid.NanoId
 
 interface FolderShow {
     val name: String
-    val size: Long
+    val size: Int
     val id: NanoId
-    val dataFiles: List<DataFileShow>
+    val dataFiles: List<String>
 }

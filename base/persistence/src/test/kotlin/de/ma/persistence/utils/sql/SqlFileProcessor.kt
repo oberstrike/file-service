@@ -25,17 +25,30 @@ object SqlFileProcessor {
         val bufferedReader = BufferedReader(InputStreamReader(inputStream))
 
         var nextCommand = ""
+        var isDo = false
 
         bufferedReader.forEachLineAsync { line ->
             if (line.startsWith("--")) {
                 return@forEachLineAsync
+
             }
             nextCommand += line
 
-            if (line.endsWith(";")) {
+            if( isDo &&  !line.startsWith("END \$\$;")) {
+                return@forEachLineAsync
+            }
+
+
+            if(line.startsWith("DO")) {
+                isDo = true
+                return@forEachLineAsync
+            }
+
+            if (line.endsWith(";") || line.startsWith("END \$\$;")) {
                 mutinySessionFactory.withSession {
                     it.createNativeQuery<Unit>(nextCommand).executeUpdate()
                 }.awaitSuspending()
+                isDo = false
                 nextCommand = ""
             }
         }

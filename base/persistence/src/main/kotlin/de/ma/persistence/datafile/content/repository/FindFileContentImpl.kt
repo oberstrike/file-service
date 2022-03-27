@@ -17,7 +17,7 @@ class FindFileContentImpl(
 ) : FindFileContent {
     override suspend fun find(searchParams: DataFileSearchParams): DataFileContentShow? {
 
-        val filename = searchParams.id.id
+        val filename = searchParams.id?.id?: return null
         //find the File recursively in the destinationFolder
         val file = File(destinationFolder).walkTopDown().find { it.name == filename } ?: return null
 

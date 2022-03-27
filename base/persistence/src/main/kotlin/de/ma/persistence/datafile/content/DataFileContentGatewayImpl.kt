@@ -1,9 +1,8 @@
 package de.ma.persistence.datafile.content
 
 import de.ma.domain.content.*
-import de.ma.domain.datafile.DataFile
 import de.ma.domain.datafile.DataFileSearchParams
-import de.ma.domain.datafile.DeleteParamsDataFile
+import de.ma.domain.datafile.DeleteDataFileParams
 import de.ma.domain.nanoid.NanoId
 import de.ma.persistence.datafile.content.repository.DataFileContentRepositoryImpl
 import javax.enterprise.context.ApplicationScoped
@@ -34,7 +33,7 @@ class DataFileContentGatewayImpl(
         }
     }
 
-    override suspend fun deleteContent(deleteParams: DeleteParamsDataFile): Result<Unit> {
+    override suspend fun deleteContent(deleteParams: DeleteDataFileParams): Result<Unit> {
         return try {
             if (dataFileContentRepositoryImpl.delete(deleteParams) == true) {
                 Result.success(Unit)

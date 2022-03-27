@@ -49,13 +49,11 @@ abstract class AbstractDatabaseTest {
     fun dataFileCreate(
         extension: String,
         name: String,
-        content: DataFileContentCreate,
-        domain: String
+        content: DataFileContentCreate
     ): DataFileCreate =
         DataFileCreateDTO(
             content,
             extension,
-            name,
-            domain
+            name
         )
 }

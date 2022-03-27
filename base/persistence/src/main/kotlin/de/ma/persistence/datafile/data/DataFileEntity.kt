@@ -20,15 +20,19 @@ import javax.persistence.*
     AttributeOverride(name = "id", column = Column(name = "data_file_id")),
 )
 class DataFileEntity(
-    override var name: String,
-    override var extension: String,
     @get:ManyToOne(fetch = FetchType.LAZY, optional = false)
-    override var folder: FolderEntity
-) : AbstractBaseEntity(), DataFile,
+    override var folder: FolderEntity,
+    override var name: String = "",
+    override var extension: String = "",
+    ) : AbstractBaseEntity(), DataFile,
     TimeControlled by TimeControlledImpl() {
 
     @get:Column(name = "deleted")
     var deleted: Boolean = false
+
+    @get:Column(name = "version")
+    @get:Version
+    var version: Long = 0
 
 
     override fun equals(other: Any?): Boolean {
@@ -38,13 +42,7 @@ class DataFileEntity(
         return id == that!!.id
     }
 
-
     override fun hashCode(): Int = id.hashCode()
-
-    override fun toString(): String {
-        return this::class.simpleName + "(id = $id )"
-    }
-
 
 }
 

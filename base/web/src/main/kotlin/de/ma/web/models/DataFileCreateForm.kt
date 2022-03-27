@@ -5,30 +5,35 @@ import de.ma.domain.datafile.DataFileCreate
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType
 import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.jboss.resteasy.reactive.PartType
-import java.io.File
+import org.jboss.resteasy.reactive.multipart.FileUpload
 import java.io.InputStream
 import javax.validation.constraints.NotNull
 import javax.ws.rs.FormParam
 import javax.ws.rs.core.MediaType
+import kotlin.io.path.inputStream
 
-data class DataFileCreateForm(
-    @get:FormParam("name")
-    var name: String? = null,
-    @get:FormParam("extension")
-    var extension: String? = null,
-    @get:FormParam("content")
-    @field:PartType(MediaType.APPLICATION_OCTET_STREAM)
-    @get:Schema(type = SchemaType.STRING, format = "binary", description = "The file content")
-    @get:NotNull
-    var content: File? = null
-)
+class DataFileCreateForm{
+    @FormParam("name")
+    @NotNull
+    var name: String? = null
+
+    @FormParam("extension")
+    @NotNull
+    var extension: String? = null
+
+    @FormParam("content")
+    @PartType(MediaType.APPLICATION_OCTET_STREAM)
+    @Schema(type = SchemaType.STRING, format = "binary", description = "The file content")
+    @NotNull
+    var content: FileUpload? = null
+}
 
 fun DataFileCreateForm.toDataFileCreate(): DataFileCreate {
     return DataFileCreateImpl(
         name = name!!,
         extension = extension!!,
         content = DataFileContentCreateImpl(
-            input = content!!.inputStream(),
+            input = content!!.uploadedFile().inputStream(),
         ),
     )
 }
