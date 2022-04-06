@@ -1,12 +1,13 @@
 package de.ma.persistence.folder.data
 
 import de.ma.domain.folder.Folder
-import de.ma.domain.folder.FolderOverview
 import de.ma.domain.folder.FolderShow
 import de.ma.domain.nanoid.NanoId
 import de.ma.persistence.datafile.data.DataFileEntity
 import de.ma.persistence.shared.AbstractBaseEntity
+import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.Hibernate
+import org.hibernate.reactive.mutiny.Mutiny
 import javax.persistence.*
 
 
@@ -15,7 +16,11 @@ import javax.persistence.*
     AttributeOverride(name = "id", column = Column(name = "folder_id")),
 )
 class FolderEntity(
-    override var name: String = "",
+) : AbstractBaseEntity(), Folder {
+
+    override var name: String = ""
+
+
     @get:OneToMany(
         mappedBy = "folder",
         cascade = [CascadeType.ALL],
@@ -23,13 +28,9 @@ class FolderEntity(
         orphanRemoval = true
     )
     override var dataFiles: MutableList<DataFileEntity> = mutableListOf()
-) : AbstractBaseEntity(), Folder {
 
-
-    fun addDataFile(dataFile: DataFileEntity) {
-        dataFiles.add(dataFile)
-        dataFile.folder = this
-    }
+    @get:Column(name = "deleted", columnDefinition = "boolean default false")
+    var deleted: Boolean = false
 
 
     @get:Version
@@ -46,29 +47,27 @@ class FolderEntity(
 
     override fun hashCode(): Int = id.hashCode()
 
-
-}
-
-data class FolderOverviewDTO(
-    override val id: NanoId,
-    override val name: String,
-    override var size: Long
-) : FolderOverview
-
-fun FolderEntity.toShow(): FolderShow {
-    return FolderShowDTO(
-        id = id!!,
-        name = name,
-        dataFiles = emptyList(),
-        size = dataFiles.size
-    )
+    fun addDataFile(dataFile: DataFileEntity) {
+        val dataFiles = mutableListOf<DataFileEntity>()
+        dataFiles.addAll(this.dataFiles)
+        dataFiles.add(dataFile)
+        this.dataFiles = dataFiles
+        dataFile.folder = this
+    }
 }
 
 
-fun FolderEntity.toOverview(): FolderOverview {
-    return FolderOverviewDTO(
-        id = id!!,
-        name = name,
-        size = this.dataFiles.size.toLong()
-    )
+suspend fun FolderEntity.toShow(): FolderShow {
+    return Mutiny.fetch(dataFiles).map {
+        FolderShowDTO(
+            id = id!!,
+            name = name,
+            dataFiles = dataFiles.map { it.id?.id ?: "" },
+            size = dataFiles.size
+        )
+    }.awaitSuspending()
+
+
 }
+
+

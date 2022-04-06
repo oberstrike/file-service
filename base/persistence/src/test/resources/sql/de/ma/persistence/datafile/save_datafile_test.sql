@@ -1,0 +1,1 @@
+INSERT INTO folder (folder_id, name, version) VALUES ('123', 'test',  0);

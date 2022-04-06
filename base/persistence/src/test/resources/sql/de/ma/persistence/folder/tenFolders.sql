@@ -1,16 +1,10 @@
-DO
-$$
-    DECLARE
-        i integer := 0;
-        id text;
-    BEGIN
-        FOR i IN 1..25 LOOP
-                id := 'FCqQJDPuqRvtMGYPX2nA' || i::text;
-                RAISE NOTICE '%', id;
-
-                i := + 1; EXIT WHEN i > 10;
-                INSERT INTO folder (folder_id, name, version) VALUES (id, 'zrdz', 0);
-            END LOOP;
-
-    END
-$$;
+INSERT INTO folder (folder_id, name, version, deleted) VALUES ('FCqQJDPuqRvtMGYPX2nB1', 'zrdz', 0, false);
+INSERT INTO folder (folder_id, name, version, deleted) VALUES ('FCqQJDPuqRvtMGYPX2nB2', 'zrdz', 0, false);
+INSERT INTO folder (folder_id, name, version, deleted) VALUES ('FCqQJDPuqRvtMGYPX2nB3', 'zrdz', 0, false);
+INSERT INTO folder (folder_id, name, version, deleted) VALUES ('FCqQJDPuqRvtMGYPX2nB4', 'zrdz', 0, false);
+INSERT INTO folder (folder_id, name, version, deleted) VALUES ('FCqQJDPuqRvtMGYPX2nB5', 'zrdz', 0, false);
+INSERT INTO folder (folder_id, name, version, deleted) VALUES ('FCqQJDPuqRvtMGYPX2nB6', 'zrdz', 0, false);
+INSERT INTO folder (folder_id, name, version, deleted) VALUES ('FCqQJDPuqRvtMGYPX2nB7', 'zrdz', 0, false);
+INSERT INTO folder (folder_id, name, version, deleted) VALUES ('FCqQJDPuqRvtMGYPX2nB8', 'zrdz', 0, false);
+INSERT INTO folder (folder_id, name, version, deleted) VALUES ('FCqQJDPuqRvtMGYPX2nB9', 'zrdz', 0, false);
+INSERT INTO folder (folder_id, name, version, deleted) VALUES ('FCqQJDPuqRvtMGYPX2nA1', 'zrdz', 0, false);

@@ -9,8 +9,9 @@ import javax.persistence.GeneratedValue
 import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
-abstract class AbstractBaseEntity : PanacheEntityBase() {
-
+abstract class AbstractBaseEntity(
+    nanoId: NanoIdEntity? = null
+) : PanacheEntityBase() {
 
     @get:EmbeddedId
     @get:GeneratedValue(generator = "nano-generator")
@@ -19,5 +20,5 @@ abstract class AbstractBaseEntity : PanacheEntityBase() {
         strategy = "de.ma.persistence.shared.nanoid.NanoIdGenerator"
     )
     @get:Column(columnDefinition = "CHAR(21)")
-    var id: NanoIdEntity? = null
+    var id: NanoIdEntity? = nanoId
 }

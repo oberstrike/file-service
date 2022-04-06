@@ -12,7 +12,7 @@ interface DataFileGateway {
 
     suspend fun deleteById(nanoId: NanoId): Result<Unit>
 
-    suspend fun save(dataFileCreate: DataFileCreate, folderId: NanoId): Result<DataFileShow>
+    suspend fun save(dataFileCreate: DataFileCreate, folderId: NanoId): Result<NanoId>
 
     suspend fun findAll(
         pagedParams: PagedParams,
@@ -27,5 +27,7 @@ interface DataFileGateway {
     suspend fun exists(name: String, extension: String): Boolean
 
     suspend fun updateDataFile(dataFileUpdate: DataFileUpdate): Result<DataFileShow>
+
+    suspend fun deleteByFolderId(folderId: NanoId): Result<Unit>
 
 }

@@ -9,7 +9,7 @@ interface DataFile  {
     val name: String
     val extension: String
     val createdAt: LocalDateTime
-    val folder: Folder
+    val folder: Folder?
     val id: NanoId?
 }
 

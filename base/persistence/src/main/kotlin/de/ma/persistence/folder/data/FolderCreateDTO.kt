@@ -11,5 +11,5 @@ data class FolderCreateDTO(override val name: String) : FolderCreate {
 
 
 fun FolderCreate.toEntity(): FolderEntity {
-    return FolderEntity(name = name)
+    return FolderEntity().apply { name = this.name }
 }

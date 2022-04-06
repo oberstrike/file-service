@@ -8,6 +8,7 @@ import de.ma.persistence.folder.data.FolderEntity
 import de.ma.persistence.shared.AbstractBaseEntity
 import de.ma.persistence.shared.TimeControlled
 import de.ma.persistence.shared.TimeControlledImpl
+import de.ma.persistence.shared.nanoid.NanoIdEntity
 import io.quarkus.hibernate.reactive.panache.PanacheEntity_.id
 import org.hibernate.Hibernate
 import org.hibernate.annotations.CreationTimestamp
@@ -19,13 +20,15 @@ import javax.persistence.*
 @AttributeOverrides(
     AttributeOverride(name = "id", column = Column(name = "data_file_id")),
 )
-class DataFileEntity(
+class DataFileEntity(id: NanoIdEntity? = null) : AbstractBaseEntity(id),
+    DataFile, TimeControlled by TimeControlledImpl() {
+
+    override var name: String = ""
+
+    override var extension: String = ""
+
     @get:ManyToOne(fetch = FetchType.LAZY, optional = false)
-    override var folder: FolderEntity,
-    override var name: String = "",
-    override var extension: String = "",
-    ) : AbstractBaseEntity(), DataFile,
-    TimeControlled by TimeControlledImpl() {
+    override var folder: FolderEntity? = null
 
     @get:Column(name = "deleted")
     var deleted: Boolean = false
@@ -46,12 +49,12 @@ class DataFileEntity(
 
 }
 
-fun DataFileCreate.toEntity(folder: FolderEntity): DataFileEntity {
-    return DataFileEntity(
-        name = name,
-        extension = extension,
-        folder = folder
-    )
+fun DataFileCreate.toEntity(): DataFileEntity {
+    val dataFileEntity = DataFileEntity()
+    dataFileEntity.name = name
+    dataFileEntity.extension = extension
+    dataFileEntity.deleted = false
+    return dataFileEntity
 }
 
 fun DataFileEntity.toShow(): DataFileShow {

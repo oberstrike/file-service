@@ -13,33 +13,9 @@ import de.ma.domain.shared.SortParam
 
 class DataFileManagementUseCaseImpl(
     internal val dataFileGateway: DataFileGateway,
-    internal val dataFileContentGateway: DataFileContentGateway,
-    filters: List<DataCreateFileFilter> = listOf()
+    internal val dataFileContentGateway: DataFileContentGateway
 ) : DataFileManagementUseCase {
 
-    private val _filters = listOf<DataCreateFileFilter>(AlreadyExistsDataCreateFileFilter(dataFileGateway)) + filters
-
-
-    /*
-        create Data File whole process
-     */
-    override suspend fun createDataFile(
-        folderNanoId: NanoId,
-        createDataFile: DataFileCreate
-    ): Result<DataFileShow> {
-
-        var target = createDataFile
-
-        for (filter in _filters) {
-            val newTarget = filter.accept(createDataFile)
-            if (newTarget.isFailure) {
-                return Result.failure(newTarget.exceptionOrNull() ?: RuntimeException("File already exists"))
-            }
-            target = newTarget.getOrNull()!!
-        }
-
-        return internalCreate(target, folderNanoId)
-    }
 
     /*
         delete data file and data file content

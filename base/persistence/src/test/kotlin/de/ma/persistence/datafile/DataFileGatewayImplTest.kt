@@ -2,20 +2,26 @@ package de.ma.persistence.datafile
 
 import de.ma.domain.datafile.DataFileGateway
 import de.ma.persistence.datafile.data.DataFileRepository
+import de.ma.persistence.datafile.utils.DataFileCreateDTO
 import de.ma.persistence.folder.data.FolderRepository
+import de.ma.persistence.shared.nanoid.NanoIdDTO
 import de.ma.persistence.utils.AbstractDatabaseTest
 import de.ma.persistence.utils.TransactionalQuarkusTest
 import de.ma.persistence.utils.sql.Sql
 import io.quarkus.panache.common.Sort
 import io.smallrye.mutiny.coroutines.awaitSuspending
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import java.io.InputStream
 import javax.inject.Inject
 
 @TransactionalQuarkusTest
+@ExperimentalCoroutinesApi
 class DataFileGatewayImplTest : AbstractDatabaseTest() {
 
     @Inject
@@ -36,8 +42,14 @@ class DataFileGatewayImplTest : AbstractDatabaseTest() {
     }
 
     @Test
+    @Sql(before = ["save_datafile_test.sql"])
     fun `tests if the save action works`() = runTest {
+        val save = dataFileGateway.save(
+            dataFileCreate("txt", "test", dataFileContentCreate(InputStream.nullInputStream())),
+            NanoIdDTO("123")
+        )
 
+        save.isSuccess.shouldBeTrue()
     }
 
     @Test

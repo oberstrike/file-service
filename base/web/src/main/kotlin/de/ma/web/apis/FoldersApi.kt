@@ -3,7 +3,6 @@ package de.ma.web.apis;
 
 import de.ma.datafile.api.management.FolderManagementUseCase
 import de.ma.domain.datafile.DataFileShow
-import de.ma.domain.folder.FolderOverview
 import de.ma.domain.folder.FolderShow
 import de.ma.domain.nanoid.NanoId
 import de.ma.domain.shared.PagedList
@@ -41,7 +40,7 @@ class FoldersApi(
                 implementation = String::class
             )
         ) id: NanoId, @MultipartForm dataFileCreateForm: DataFileCreateForm
-    ): DataFileShow = handle {
+    ): NanoId = handle {
         folderManagementUseCase.createDataFileInFolder(id, dataFileCreateForm.toDataFileCreate())
     }
 

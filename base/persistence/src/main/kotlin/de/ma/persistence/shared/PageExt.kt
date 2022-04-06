@@ -4,21 +4,27 @@ import de.ma.domain.shared.PagedList
 import de.ma.domain.shared.PagedParams
 import io.quarkus.hibernate.reactive.panache.PanacheQuery
 import io.quarkus.panache.common.Page
+import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.coroutines.awaitSuspending
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
+import org.hibernate.reactive.mutiny.Mutiny
 
-suspend inline fun <T : Any> PanacheQuery<T>.toPagedList(pagedParams: PagedParams): PagedList<T> {
+ fun <T : Any> PanacheQuery<T>.toPagedList(pagedParams: PagedParams): Uni<PagedList<T>> {
     val targetPage = this.page<T>(Page.of(pagedParams.page, pagedParams.size))
-
-    return PagedListImpl(
-        pagedParams.page,
-        targetPage.pageCount().awaitSuspending(),
-        targetPage.list<T>().awaitSuspending()
-    )
+    return targetPage.pageCount().chain { pageCount ->
+        Mutiny.fetch(targetPage.list<T>()).chain { uniList ->
+            uniList.chain { list ->
+                Uni.createFrom().item(PagedListImpl(pagedParams.page, pageCount, list))
+            }
+        }
+    }
 }
 
-fun <T : Any, R : Any> PagedList<T>.pagedMap(transform: (T) -> R): PagedList<R> {
-    val map = this.items.map(transform)
-    return PagedListImpl(this.page, this.pageCount, map)
+suspend fun <T : Any, R : Any> PagedList<T>.pagedMap(transform: suspend (T) -> R): PagedList<R> {
+    val map = this.items.asFlow().map(transform)
+    return PagedListImpl(this.page, this.pageCount, map.toList())
 }
 
 

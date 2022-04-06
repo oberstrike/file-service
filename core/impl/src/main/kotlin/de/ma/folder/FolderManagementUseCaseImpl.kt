@@ -1,6 +1,6 @@
 package de.ma.folder
 
-import de.ma.datafile.api.management.DataFileManagementUseCase
+import de.ma.datafile.api.management.DataFileCreateUseCase
 import de.ma.datafile.api.management.FolderManagementUseCase
 import de.ma.domain.datafile.DataFileCreate
 import de.ma.domain.datafile.DataFileShow
@@ -12,7 +12,7 @@ import de.ma.domain.shared.SortParam
 
 class FolderManagementUseCaseImpl(
     private val folderGateway: FolderGateway,
-    private val dataFileManagementUseCase: DataFileManagementUseCase
+    private val dataFileCreateUseCase: DataFileCreateUseCase
 ) : FolderManagementUseCase {
 
     override suspend fun deleteDatafilesFromFolder(id: NanoId): Result<Unit> {
@@ -22,45 +22,36 @@ class FolderManagementUseCaseImpl(
     override suspend fun createDataFileInFolder(
         folderId: NanoId,
         dataFileCreate: DataFileCreate
-    ): Result<DataFileShow> {
+    ): Result<NanoId> {
+
+        val exists = folderGateway.existsById(folderId)
+
+        if (!exists) {
+            return Result.failure(RuntimeException("Folder with id ${folderId.id} does not exist"))
+        }
 
         //check if the folder exists
         val folderHasDataFile = folderGateway.hasDataFileWithNameById(dataFileCreate.name, folderId)
 
-        if(folderHasDataFile) {
+        if (folderHasDataFile) {
             return Result.failure(RuntimeException("Folder already has a datafile with the name ${dataFileCreate.name}"))
         }
 
-
-        //create the datafile
-        val createdDataFileShow = dataFileManagementUseCase.createDataFile(
-            folderId,
-            dataFileCreate
-        ).getOrElse {
-            return Result.failure(it)
-        }
-
-        //add the data file to folder datafiles
-        val isAdded = folderGateway.addDataFileToFolder(folderId, createdDataFileShow.id).getOrElse {
-            return Result.failure(it)
-        }
-
-        if (!isAdded) {
-            return Result.failure(RuntimeException("DataFile was not added to folder"))
-        }
-
-        return Result.success(createdDataFileShow)
+        return dataFileCreateUseCase.createDataFile(folderId, dataFileCreate)
     }
 
-    override suspend fun getDataFilesFromFolder(id: NanoId,
-                                                pagedParams: PagedParams): Result<PagedList<DataFileShow>> {
-        return dataFileManagementUseCase.getDataFilesPaged(
+    override suspend fun getDataFilesFromFolder(
+        id: NanoId,
+        pagedParams: PagedParams
+    ): Result<PagedList<DataFileShow>> {
+        return folderGateway.getDataFilesPaged(
+            folderId = id,
             pagedParams = pagedParams
         )
     }
 
-    override suspend fun createFolder(folderCreate: FolderCreate): Result<FolderOverview> {
-        val exists = folderGateway.exists(folderCreate.name)
+    override suspend fun createFolder(folderCreate: FolderCreate): Result<FolderShow> {
+        val exists = folderGateway.oneFolderWithSameNameExists(folderCreate.name)
         if (exists) {
             return Result.failure(RuntimeException("Folder with name ${folderCreate.name} already exists"))
         }
@@ -73,7 +64,7 @@ class FolderManagementUseCaseImpl(
         pagedParams: PagedParams?,
         searchParams: FolderSearchParams?,
         sortParams: SortParam?
-    ): Result<PagedList<FolderOverview>> {
+    ): Result<PagedList<FolderShow>> {
         return folderGateway.getFoldersPaged(pagedParams, searchParams, sortParams)
     }
 
@@ -85,7 +76,7 @@ class FolderManagementUseCaseImpl(
         return deleteFolder(id)
     }
 
-    override suspend fun updateFolder(folderUpdate: FolderUpdate, folderId: NanoId): Result<FolderOverview> {
+    override suspend fun updateFolder(folderUpdate: FolderUpdate, folderId: NanoId): Result<FolderShow> {
         return folderGateway.updateFolder(folderUpdate, folderId)
     }
 

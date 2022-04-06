@@ -16,7 +16,7 @@ interface FolderManagementUseCase {
         pagedParams: PagedParams? = null,
         searchParams: FolderSearchParams? = null,
         sortParams: SortParam? = null
-    ): Result<PagedList<FolderOverview>>
+    ): Result<PagedList<FolderShow>>
 
     //returns the folder with content
     suspend fun getFolderById(id: NanoId): Result<FolderShow>
@@ -25,11 +25,11 @@ interface FolderManagementUseCase {
     suspend fun deleteFolder(id: NanoId): Result<Boolean>
 
     //updating a folder to rename it
-    suspend fun updateFolder(folderUpdate: FolderUpdate, folderId: NanoId): Result<FolderOverview>
+    suspend fun updateFolder(folderUpdate: FolderUpdate, folderId: NanoId): Result<FolderShow>
 
-    suspend fun createFolder(folderCreate: FolderCreate): Result<FolderOverview>
+    suspend fun createFolder(folderCreate: FolderCreate): Result<FolderShow>
 
-    suspend fun createDataFileInFolder(folderId: NanoId, dataFileCreate: DataFileCreate): Result<DataFileShow>
+    suspend fun createDataFileInFolder(folderId: NanoId, dataFileCreate: DataFileCreate): Result<NanoId>
 
     suspend fun deleteDatafilesFromFolder(id: NanoId): Result<Unit>
 
